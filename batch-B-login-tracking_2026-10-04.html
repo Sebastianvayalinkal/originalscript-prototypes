@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OriginalScript Login and Tracking</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@500;700&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Serif+Hebrew&display=swap">
+<style>
+:root{
+  --bg:#f4f1ec; --panel:#ffffff; --ink:#1d1a17; --ink2:#5b544d; --ink3:#8c847b;
+  --line:#e6e0d8; --accent:#8b5a3c; --accent2:#6b4423; --accent-soft:#f6ede4;
+  --free:#e4f1e4; --free-ink:#2b5a2b; --trial:#fff5df; --trial-ink:#6b4a12;
+  --member:#f6ede4; --member-ink:#8b5a3c; --locked:#ede8f3; --locked-ink:#55466a;
+  --note:#fff6c7; --note-ink:#4d3f05; --note-line:#e8d27a;
+  --elohim:#fdf0d8; --yhwh:#e3f1e3;
+  --J:#b7791f; --E:#2f7f6f; --P:#5b5fa8; --D:#a8455b;
+  --phone:#ffffff; --status:#f9f7f4;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}}
+:root[data-theme="dark"]{
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Malayalam","Nirmala UI","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 32px;padding-inline:16px}
+h1,h2,h3{font-family:"Noto Serif Malayalam",Georgia,"Nirmala UI",serif;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+.top{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;padding-block:18px 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.top h1{font-size:22px}
+.top .sub{color:var(--ink2);font-size:13px}
+.langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}.langsw button{background:var(--panel);border:none;padding:6px 14px;color:var(--ink2)}.langsw button.on{background:var(--accent);color:#fff}
+.top .tag{margin-left:0;margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) minmax(280px,360px);gap:20px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}.index{position:static}.index ol{display:flex;flex-wrap:wrap;gap:6px}.index li{flex:0 0 auto}}
+.index{position:sticky;top:12px}
+.index h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-family:inherit}
+.index ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.index button{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
+.index button .n{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:11px;min-width:18px}
+.index button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2)}
+.stage{display:flex;justify-content:center}.idtag{display:flex;gap:10px;align-items:baseline;justify-content:center;margin:0 0 8px;font-size:12px;color:var(--ink2)}.idtag b{font-variant-numeric:tabular-nums;color:var(--accent2);background:var(--accent-soft);padding:2px 8px;border-radius:6px;font-size:13px}.idtag code{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink3)}
+.phone{width:390px;max-width:100%;height:844px;background:var(--phone);border-radius:38px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line)}
+.notch{height:26px;background:#000;border-radius:0 0 18px 18px;margin:0 auto;width:180px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.status{height:32px;padding:6px 18px;background:var(--status);display:flex;justify-content:space-between;font-size:11px;color:var(--ink3)}
+.brand{padding:8px 16px 4px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink3)}
+.brand b{color:var(--accent);font-family:"Noto Serif Malayalam",Georgia,serif;font-size:14px}
+.brand .acts{display:flex;gap:6px}
+.brand .acts button{background:none;border:1px solid var(--line);border-radius:12px;padding:2px 9px;font-size:11px;color:var(--ink2)}
+.sb{padding:6px 16px 8px;display:grid;gap:5px;background:var(--phone)}
+.sb .box{display:flex;align-items:center;gap:8px;border:1.5px solid var(--accent);border-radius:10px;padding:7px 10px;background:var(--panel)}
+.sb .box span{color:var(--ink3);font-size:13px;flex:1}
+.sb .box i{font-style:normal}
+.sb .modes{display:flex;gap:6px;font-size:11px;align-items:center}
+.sb .modes b{font-weight:500;padding:2px 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent2)}
+.sb .modes em{font-style:normal;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+.head{padding:10px 16px 8px;border-bottom:1px solid var(--line)}
+.head h2{font-size:22px;color:var(--ink)}
+.head p{margin:2px 0 0;font-size:12px;color:var(--ink3)}
+.body{flex:1;overflow-y:auto;padding:14px 16px;min-height:0}
+.foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--phone)}
+.btn{flex:1;padding:11px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:500}
+.btn.sec{background:transparent;color:var(--accent)}
+.hint{font-size:11px;color:var(--ink3);text-align:center;padding:6px 16px 0;background:var(--phone)}
+/* home */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{border-radius:12px;padding:16px 10px;text-align:center;background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);font-family:"Noto Serif Malayalam",serif;font-weight:700;font-size:15px}
+.tile small{display:block;font-family:inherit;font-weight:400;font-size:11px;color:var(--ink3);margin-top:2px}
+.menu{display:grid;gap:7px}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--ink);font-size:13.5px}
+.menu button.degree{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2);font-weight:600}
+.menu button:after{content:"›";color:var(--ink3);font-size:18px}
+/* lists */
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:0 16px}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 10px;color:var(--ink3)}
+.tabs button.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.books{display:grid;gap:2px}
+.books button{display:flex;justify-content:space-between;width:100%;background:none;border:none;border-bottom:1px solid var(--line);padding:10px 4px;color:var(--ink);font-size:14px}
+.books button span{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:12px}
+/* reader */
+.verse{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;cursor:pointer}
+.verse .n{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:11px;min-width:16px;padding-top:4px}
+.verse .t{font-size:16px;line-height:1.85;flex:1;font-family:"Noto Serif Malayalam",serif}
+.verse .c{color:var(--ink3);align-self:center}
+.nm{padding:1px 5px;border-radius:4px;font-weight:600;font-family:"Noto Sans Malayalam",sans-serif;font-size:14px}
+.nm.el{background:var(--elohim)}
+.nm.yh{background:var(--yhwh)}
+.hit{background:var(--trial);color:var(--trial-ink);border-radius:3px;padding:0 3px}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 0 0;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink3)}
+.pager b{background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;font-weight:500}
+.pager span{border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.audio{display:flex;justify-content:space-around;align-items:center;padding:8px 16px;border-top:1px solid var(--line);background:var(--status);font-size:20px;color:var(--accent)}
+.audio .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:18px}
+/* src colours */
+.src{border-left:5px solid;padding-left:8px}
+.src.J{border-color:var(--J)}.src.E{border-color:var(--E)}.src.P{border-color:var(--P)}.src.D{border-color:var(--D)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.toggle{position:relative;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:10px;font-size:13px}
+.sw{width:40px;height:22px;border-radius:11px;background:var(--line);position:relative}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.sw.on{background:var(--accent)}.sw.on:after{left:20px}
+/* timeline */
+.tl{position:relative;padding-left:70px}
+.tl:before{content:"";position:absolute;left:52px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;margin-bottom:22px}
+.tl .ev b{position:absolute;left:-70px;width:50px;text-align:right;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink3);top:4px}
+.tl .ev:before{content:"";position:absolute;left:-23px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.chip{display:inline-block;padding:3px 10px;border-radius:6px;color:#fff;font-weight:600;font-size:13px;margin-right:4px}
+.chip.J{background:var(--J)}.chip.E{background:var(--E)}.chip.P{background:var(--P);color:#1d2a10}.chip.D{background:var(--D)}
+.tl .ev p{margin:4px 0 0;font-size:12px;color:var(--ink2)}
+.tbl{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table{border-collapse:collapse;font-size:12px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{color:#fff;font-weight:600}
+th.J{background:var(--J)}th.E{background:var(--E)}th.P{background:var(--P);color:#1d2a10}th.D{background:var(--D)}
+td:first-child{background:var(--status);font-weight:600;color:var(--ink2);white-space:nowrap}
+/* levels */
+.lvl{padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:9px;cursor:pointer}
+.lvl.feat{border:2px solid var(--accent)}
+.lvl .r{display:flex;justify-content:space-between;align-items:center}
+.lvl .r b{font-size:15px;font-weight:600}
+.bd{font-size:10.5px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.02em}
+.bd.free{background:var(--free);color:var(--free-ink)}.bd.trial{background:var(--trial);color:var(--trial-ink)}.bd.member{background:var(--member);color:var(--member-ink)}.bd.locked{background:var(--locked);color:var(--locked-ink)}
+.lvl p{margin:3px 0 0;font-size:12px;color:var(--ink2)}
+.lvl small{color:var(--ink3);font-size:11px}
+.rooms{display:grid;gap:9px}
+.room{padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.room b{font-size:14px;display:block}
+.room span{font-size:12px;color:var(--ink2)}
+.cm{padding:10px 12px;background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px}
+.cm .lb{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.cm h3{font-size:13.5px;margin-bottom:5px;font-family:inherit}
+.cm p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+.cm .heb{font-family:"Noto Serif Hebrew","Times New Roman",serif;direction:rtl;font-size:18px;color:var(--ink);margin:4px 0}
+.img{height:90px;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink3);font-size:12px;background:var(--status);margin-top:8px}
+.refs{font-size:11px;color:var(--ink3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.refs b{color:var(--ink2)}
+.side{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;background:var(--accent);color:#fff;border-radius:10px 0 0 10px;padding:10px 0;display:grid;gap:8px;justify-items:center;font-size:13px;box-shadow:-2px 2px 8px rgba(0,0,0,.2)}
+.side span{writing-mode:vertical-rl;font-size:10px;letter-spacing:.05em}
+.rel{position:relative}
+.req{background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;padding:12px;margin:14px 0}
+.req h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;font-family:inherit}
+.req div{display:flex;gap:8px;font-size:13px;color:var(--ink2);padding:4px 0}
+.req .ok{color:var(--free-ink)}
+.way{display:grid;gap:7px}
+.way button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:13px}
+.way button small{display:block;color:var(--ink3);font-size:11px}
+.field{display:grid;gap:5px;margin-bottom:12px;font-size:12px;color:var(--ink2)}
+.field textarea,.field select,.field .in{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--panel);color:var(--ink);font:inherit}
+.field textarea{min-height:90px;resize:vertical}
+.slider{display:flex;align-items:center;gap:10px;padding:6px 0}
+.slider .bar{flex:1;height:4px;background:var(--line);border-radius:2px;position:relative}
+.slider .bar:after{content:"";position:absolute;left:62%;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.sugg{display:grid;gap:4px;margin-top:6px}
+.sugg button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px;display:flex;justify-content:space-between}
+.sugg button small{color:var(--ink3);font-size:11px}
+.keys{margin-top:auto;background:var(--status);border-top:1px solid var(--line);padding:8px;display:grid;gap:5px}
+.keys div{display:flex;gap:4px;justify-content:center}
+.keys span{flex:1;max-width:32px;height:34px;border-radius:5px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:13px}
+.res{padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.res .ref{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.res .t{font-size:14.5px;line-height:1.75;font-family:"Noto Serif Malayalam",serif}
+.res .why{font-size:11px;color:var(--ink3);margin-top:2px}
+.pair{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;font-size:13.5px}
+.pair.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
+/* annotation panel */
+.note{background:var(--note);color:var(--note-ink);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px;font-size:13px;position:sticky;top:12px}
+.note h2{font-size:15px;margin-bottom:2px;font-family:inherit}
+.note .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin:10px 0 3px}
+.note p{margin:0 0 4px;line-height:1.5}
+.note ul{margin:0;padding-left:18px}
+.note li{margin:2px 0}
+.note .ask{margin-top:10px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.45);border-left:3px solid var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .note .ask{background:rgba(0,0,0,.25)}}
+:root[data-theme="dark"] .note .ask{background:rgba(0,0,0,.25)}
+.note .eng{font-family:"Segoe UI",system-ui,sans-serif}
+.nav2{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.nav2 button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.screen.on{animation:f .18s ease}@keyframes f{from{opacity:.4}to{opacity:1}}}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- phone mode: real handset (<=480px) shows the app full-screen ---- */
+@media (max-width:480px){
+  body{padding:0}
+  .top{padding:8px 12px;margin:0;border-bottom:1px solid var(--line);gap:6px;flex-wrap:nowrap;align-items:center}
+  .top h1{font-size:14px;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top .sub,.top .tag{display:none}
+  .langsw button{padding:4px 10px;font-size:12px}
+  .layout{display:block}
+  .index,#note{display:none}
+  .index.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px;z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .index.open ol{display:grid;gap:4px}
+  #note.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;z-index:30;border-radius:0;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .phone{width:100%;max-width:none;height:calc(100dvh - 42px - 52px);border-radius:0;box-shadow:none;border:none}
+  body .pbar{display:flex}
+}
+.pbar{display:none;position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--line);align-items:center;justify-content:space-between;padding:0 10px;z-index:40;gap:6px}
+.pbar button{background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.pbar .cnt{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>OriginalScript · Batch B — പ്രവേശനവും സമയരേഖയും</h1>
+  <span class="sub">11 mobile screens · Malayalam UI · phone-number login, quota push, session timer, WhatsApp, resume link, hours, leaderboard, questions, content version</span>
+  <span class="langsw"><button data-l="ml" class="on">മലയാളം</button><button data-l="en">English</button></span>
+  <span class="tag">Prototype · 13 Sep 2026</span>
+</div>
+
+<div class="layout">
+  <nav class="index"><h2>Screens</h2><ol id="idx"></ol></nav>
+
+  <div class="stage"><div><div class="idtag" id="idtag"></div><div class="phone"><div class="notch"></div>
+
+<!-- 1 PHONE SIGN IN -->
+<section class="screen" data-t="Sign in with phone number">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← തിരികെ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക</h2><p>ഇമെയിൽ വേണ്ട · പാസ്‌വേഡ് വേണ്ട · 30 സെക്കൻഡ്</p></div>
+  <div class="body">
+    <div class="field"><span>രാജ്യം</span><div class="in">🇮🇳 ഇന്ത്യ (+91) ▾</div></div>
+    <div class="field"><span>ഫോൺ നമ്പർ</span><div class="in" style="font-size:18px;letter-spacing:.08em;font-variant-numeric:tabular-nums">98470 12345</div></div>
+    <div class="toggle">കോഡ് വാട്സ്ആപ്പ് / SMS വഴി (രാജ്യത്തിന് ചെലവു കുറഞ്ഞത്) <span class="sw on"></span></div>
+    <div class="toggle">ഈ ഫോണിൽ എന്നെ ഓർത്തുവയ്ക്കുക <span class="sw on"></span></div>
+    <button class="btn" style="width:100%;margin-top:6px" data-go="2">കോഡ് അയയ്ക്കുക →</button>
+    <p style="font-size:11px;color:var(--ink3);text-align:center;margin:12px 0 0">പേര് ഇപ്പോൾ വേണ്ട — പിന്നീട് ചേർക്കാം<br>ഇമെയിൽ ഉള്ളവർക്ക്: <u>ഇമെയിൽ കൊണ്ട് പ്രവേശിക്കുക</u></p>
+    <div class="cm" style="margin-top:18px;border-left-color:var(--ink3)"><div class="lb">പ്രവേശിച്ചാൽ</div><p>✓ പരിധിയില്ലാത്ത തിരച്ചിൽ · ✓ അടുത്ത/മുൻ വാക്യം നേരിട്ട് · ✓ പഠനസമയം തനിയെ രേഖപ്പെടും · ✓ നിർത്തിയിടത്ത് തുടരാം</p></div>
+  </div>
+  <div class="hint">രജിസ്റ്റർ ചെയ്യാതെയും വായന തുടരാം — ദിവസം 10 തിരച്ചിൽ</div>
+</section>
+
+<!-- 2 OTP -->
+<section class="screen" data-t="One-time code">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="1">← നമ്പർ മാറ്റുക</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>കോഡ് നൽകുക</h2><p>+91 98470 12345 ലേക്ക് വാട്സ്ആപ്പിൽ അയച്ചു</p></div>
+  <div class="body">
+    <div style="display:flex;gap:8px;justify-content:center;margin:10px 0 16px">
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--accent);border-radius:8px;background:var(--panel)">4</span>
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--accent);border-radius:8px;background:var(--panel)">8</span>
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--accent);border-radius:8px;background:var(--panel)">2</span>
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--line);border-radius:8px;background:var(--panel)"></span>
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--line);border-radius:8px;background:var(--panel)"></span>
+      <span class="in" style="width:44px;height:52px;display:grid;place-items:center;font-size:22px;border:1.5px solid var(--line);border-radius:8px;background:var(--panel)"></span>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--ink3);margin:0">കോഡ് വന്നില്ലേ? <u>വീണ്ടും അയയ്ക്കുക</u> (0:42) · <u>SMS ആയി അയയ്ക്കുക</u></p>
+    <div class="cm" style="margin-top:22px"><div class="lb">അടുത്ത തവണ</div><p>ഈ ഫോണിൽ കോഡ് വേണ്ട — തുറന്നാൽ ഉടൻ വായന. പുറത്തുപോകുന്നതു വരെ പ്രവേശനം നിലനിൽക്കും.</p></div>
+  </div>
+  <div class="keys">
+    <div><span>1</span><span>2</span><span>3</span></div>
+    <div><span>4</span><span>5</span><span>6</span></div>
+    <div><span>7</span><span>8</span><span>9</span></div>
+    <div><span></span><span>0</span><span>⌫</span></div>
+  </div>
+</section>
+
+<!-- 3 QUOTA REACHED -->
+<section class="screen" data-t="Visitor quota reached (gentle push)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="1">പ്രവേശിക്കുക</button></div></div>
+  <div class="sb" data-q="നീതി" data-mode="word" data-left="ഇന്നത്തെ 10 തിരച്ചിലുകൾ കഴിഞ്ഞു"></div>
+  <div class="body">
+    <div class="cm" style="border-left-color:var(--trial-ink);background:var(--trial)"><h3 style="margin:0 0 4px">ഇന്നത്തെ 10 സൗജന്യ തിരച്ചിലുകൾ കഴിഞ്ഞു</h3><p style="color:var(--trial-ink)">നാളെ വീണ്ടും 10 കിട്ടും. ഇപ്പോൾ വായിക്കുന്ന അധ്യായം തുടരാം; വെറും ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിച്ചാൽ പരിധിയില്ല.</p></div>
+    <button class="btn" style="width:100%" data-go="1">📱 ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക — സൗജന്യം</button>
+    <p style="text-align:center;font-size:11px;color:var(--ink3);margin:8px 0 16px">30 സെക്കൻഡ് · ഇമെയിൽ വേണ്ട · പണം വേണ്ട</p>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">പ്രവേശിക്കാതെ ഇപ്പോൾ ചെയ്യാവുന്നത്</div><p>📖 ഉല്പത്തി 1 വായന തുടരുക<br>🎧 ഇപ്പോഴത്തെ അധ്യായം കേൾക്കുക<br>🏛 പങ്കാളി സ്ഥാപനങ്ങൾ കാണുക (പരിധിയില്ല)<br>📅 നാളെ 10 പുതിയ തിരച്ചിലുകൾ</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">നിങ്ങളെപ്പോലെ</div><p>ഈ ആഴ്ച 2,140 പേർ ഫോൺ നമ്പർ കൊണ്ട് ചേർന്നു · 61 രാജ്യങ്ങൾ</p></div>
+  </div>
+  <div class="foot"><button class="btn sec">വായന തുടരുക</button><button class="btn" data-go="1">പ്രവേശിക്കുക</button></div>
+</section>
+
+<!-- 4 SESSION TIMER -->
+<section class="screen" data-t="Session timer running (logged in)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button style="border-color:var(--free-ink);color:var(--free-ink)">● 41 മി</button><button>Aa</button></div></div>
+  <div class="sb" data-left="പരിധിയില്ല"></div>
+  <div class="head"><h2>ഉല്പത്തി 1</h2><p>സാറ · ഇന്ന് 41 മിനിറ്റ് · ഈ ആഴ്ച 4 മണി 35 മി</p></div>
+  <div class="body">
+    <div class="verse"><span class="n">4</span><span class="t">വെളിച്ചം നല്ലതു എന്നു <span class="nm el">[എലോഹിം]</span> കണ്ടു; <span class="nm el">[എലോഹിം]</span> വെളിച്ചവും ഇരുളും തമ്മിൽ വേർപിരിച്ചു.</span><span class="c">›</span></div>
+    <div class="verse"><span class="n">5</span><span class="t"><span class="nm el">[എലോഹിം]</span> വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു. സന്ധ്യയായി ഉഷസ്സുമായി, ഒന്നാം ദിവസം.</span><span class="c">›</span></div>
+    <div class="verse"><span class="n">6</span><span class="t">വെള്ളങ്ങളുടെ മദ്ധ്യേ ഒരു വിതാനം ഉണ്ടാകട്ടെ എന്നു <span class="nm el">[എലോഹിം]</span> കല്പിച്ചു…</span><span class="c">›</span></div>
+    <div class="pager"><span>‹ അധ്യായം</span><b>2</b><span>3</span><span>4</span><span>അധ്യായം ›</span></div>
+    <div class="cm" style="margin-top:14px"><div class="lb">സമയം എങ്ങനെ എണ്ണുന്നു</div><p>● ഓരോ 30 സെക്കൻഡിലും ഈ പേജ് “ഞാൻ ഇവിടെയുണ്ട്” എന്നു അറിയിക്കുന്നു. സ്ക്രോൾ/ടച്ച്/കേൾവി ഇല്ലാതെ 5 മിനിറ്റ് കഴിഞ്ഞാൽ എണ്ണൽ നിൽക്കും; തിരികെ വന്നാൽ തുടരും. ഇപ്പോഴത്തെ സ്ഥാനം: 1:4 · 62% — തനിയെ സൂക്ഷിച്ചു.</p></div>
+    <div class="cm" style="border-left-color:var(--free-ink)"><div class="lb">അടുത്ത അറിയിപ്പ്</div><p>💬 19 മിനിറ്റിൽ വാട്സ്ആപ്പ് സന്ദേശം (ഓരോ 30 മിനിറ്റിലും) · ഓഫ് ചെയ്യാം</p></div>
+  </div>
+  <div class="audio"><span>⏮</span><span>◀◀</span><span class="play">▶</span><span>▶▶</span><span>⏭</span></div>
+</section>
+
+<!-- 5 WHATSAPP OPT-IN -->
+<section class="screen" data-t="WhatsApp opt-in">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>← ക്രമീകരണങ്ങൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>വാട്സ്ആപ്പ് അറിയിപ്പുകൾ</h2><p>+91 98470 12345 · എപ്പോൾ വേണമെങ്കിലും നിർത്താം</p></div>
+  <div class="body">
+    <div class="toggle">വാട്സ്ആപ്പിൽ അറിയിപ്പുകൾ സ്വീകരിക്കുന്നു <span class="sw on"></span></div>
+    <p style="font-size:11px;color:var(--ink3);margin:-4px 0 12px 12px">നിങ്ങളുടെ സമ്മതം 13 സെപ്റ്റം. 2026-ൽ രേഖപ്പെടുത്തി (WhatsApp Business നിയമം)</p>
+    <div class="toggle">ഓരോ 30 മിനിറ്റ് പഠനത്തിലും <span class="sw on"></span></div>
+    <div class="toggle">വായന നിർത്തുമ്പോൾ (സെഷൻ അവസാനം) <span class="sw on"></span></div>
+    <div class="toggle">ഞായറാഴ്ച ആഴ്ചയിലെ റാങ്ക് <span class="sw on"></span></div>
+    <div class="toggle">എന്റെ ചോദ്യത്തിന് മറുപടി വരുമ്പോൾ <span class="sw on"></span></div>
+    <div class="toggle">പഠനക്ലാസുകളെക്കുറിച്ചുള്ള അറിയിപ്പുകൾ <span class="sw"></span></div>
+    <div class="field" style="margin-top:12px"><span>നിശ്ശബ്ദ സമയം</span><div class="in">രാത്രി 10:00 – രാവിലെ 7:00 ▾</div></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">സന്ദേശത്തിൽ എന്തുണ്ടാകും</div><p>ഇന്നത്തെ/ഈ സെഷനിലെ സമയം · ഈ ആഴ്ചയിലെ റാങ്ക് · നിർത്തിയിടത്ത് തുറക്കുന്ന ലിങ്ക്. പരസ്യമില്ല.</p><div class="nav2" style="justify-content:flex-start"><button data-go="6">സന്ദേശം കാണുക →</button></div></div>
+  </div>
+  <div class="foot"><button class="btn" style="flex:1">സൂക്ഷിക്കുക</button></div>
+</section>
+
+<!-- 6 WHATSAPP PREVIEW -->
+<section class="screen" data-t="WhatsApp message (30 min & session end)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand" style="background:#075e54;color:#fff;padding:10px 16px"><b style="color:#fff;font-family:inherit">◀ OriginalScript ✓</b><span style="font-size:11px">WhatsApp Business</span></div>
+  <div class="body" style="background:#e5ddd5;display:grid;gap:10px;align-content:start">
+    <div style="background:#fff;border-radius:8px;padding:10px 12px;max-width:88%;font-size:13px;color:#111;box-shadow:0 1px 1px rgba(0,0,0,.15)"><b>OriginalScript</b><br>സാറ, ഇന്ന് ഇതുവരെ <b>30 മിനിറ്റ്</b> പഠിച്ചു 👏<br>ഈ ആഴ്ച: 4 മണി 24 മി · റാങ്ക് <b>131 / 9,412</b><br>ഇപ്പോൾ: ഉല്പത്തി 1:4<br><span style="color:#075e54">originalscript.org/r/k7Q2x</span> — തൊട്ടാൽ അതേ വാക്യത്തിൽ തുറക്കും<div style="text-align:right;font-size:10px;color:#777">2:10 PM ✓✓</div></div>
+    <div style="background:#fff;border-radius:8px;padding:10px 12px;max-width:88%;font-size:13px;color:#111;box-shadow:0 1px 1px rgba(0,0,0,.15)"><b>OriginalScript</b><br>ഇന്നത്തെ വായന കഴിഞ്ഞു — <b>1 മണി 12 മിനിറ്റ്</b> (വായന 58 · കേൾവി 14).<br>ഈ ആഴ്ച ആകെ: <b>5 മണി 6 മി</b> · റാങ്ക് <b>118</b> ⬆13<br>നിർത്തിയത്: ഉല്പത്തി 2:7<br>തുടരാൻ: <span style="color:#075e54">originalscript.org/r/k7Q2y</span><br><span style="color:#777;font-size:11px">ഞായറാഴ്ച ആഴ്ചയിലെ റാങ്ക് വരും. STOP അയച്ചാൽ നിർത്തും.</span><div style="text-align:right;font-size:10px;color:#777">2:52 PM ✓✓</div></div>
+    <div style="background:#dcf8c6;border-radius:8px;padding:8px 12px;max-width:60%;font-size:13px;color:#111;justify-self:end">🙏<div style="text-align:right;font-size:10px;color:#777">2:53 PM ✓✓</div></div>
+    <div style="text-align:center;font-size:10px;color:#555;margin-top:6px">ലിങ്ക് തൊട്ടാൽ → സ്ക്രീൻ 7</div>
+  </div>
+  <div class="foot" style="background:#f0f0f0"><span class="in" style="flex:1;border-radius:20px;padding:8px 14px;color:#888;background:#fff;border:1px solid #ddd">Message</span><span style="width:40px;height:40px;border-radius:50%;background:#075e54;color:#fff;display:grid;place-items:center">🎤</span></div>
+</section>
+
+<!-- 7 RESUME LANDING -->
+<section class="screen" data-t="Resume link landing">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button style="border-color:var(--free-ink);color:var(--free-ink)">● സാറ</button></div></div>
+  <div class="sb"></div>
+  <div class="body" style="text-align:center;padding-top:22px">
+    <div style="font-size:44px">📖</div>
+    <h2 style="font-size:22px;margin:8px 0 4px">തിരിച്ചു വന്നതിൽ സന്തോഷം, സാറ</h2>
+    <p style="font-size:13px;color:var(--ink2);margin:0 0 14px">ലിങ്ക് വഴി പ്രവേശിച്ചു — കോഡ് വേണ്ട. നിർത്തിയ അതേ സ്ഥലത്തേക്ക് 3 സെക്കൻഡിൽ…</p>
+    <div class="cm" style="text-align:left"><div class="lb">നിർത്തിയിടം</div><p><b>ഉല്പത്തി 2:7</b> · പേജ് 2 / 6 · 62% താഴെ · അക്ഷര വലുപ്പം: വലുത്</p><p style="margin-top:6px"><span class="nm yh">[യഹ്‌വെ]</span> <span class="nm el">[എലോഹിം]</span> നിലത്തെ പൊടികൊണ്ടു മനുഷ്യനെ നിർമ്മിച്ചു…</p></div>
+    <button class="btn" style="width:100%">അവിടെനിന്ന് തുടരുക →</button>
+    <div class="nav2"><button>ആദ്യം മുതൽ</button><button>പുസ്തകങ്ങൾ</button><button data-go="8">എന്റെ സമയം</button></div>
+    <p style="font-size:11px;color:var(--ink3);margin-top:14px">ഈ ലിങ്ക് നിങ്ങളുടെ ഫോണിനു മാത്രം · 30 ദിവസം സാധുത</p>
+  </div>
+</section>
+
+<!-- 8 HOURS BY DATE -->
+<section class="screen" data-t="My hours by date">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>← ഹോം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>എന്റെ പഠനസമയം</h2><p>സാറ · +91 98470 12345 · സെപ്റ്റംബർ 2026</p></div>
+  <div class="body">
+    <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="tile" style="font-family:inherit"><span style="font-size:20px">5:06</span><small>ഈ ആഴ്ച</small></div>
+      <div class="tile" style="font-family:inherit"><span style="font-size:20px">18:40</span><small>ഈ മാസം</small></div>
+      <div class="tile" style="font-family:inherit"><span style="font-size:20px">48.5</span><small>ആകെ മണിക്കൂർ</small></div>
+    </div>
+    <div class="tabs"><button class="on">ദിവസം</button><button>ആഴ്ച</button><button>പുസ്തകം</button></div>
+    <div class="books">
+      <button><span style="color:var(--ink)">ഞായർ 13 സെപ്റ്റം.</span><span>1:12 · 📖 58 🎧 14</span></button>
+      <button><span style="color:var(--ink)">ശനി 12</span><span>0:48 · 📖 48</span></button>
+      <button><span style="color:var(--ink)">വെള്ളി 11</span><span>1:05 · 📖 35 🎧 30</span></button>
+      <button><span style="color:var(--ink)">വ്യാഴം 10</span><span>—</span></button>
+      <button><span style="color:var(--ink)">ബുധൻ 9</span><span>0:41 · 📖 41</span></button>
+      <button><span style="color:var(--ink)">ചൊവ്വ 8</span><span>0:52 · 🎧 52</span></button>
+      <button><span style="color:var(--ink)">തിങ്കൾ 7</span><span>0:28 · 📖 28</span></button>
+    </div>
+    <div class="cm" style="margin-top:12px;border-left-color:var(--ink3)"><div class="lb">ഈ സമയം എന്തിന്</div><p>48.5 മണിക്കൂർ ÷ 45 = <b>1.08 ക്രെഡിറ്റ്</b> — അക്കാദമിക നിലയിൽ ചേർന്നാൽ ഈ സമയം കണക്കിൽ വരും. <u>ഇവിടെ പഠിക്കൂ →</u></p></div>
+    <div class="nav2"><button>⬇ ഡാറ്റ ഡൗൺലോഡ് (CSV)</button><button>📧 ഇമെയിൽ</button></div>
+  </div>
+</section>
+
+<!-- 9 LEADERBOARD -->
+<section class="screen" data-t="Weekly leaderboard">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>← ഹോം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഈ ആഴ്ചയിലെ വായനക്കാർ</h2><p>7–13 സെപ്റ്റം. · ഞായറാഴ്ച രാത്രി 12 (UTC) പുതുക്കും · 9,412 പേർ</p></div>
+  <div class="body">
+    <div class="cm" style="background:var(--accent-soft);border-left-color:var(--accent)"><div class="lb">നിങ്ങൾ</div><p><b style="font-size:22px">118</b> / 9,412 · 5 മണി 6 മി · ⬆ 13 കഴിഞ്ഞ ആഴ്ചയേക്കാൾ<br><span style="font-size:11px;color:var(--ink3)">100-ൽ എത്താൻ 38 മിനിറ്റ് കൂടി</span></p></div>
+    <div class="tabs"><button class="on">ലോകം</button><button>ഇന്ത്യ</button><button>കേരളം</button><button>എന്റെ പ്രായം</button></div>
+    <div class="books">
+      <button><span style="color:var(--ink)">🥇 1 · ജോൺ, നൈറോബി</span><span>21:40</span></button>
+      <button><span style="color:var(--ink)">🥈 2 · മേരി, കൊച്ചി</span><span>19:15</span></button>
+      <button><span style="color:var(--ink)">🥉 3 · പീറ്റർ, ലാഗോസ്</span><span>18:52</span></button>
+      <button><span style="color:var(--ink)">4 · അന്ന, ജൊഹാനസ്ബർഗ്</span><span>17:30</span></button>
+      <button><span style="color:var(--ink)">5 · തോമസ്, തിരുവല്ല</span><span>16:48</span></button>
+      <button><span style="color:var(--ink3)">…</span><span></span></button>
+      <button style="background:var(--accent-soft)"><span style="color:var(--accent2);font-weight:600">118 · സാറ, കോട്ടയം (നിങ്ങൾ)</span><span style="color:var(--accent2)">5:06</span></button>
+      <button><span style="color:var(--ink)">119 · ദാവീദ്, അക്ര</span><span>5:04</span></button>
+    </div>
+    <p style="font-size:11px;color:var(--ink3);margin-top:12px">പേരും സ്ഥലവും മാത്രം കാണിക്കും · മറയ്ക്കാൻ: ക്രമീകരണങ്ങൾ › സ്വകാര്യത</p>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">സന്ദർശകൻ ഇതു കാണുമ്പോൾ</div><p>ഇതേ പട്ടിക · മുകളിലെ കാർഡിനു പകരം: “നിങ്ങളുടെ റാങ്ക് കാണാൻ ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക”</p></div>
+  </div>
+</section>
+
+<!-- 10 MY QUESTIONS -->
+<section class="screen" data-t="My questions log">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>← ഹോം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>എന്റെ ചോദ്യങ്ങൾ</h2><p>7 ചോദ്യങ്ങൾ · 5 മറുപടി · 2 കാത്തിരിക്കുന്നു</p></div>
+  <div class="body">
+    <div class="res"><div class="ref">ഉല്പത്തി 1:1 · 13 സെപ്റ്റം. · <span style="color:var(--trial-ink)">കാത്തിരിക്കുന്നു</span></div><div class="t" style="font-size:14px">എലോഹിം ബഹുവചനമാണെങ്കിൽ ക്രിയ എന്തുകൊണ്ട് ഏകവചനം?</div><div class="why">ഇതേ ചോദ്യം 214 പേർ ചോദിച്ചു · മറുപടി വരുമ്പോൾ വാട്സ്ആപ്പിൽ</div></div>
+    <div class="res"><div class="ref">ഉല്പത്തി 2:4 · 11 സെപ്റ്റം. · <span style="color:var(--free-ink)">മറുപടി ലഭിച്ചു</span></div><div class="t" style="font-size:14px">എന്തുകൊണ്ട് ഇവിടെ പെട്ടെന്ന് യഹ്‌വെ എലോഹിം?</div><div class="cm" style="margin:8px 0 0"><div class="lb">മറുപടി · <span class="bd free">✓ എഡിറ്റർ പരിശോധിച്ചത്</span></div><p>2:4b മുതൽ J സ്രോതസ്സ് തുടങ്ങുന്നു; J-യിൽ ദൈവനാമം യഹ്‌വെ ആണ്. നിറങ്ങളുടെ പാളി ഓൺ ചെയ്താൽ മാറ്റം കാണാം. അവലംബം: Friedman 1987, p. 50.</p></div></div>
+    <div class="res"><div class="ref">പുറപ്പാട് 6:3 · 9 സെപ്റ്റം. · <span style="color:var(--free-ink)">മറുപടി ലഭിച്ചു</span></div><div class="t" style="font-size:14px">അബ്രാഹാം യഹ്‌വെ എന്ന പേര് അറിഞ്ഞിരുന്നില്ലേ?</div><div class="cm" style="margin:8px 0 0;border-left-color:var(--trial-ink)"><div class="lb">മറുപടി · <span class="bd trial">AI തയ്യാറാക്കിയത് · പരിശോധന കാത്തിരിക്കുന്നു</span></div><p>പുറപ്പാട് 6:3 പറയുന്നത് പേര് അറിഞ്ഞിരുന്നില്ല എന്നാണ്; എന്നാൽ ഉല്പത്തി 15:7-ൽ (J) അബ്രാഹാമിനോട് യഹ്‌വെ എന്ന പേരു തന്നെ. രണ്ടു സ്രോതസ്സുകൾ (P, J) തമ്മിലുള്ള വ്യത്യാസം. അവലംബം: Friedman 1987, pp. 80–82.</p></div></div>
+    <div class="cm" style="margin-top:12px;border-left-color:var(--ink3)"><div class="lb">മറുപടി എങ്ങനെ വരുന്നു</div><p>1) AI നമ്മുടെ ഡാറ്റയിൽ നിന്നും മാർഗ്ഗരേഖ പ്രകാരവും മറുപടി തയ്യാറാക്കും (പുറത്തുനിന്ന് അവലംബങ്ങൾ മാത്രം) — “AI തയ്യാറാക്കിയത്” എന്ന കുറിപ്പോടെ. 2) എഡിറ്റർ പരിശോധിച്ചാൽ ✓ അടയാളം. 3) മറുപടി നമ്മുടെ ഡാറ്റയിൽ സൂക്ഷിക്കും — അടുത്ത ആൾക്ക് ഉടൻ.<br><br>ചോദ്യങ്ങൾ വാക്യത്തോടു ചേർത്ത് ഗവേഷണത്തിന് സൂക്ഷിക്കുന്നു (പ്രായ വിഭാഗം, രാജ്യം — പേരില്ലാതെ). കൂടുതൽ ചോദിച്ച ചോദ്യങ്ങൾ പുതിയ മുറികളായി മാറും.</p></div>
+  </div>
+</section>
+
+<!-- 11 THEOLOGICAL TOGGLE -->
+<section class="screen" data-t="Theological version toggle">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>← ക്രമീകരണങ്ങൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഉള്ളടക്ക പതിപ്പ്</h2><p>സ്ഥിരം: അക്കാദമിക · ഏതു ദൈവശാസ്ത്രത്തെയും അനുകൂലിക്കുന്നില്ല, എതിർക്കുന്നില്ല</p></div>
+  <div class="body">
+    <div class="pair on">അക്കാദമിക പതിപ്പ് <span>✓</span></div>
+    <p style="font-size:12px;color:var(--ink2);margin:-2px 0 12px 12px">പാഠം · ഭാഷ · ചരിത്രം · സ്രോതസ്സുകൾ · അവലംബങ്ങൾ. വിശ്വാസപരമായ വ്യാഖ്യാനങ്ങൾ ഒന്നും കാണിക്കില്ല.</p>
+    <div class="pair">ദൈവശാസ്ത്ര പതിപ്പ് <span class="sw"></span></div>
+    <p style="font-size:12px;color:var(--ink2);margin:-2px 0 12px 12px">ഓൺ ചെയ്താൽ, “ദൈവശാസ്ത്രം” എന്നു അടയാളപ്പെടുത്തിയ ഭാഗങ്ങൾ കൂടി കാണിക്കും — എപ്പോഴും വേറിട്ട ലേബലോടെ, പാരമ്പര്യത്തിന്റെ പേരോടെ.</p>
+    <div class="cm"><div class="lb">ഉദാഹരണം — ഓഫ് (ഇപ്പോൾ)</div><p>ഉല്പത്തി 1:1 · ദൈവനാമ വിശകലനം: എലോഹിം — ബഹുവചന രൂപം, ഏകവചന ക്രിയ; P സ്രോതസ്സ്; അവലംബം BDB §430.</p></div>
+    <div class="cm" style="border-left-color:var(--locked-ink);opacity:.75"><div class="lb">ഉദാഹരണം — ഓൺ ചെയ്താൽ (മറഞ്ഞിരിക്കുന്നു)</div><p><span class="bd locked">ദൈവശാസ്ത്രം · പാരമ്പര്യം X</span> …ഈ ബഹുവചനത്തെ ചില പാരമ്പര്യങ്ങൾ ഇങ്ങനെ വ്യാഖ്യാനിക്കുന്നു… <span style="font-size:11px;color:var(--ink3)">(is_theological = true — അക്കാദമിക പതിപ്പിൽ ഒരിക്കലും കാണില്ല)</span></p></div>
+    <div class="toggle">മറ്റു ബൈബിൾ പതിപ്പുകൾ കാണിക്കുക <span class="sw"></span><span style="font-size:10px;color:var(--ink3);position:absolute;right:60px">ഈ ഘട്ടത്തിൽ ലഭ്യമല്ല</span></div>
+  </div>
+  <div class="foot"><button class="btn" style="flex:1">സൂക്ഷിക്കുക</button></div>
+</section>
+
+  </div></div></div>
+
+  <aside class="note eng" id="note"></aside>
+</div>
+
+<script>
+const NOTES = [
+ {u:"A visitor (or a rural first-time user) taps 'sign in'.",m:["Phone number only — no email, no password, no name. Country picker defaults from the SIM/locale.","Code sent by WhatsApp by default (cheaper and more reliable than SMS in Africa/India), SMS as fallback.","'Remember me on this phone' is ON by default → persistent JWT/cookie; the user stays signed in until they sign out.","Email sign-in kept as a small secondary link for those who have one.","Bottom line keeps the door open: reading continues without registering."],s:"Sebastian 13 Sep: simple phone-number login for the common man in rural Africa / developing countries; doc p.15 'Permanent Login' (JWT / persistent cookies)",d:"users (phone_e164, country, created_at, remember_device_token); otp_codes",a:"Decided 13 Sep: send the code by whichever channel is cheapest for that country (WhatsApp or SMS) — a per-country cost table drives the choice; the user never sees the difference."},
+ {u:"User enters the 6-digit code.",m:["Big boxes, numeric keypad, auto-advance; resend timer; switch to SMS.","Explains that this phone will not ask again (elderly reassurance)."],s:"Same as screen 1",d:"otp_codes (phone, code, expires_at, attempts)",a:""},
+ {u:"A visitor makes the 11th search of the day.",m:["Never a wall: the message says tomorrow brings 10 more, and lists what still works now (reading, listening, institutions).","One clear action: sign in with phone number — free, 30 seconds.","Social proof line (people who joined this week) is optional."],s:"Chat rules: visitor 10 searches/day; gentle push, no hard gates; institutions browsable by anyone",d:"search_queries count per device per UTC day",a:"Decided 13 Sep: quota counted per device (cookie / device id), not per IP."},
+ {u:"A signed-in reader is reading; time is being counted.",m:["Green ● pill in the header shows today's minutes — always visible, never a pop-up.","Heartbeat every 30 s while the tab is active; stops after 5 min idle; resumes on touch/scroll/audio.","Chapter ‹ › arrows visible (logged-in navigation); search bar says 'no limit'.","Position (verse + scroll %) saved with every heartbeat.","Countdown to the next WhatsApp message shown once, with an off switch."],s:"Doc p.1 'Reading Hour Accumulator' (30-s ping), 'Resume Reading'; p.16 'periodic background sync saves'; chat: logged-in full navigation; listening counts (decided 13 Sep)",d:"study_sessions (user_id, started_at, active_seconds, reading_seconds, listening_seconds, last_verse_id, scroll_pct)",a:""},
+ {u:"User manages WhatsApp notifications.",m:["Explicit opt-in with the consent date stored (WhatsApp Business rule).","Separate switches for: every 30 min, session end, Sunday rank, question answered, course news (off by default).","Quiet hours so night reading does not ping the phone."],s:"Doc p.14 'send WhatsApp message after every 30 min or end of the session, and his rank'; p.16 'users must explicitly opt-in'",d:"notification_prefs (user_id, wa_optin_at, every30, session_end, weekly_rank, quiet_from, quiet_to)",a:""},
+ {u:"What the user actually receives on WhatsApp.",m:["Message 1 (every 30 min): today's minutes, week total, rank, current verse, resume link.","Message 2 (session end, fired by beforeunload + sendBeacon, or by the 5-min idle timeout on mobile where close events don't fire): session minutes split reading/listening, week total, rank change, stopping verse, resume link, STOP instruction.","Links are short, tokenised, personal (screen 7)."],s:"Doc p.15 'The WhatsApp Payload'; p.16 caveats on mobile browsers",d:"wa_messages log; resume_tokens (token, user_id, verse_id, scroll_pct, expires_at)",a:"Template messages must be pre-approved by Meta — the two texts here can be submitted as the templates."},
+ {u:"User taps the link in WhatsApp.",m:["Token in the link signs them in on that phone (no code) and opens the exact verse, page and scroll position, with their saved text size.","3-second auto-continue with a visible button for those who prefer to tap.","Token is personal and expires (30 days)."],s:"Doc p.15 'dynamic continuation link … restores the session'",d:"resume_tokens; user_prefs",a:""},
+ {u:"User checks their study time.",m:["Three totals on top; day / week / book tabs; each day split into reading 📖 and listening 🎧 minutes.","Bridge to the academic side: hours ÷ 45 = credits, with the 'Study here' link — this is the push from free reader to credit student.","Download CSV / email — the same data the research team pulls by login (phone/email)."],s:"Doc p.1 'can pull the data datewise for that login email id'; chat: hours ÷ 45; gentle push",d:"study_sessions aggregated per day",a:""},
+ {u:"User opens the weekly leaderboard.",m:["Week = Monday to Sunday 00:00 UTC; recalculated by the Sunday cron job.","My rank card first, with the gap to the next milestone (motivation without pressure).","Tabs: world / country / state / my age band. Display name + town only; privacy switch to hide."],s:"Doc p.1 'Weekly Leaderboard Engine — cron every Sunday at midnight UTC'; doc p.14 'his rank for the week'",d:"weekly_ranks (user_id, week_start, seconds, rank_world, rank_country)",a:"Decided 13 Sep: leaderboard visible BEFORE login — a visitor sees the list and 'sign in to see your rank' in place of the my-rank card."},
+ {u:"User reviews questions they asked.",m:["Each question tied to its verse; status answered / waiting; answer shown inline with a reference.","'214 people asked this' shows the question logger feeding back into content."],s:"Doc p.1 'Academic Question Logger'",d:"reader_questions + answers",a:"Decided 13 Sep: AI answers first, only from our own data / under our guidelines (external sources for references only). The answer is saved in our database with an 'AI generated' note; an editor verifies it and it then shows a verification tick (authenticity)."},
+ {u:"User looks at the content-version setting.",m:["Academic is the default and the only version shown to everyone until they switch.","Theological version OFF by default; when ON, flagged content appears with a visible label and the tradition's name — never mixed into academic panels.","'Other Bible versions' switch present but disabled: not available at this stage (rule 4)."],s:"Doc p.1 'Strict Content Neutrality Isolation' (is_theological); project rule 4",d:"content_items.is_theological; user_prefs.show_theological",a:""}
+];
+const IDS=[["2.1", "LOGIN", "/sign-in"], ["2.2", "OTP", "/sign-in/code"], ["1.1.6", "SRCH-LIM", "/search/limit"], ["3", "SESSION", "—"], ["2.7.1", "SET-WA", "/settings/whatsapp"], ["6.1", "MSG-30", "—"], ["2.3", "RESUME", "/r/{token}"], ["2.4", "HOURS", "/me/hours"], ["2.5", "RANK", "/leaderboard"], ["2.6", "MYQ", "/me/questions"], ["2.7.2", "SET-VER", "/settings/content-version"]];
+const KEY='os-batch-b';
+const EN={"OriginalScript · Batch B — പ്രവേശനവും സമയരേഖയും": "OriginalScript · Batch B — Sign-in & Time Tracking", "← തിരികെ": "← Back", "ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക": "Sign in with your phone number", "ഇമെയിൽ വേണ്ട · പാസ്‌വേഡ് വേണ്ട · 30 സെക്കൻഡ്": "No email · no password · 30 seconds", "രാജ്യം": "Country", "🇮🇳 ഇന്ത്യ (+91) ▾": "🇮🇳 India (+91) ▾", "ഫോൺ നമ്പർ": "Phone number", "കോഡ് വാട്സ്ആപ്പ് / SMS വഴി (രാജ്യത്തിന് ചെലവു കുറഞ്ഞത്) <span class=\"sw on\"></span>": "Code by WhatsApp / SMS (cheapest for your country) <span class=\"sw on\"></span>", "ഈ ഫോണിൽ എന്നെ ഓർത്തുവയ്ക്കുക <span class=\"sw on\"></span>": "Remember me on this phone <span class=\"sw on\"></span>", "കോഡ് അയയ്ക്കുക →": "Send code →", "പേര് ഇപ്പോൾ വേണ്ട — പിന്നീട് ചേർക്കാം<br>ഇമെയിൽ ഉള്ളവർക്ക്: <u>ഇമെയിൽ കൊണ്ട് പ്രവേശിക്കുക</u>": "No name needed now — add it later<br>Have an email? <u>Sign in with email</u>", "ഇമെയിൽ കൊണ്ട് പ്രവേശിക്കുക": "Sign in with email", "പ്രവേശിച്ചാൽ": "Once signed in", "✓ പരിധിയില്ലാത്ത തിരച്ചിൽ · ✓ അടുത്ത/മുൻ വാക്യം നേരിട്ട് · ✓ പഠനസമയം തനിയെ രേഖപ്പെടും · ✓ നിർത്തിയിടത്ത് തുടരാം": "✓ Unlimited search · ✓ next/previous verse directly · ✓ study time recorded automatically · ✓ continue where you stopped", "രജിസ്റ്റർ ചെയ്യാതെയും വായന തുടരാം — ദിവസം 10 തിരച്ചിൽ": "You can keep reading without registering — 10 searches a day", "← നമ്പർ മാറ്റുക": "← Change number", "കോഡ് നൽകുക": "Enter the code", "+91 98470 12345 ലേക്ക് വാട്സ്ആപ്പിൽ അയച്ചു": "Sent by WhatsApp to +91 98470 12345", "കോഡ് വന്നില്ലേ? <u>വീണ്ടും അയയ്ക്കുക</u> (0:42) · <u>SMS ആയി അയയ്ക്കുക</u>": "No code? <u>Send again</u> (0:42) · <u>Send as SMS</u>", "വീണ്ടും അയയ്ക്കുക": "Send again", "SMS ആയി അയയ്ക്കുക": "Send as SMS", "അടുത്ത തവണ": "Next time", "ഈ ഫോണിൽ കോഡ് വേണ്ട — തുറന്നാൽ ഉടൻ വായന. പുറത്തുപോകുന്നതു വരെ പ്രവേശനം നിലനിൽക്കും.": "No code needed on this phone — open and read at once. You stay signed in until you sign out.", "പ്രവേശിക്കുക": "Sign in", "ഇന്നത്തെ 10 സൗജന്യ തിരച്ചിലുകൾ കഴിഞ്ഞു": "Today's 10 free searches are used up", "നാളെ വീണ്ടും 10 കിട്ടും. ഇപ്പോൾ വായിക്കുന്ന അധ്യായം തുടരാം; വെറും ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിച്ചാൽ പരിധിയില്ല.": "You get 10 more tomorrow. You can keep reading the current chapter; sign in with just a phone number and there is no limit.", "📱 ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക — സൗജന്യം": "📱 Sign in with phone number — free", "30 സെക്കൻഡ് · ഇമെയിൽ വേണ്ട · പണം വേണ്ട": "30 seconds · no email · no payment", "പ്രവേശിക്കാതെ ഇപ്പോൾ ചെയ്യാവുന്നത്": "What you can do right now without signing in", "📖 ഉല്പത്തി 1 വായന തുടരുക<br>🎧 ഇപ്പോഴത്തെ അധ്യായം കേൾക്കുക<br>🏛 പങ്കാളി സ്ഥാപനങ്ങൾ കാണുക (പരിധിയില്ല)<br>📅 നാളെ 10 പുതിയ തിരച്ചിലുകൾ": "📖 Keep reading Genesis 1<br>🎧 Listen to the current chapter<br>🏛 Browse partner institutions (no limit)<br>📅 10 new searches tomorrow", "നിങ്ങളെപ്പോലെ": "People like you", "ഈ ആഴ്ച 2,140 പേർ ഫോൺ നമ്പർ കൊണ്ട് ചേർന്നു · 61 രാജ്യങ്ങൾ": "2,140 people joined with a phone number this week · 61 countries", "വായന തുടരുക": "Keep reading", "● 41 മി": "● 41 min", "ഉല്പത്തി 1": "Genesis 1", "സാറ · ഇന്ന് 41 മിനിറ്റ് · ഈ ആഴ്ച 4 മണി 35 മി": "Sarah · today 41 min · this week 4 h 35 min", "വെളിച്ചം നല്ലതു എന്നു <span class=\"nm el\">[എലോഹിം]</span> കണ്ടു; <span class=\"nm el\">[എലോഹിം]</span> വെളിച്ചവും ഇരുളും തമ്മിൽ വേർപിരിച്ചു.": "<span class=\"nm el\">[Elohim]</span> saw that the light was good; and <span class=\"nm el\">[Elohim]</span> separated the light from the darkness.", "[എലോഹിം]": "[Elohim]", "<span class=\"nm el\">[എലോഹിം]</span> വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു. സന്ധ്യയായി ഉഷസ്സുമായി, ഒന്നാം ദിവസം.": "<span class=\"nm el\">[Elohim]</span> called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.", "വെള്ളങ്ങളുടെ മദ്ധ്യേ ഒരു വിതാനം ഉണ്ടാകട്ടെ എന്നു <span class=\"nm el\">[എലോഹിം]</span> കല്പിച്ചു…": "And <span class=\"nm el\">[Elohim]</span> said, “Let there be a vault between the waters…”", "‹ അധ്യായം": "‹ Chapter", "അധ്യായം ›": "Chapter ›", "സമയം എങ്ങനെ എണ്ണുന്നു": "How time is counted", "● ഓരോ 30 സെക്കൻഡിലും ഈ പേജ് “ഞാൻ ഇവിടെയുണ്ട്” എന്നു അറിയിക്കുന്നു. സ്ക്രോൾ/ടച്ച്/കേൾവി ഇല്ലാതെ 5 മിനിറ്റ് കഴിഞ്ഞാൽ എണ്ണൽ നിൽക്കും; തിരികെ വന്നാൽ തുടരും. ഇപ്പോഴത്തെ സ്ഥാനം: 1:4 · 62% — തനിയെ സൂക്ഷിച്ചു.": "● Every 30 seconds this page reports “I am here”. After 5 minutes with no scroll, touch or audio the count pauses; it resumes when you return. Current position: 1:4 · 62% — saved automatically.", "അടുത്ത അറിയിപ്പ്": "Next notification", "💬 19 മിനിറ്റിൽ വാട്സ്ആപ്പ് സന്ദേശം (ഓരോ 30 മിനിറ്റിലും) · ഓഫ് ചെയ്യാം": "💬 WhatsApp message in 19 minutes (every 30 minutes) · can be switched off", "← ക്രമീകരണങ്ങൾ": "← Settings", "വാട്സ്ആപ്പ് അറിയിപ്പുകൾ": "WhatsApp notifications", "+91 98470 12345 · എപ്പോൾ വേണമെങ്കിലും നിർത്താം": "+91 98470 12345 · stop at any time", "വാട്സ്ആപ്പിൽ അറിയിപ്പുകൾ സ്വീകരിക്കുന്നു <span class=\"sw on\"></span>": "Receive notifications on WhatsApp <span class=\"sw on\"></span>", "നിങ്ങളുടെ സമ്മതം 13 സെപ്റ്റം. 2026-ൽ രേഖപ്പെടുത്തി (WhatsApp Business നിയമം)": "Your consent was recorded on 13 Sep 2026 (WhatsApp Business rule)", "ഓരോ 30 മിനിറ്റ് പഠനത്തിലും <span class=\"sw on\"></span>": "Every 30 minutes of study <span class=\"sw on\"></span>", "വായന നിർത്തുമ്പോൾ (സെഷൻ അവസാനം) <span class=\"sw on\"></span>": "When you stop reading (session end) <span class=\"sw on\"></span>", "ഞായറാഴ്ച ആഴ്ചയിലെ റാങ്ക് <span class=\"sw on\"></span>": "Weekly rank on Sunday <span class=\"sw on\"></span>", "എന്റെ ചോദ്യത്തിന് മറുപടി വരുമ്പോൾ <span class=\"sw on\"></span>": "When my question is answered <span class=\"sw on\"></span>", "പഠനക്ലാസുകളെക്കുറിച്ചുള്ള അറിയിപ്പുകൾ <span class=\"sw\"></span>": "News about study classes <span class=\"sw\"></span>", "നിശ്ശബ്ദ സമയം": "Quiet hours", "രാത്രി 10:00 – രാവിലെ 7:00 ▾": "10:00 pm – 7:00 am ▾", "സന്ദേശത്തിൽ എന്തുണ്ടാകും": "What the message contains", "ഇന്നത്തെ/ഈ സെഷനിലെ സമയം · ഈ ആഴ്ചയിലെ റാങ്ക് · നിർത്തിയിടത്ത് തുറക്കുന്ന ലിങ്ക്. പരസ്യമില്ല.": "Time today / this session · rank this week · a link that opens where you stopped. No advertising.", "സന്ദേശം കാണുക →": "See the message →", "സൂക്ഷിക്കുക": "Save", "<b>OriginalScript</b><br>സാറ, ഇന്ന് ഇതുവരെ <b>30 മിനിറ്റ്</b> പഠിച്ചു 👏<br>ഈ ആഴ്ച: 4 മണി 24 മി · റാങ്ക് <b>131 / 9,412</b><br>ഇപ്പോൾ: ഉല്പത്തി 1:4<br><span style=\"color:#075e54\">originalscript.org/r/k7Q2x</span> — തൊട്ടാൽ അതേ വാക്യത്തിൽ തുറക്കും<div style=\"text-align:right;font-size:10px;color:#777\">2:10 PM ✓✓</div>": "<b>OriginalScript</b><br>Sarah, you have studied <b>30 minutes</b> so far today 👏<br>This week: 4 h 24 min · rank <b>131 / 9,412</b><br>Now at: Genesis 1:4<br><span style=\"color:#075e54\">originalscript.org/r/k7Q2x</span> — tap to open at the same verse<div style=\"text-align:right;font-size:10px;color:#777\">2:10 PM ✓✓</div>", "30 മിനിറ്റ്": "30 minutes", "<b>OriginalScript</b><br>ഇന്നത്തെ വായന കഴിഞ്ഞു — <b>1 മണി 12 മിനിറ്റ്</b> (വായന 58 · കേൾവി 14).<br>ഈ ആഴ്ച ആകെ: <b>5 മണി 6 മി</b> · റാങ്ക് <b>118</b> ⬆13<br>നിർത്തിയത്: ഉല്പത്തി 2:7<br>തുടരാൻ: <span style=\"color:#075e54\">originalscript.org/r/k7Q2y</span><br><span style=\"color:#777;font-size:11px\">ഞായറാഴ്ച ആഴ്ചയിലെ റാങ്ക് വരും. STOP അയച്ചാൽ നിർത്തും.</span><div style=\"text-align:right;font-size:10px;color:#777\">2:52 PM ✓✓</div>": "<b>OriginalScript</b><br>Today's reading is done — <b>1 h 12 min</b> (reading 58 · listening 14).<br>This week total: <b>5 h 6 min</b> · rank <b>118</b> ⬆13<br>Stopped at: Genesis 2:7<br>Continue: <span style=\"color:#075e54\">originalscript.org/r/k7Q2y</span><br><span style=\"color:#777;font-size:11px\">Your weekly rank comes on Sunday. Send STOP to stop.</span><div style=\"text-align:right;font-size:10px;color:#777\">2:52 PM ✓✓</div>", "1 മണി 12 മിനിറ്റ്": "1 h 12 min", "5 മണി 6 മി": "5 h 6 min", "ഞായറാഴ്ച ആഴ്ചയിലെ റാങ്ക് വരും. STOP അയച്ചാൽ നിർത്തും.": "Your weekly rank comes on Sunday. Send STOP to stop.", "ലിങ്ക് തൊട്ടാൽ → സ്ക്രീൻ 7": "Tap the link → screen 7", "● സാറ": "● Sarah", "തിരിച്ചു വന്നതിൽ സന്തോഷം, സാറ": "Welcome back, Sarah", "ലിങ്ക് വഴി പ്രവേശിച്ചു — കോഡ് വേണ്ട. നിർത്തിയ അതേ സ്ഥലത്തേക്ക് 3 സെക്കൻഡിൽ…": "Signed in through the link — no code needed. Taking you to where you stopped in 3 seconds…", "നിർത്തിയിടം": "Where you stopped", "<b>ഉല്പത്തി 2:7</b> · പേജ് 2 / 6 · 62% താഴെ · അക്ഷര വലുപ്പം: വലുത്": "<b>Genesis 2:7</b> · page 2 / 6 · 62% down · text size: large", "ഉല്പത്തി 2:7": "Genesis 2:7", "<span class=\"nm yh\">[യഹ്‌വെ]</span> <span class=\"nm el\">[എലോഹിം]</span> നിലത്തെ പൊടികൊണ്ടു മനുഷ്യനെ നിർമ്മിച്ചു…": "<span class=\"nm yh\">[YHWH]</span> <span class=\"nm el\">[Elohim]</span> formed the man from the dust of the ground…", "[യഹ്‌വെ]": "[YHWH]", "അവിടെനിന്ന് തുടരുക →": "Continue from there →", "ആദ്യം മുതൽ": "From the beginning", "പുസ്തകങ്ങൾ": "Books", "എന്റെ സമയം": "My time", "ഈ ലിങ്ക് നിങ്ങളുടെ ഫോണിനു മാത്രം · 30 ദിവസം സാധുത": "This link is for your phone only · valid 30 days", "← ഹോം": "← Home", "എന്റെ പഠനസമയം": "My study time", "സാറ · +91 98470 12345 · സെപ്റ്റംബർ 2026": "Sarah · +91 98470 12345 · September 2026", "ഈ ആഴ്ച": "This week", "ഈ മാസം": "This month", "ആകെ മണിക്കൂർ": "Total hours", "ദിവസം": "Day", "ആഴ്ച": "Week", "പുസ്തകം": "Book", "ഞായർ 13 സെപ്റ്റം.": "Sun 13 Sep", "ശനി 12": "Sat 12", "വെള്ളി 11": "Fri 11", "വ്യാഴം 10": "Thu 10", "ബുധൻ 9": "Wed 9", "ചൊവ്വ 8": "Tue 8", "തിങ്കൾ 7": "Mon 7", "ഈ സമയം എന്തിന്": "What this time is for", "48.5 മണിക്കൂർ ÷ 45 = <b>1.08 ക്രെഡിറ്റ്</b> — അക്കാദമിക നിലയിൽ ചേർന്നാൽ ഈ സമയം കണക്കിൽ വരും. <u>ഇവിടെ പഠിക്കൂ →</u>": "48.5 hours ÷ 45 = <b>1.08 credits</b> — if you join the academic level this time counts. <u>Study here →</u>", "1.08 ക്രെഡിറ്റ്": "1.08 credits", "ഇവിടെ പഠിക്കൂ →": "Study here →", "⬇ ഡാറ്റ ഡൗൺലോഡ് (CSV)": "⬇ Download data (CSV)", "📧 ഇമെയിൽ": "📧 Email", "ഈ ആഴ്ചയിലെ വായനക്കാർ": "This week's readers", "7–13 സെപ്റ്റം. · ഞായറാഴ്ച രാത്രി 12 (UTC) പുതുക്കും · 9,412 പേർ": "7–13 Sep · refreshed Sunday midnight (UTC) · 9,412 people", "നിങ്ങൾ": "You", "<b style=\"font-size:22px\">118</b> / 9,412 · 5 മണി 6 മി · ⬆ 13 കഴിഞ്ഞ ആഴ്ചയേക്കാൾ<br><span style=\"font-size:11px;color:var(--ink3)\">100-ൽ എത്താൻ 38 മിനിറ്റ് കൂടി</span>": "<b style=\"font-size:22px\">118</b> / 9,412 · 5 h 6 min · ⬆ 13 from last week<br><span style=\"font-size:11px;color:var(--ink3)\">38 more minutes to reach 100</span>", "100-ൽ എത്താൻ 38 മിനിറ്റ് കൂടി": "38 more minutes to reach 100", "ലോകം": "World", "ഇന്ത്യ": "India", "കേരളം": "Kerala", "എന്റെ പ്രായം": "My age group", "🥇 1 · ജോൺ, നൈറോബി": "🥇 1 · John, Nairobi", "🥈 2 · മേരി, കൊച്ചി": "🥈 2 · Mary, Kochi", "🥉 3 · പീറ്റർ, ലാഗോസ്": "🥉 3 · Peter, Lagos", "4 · അന്ന, ജൊഹാനസ്ബർഗ്": "4 · Anna, Johannesburg", "5 · തോമസ്, തിരുവല്ല": "5 · Thomas, Thiruvalla", "118 · സാറ, കോട്ടയം (നിങ്ങൾ)": "118 · Sarah, Kottayam (you)", "119 · ദാവീദ്, അക്ര": "119 · David, Accra", "പേരും സ്ഥലവും മാത്രം കാണിക്കും · മറയ്ക്കാൻ: ക്രമീകരണങ്ങൾ › സ്വകാര്യത": "Only name and town are shown · to hide: Settings › Privacy", "സന്ദർശകൻ ഇതു കാണുമ്പോൾ": "When a visitor sees this", "ഇതേ പട്ടിക · മുകളിലെ കാർഡിനു പകരം: “നിങ്ങളുടെ റാങ്ക് കാണാൻ ഫോൺ നമ്പർ കൊണ്ട് പ്രവേശിക്കുക”": "Same list · in place of the card above: “Sign in with your phone number to see your rank”", "എന്റെ ചോദ്യങ്ങൾ": "My questions", "7 ചോദ്യങ്ങൾ · 5 മറുപടി · 2 കാത്തിരിക്കുന്നു": "7 questions · 5 answered · 2 waiting", "ഉല്പത്തി 1:1 · 13 സെപ്റ്റം. · <span style=\"color:var(--trial-ink)\">കാത്തിരിക്കുന്നു</span>": "Genesis 1:1 · 13 Sep · <span style=\"color:var(--trial-ink)\">waiting</span>", "കാത്തിരിക്കുന്നു": "waiting", "എലോഹിം ബഹുവചനമാണെങ്കിൽ ക്രിയ എന്തുകൊണ്ട് ഏകവചനം?": "If Elohim is plural, why is the verb singular?", "ഇതേ ചോദ്യം 214 പേർ ചോദിച്ചു · മറുപടി വരുമ്പോൾ വാട്സ്ആപ്പിൽ": "214 people asked the same question · WhatsApp when the answer arrives", "ഉല്പത്തി 2:4 · 11 സെപ്റ്റം. · <span style=\"color:var(--free-ink)\">മറുപടി ലഭിച്ചു</span>": "Genesis 2:4 · 11 Sep · <span style=\"color:var(--free-ink)\">answered</span>", "മറുപടി ലഭിച്ചു": "answered", "എന്തുകൊണ്ട് ഇവിടെ പെട്ടെന്ന് യഹ്‌വെ എലോഹിം?": "Why suddenly YHWH Elohim here?", "മറുപടി · <span class=\"bd free\">✓ എഡിറ്റർ പരിശോധിച്ചത്</span>": "Answer · <span class=\"bd free\">✓ Verified by editor</span>", "✓ എഡിറ്റർ പരിശോധിച്ചത്": "✓ Verified by editor", "2:4b മുതൽ J സ്രോതസ്സ് തുടങ്ങുന്നു; J-യിൽ ദൈവനാമം യഹ്‌വെ ആണ്. നിറങ്ങളുടെ പാളി ഓൺ ചെയ്താൽ മാറ്റം കാണാം. അവലംബം: Friedman 1987, p. 50.": "The J source begins at 2:4b; in J the divine name is YHWH. Switch on the colour layer to see the change. Reference: Friedman 1987, p. 50.", "പുറപ്പാട് 6:3 · 9 സെപ്റ്റം. · <span style=\"color:var(--free-ink)\">മറുപടി ലഭിച്ചു</span>": "Exodus 6:3 · 9 Sep · <span style=\"color:var(--free-ink)\">answered</span>", "അബ്രാഹാം യഹ്‌വെ എന്ന പേര് അറിഞ്ഞിരുന്നില്ലേ?": "Did Abraham not know the name YHWH?", "മറുപടി · <span class=\"bd trial\">AI തയ്യാറാക്കിയത് · പരിശോധന കാത്തിരിക്കുന്നു</span>": "Answer · <span class=\"bd trial\">AI generated · awaiting verification</span>", "AI തയ്യാറാക്കിയത് · പരിശോധന കാത്തിരിക്കുന്നു": "AI generated · awaiting verification", "പുറപ്പാട് 6:3 പറയുന്നത് പേര് അറിഞ്ഞിരുന്നില്ല എന്നാണ്; എന്നാൽ ഉല്പത്തി 15:7-ൽ (J) അബ്രാഹാമിനോട് യഹ്‌വെ എന്ന പേരു തന്നെ. രണ്ടു സ്രോതസ്സുകൾ (P, J) തമ്മിലുള്ള വ്യത്യാസം. അവലംബം: Friedman 1987, pp. 80–82.": "Exodus 6:3 says the name was not known; but in Genesis 15:7 (J) YHWH uses that very name with Abraham. The difference lies between two sources (P, J). Reference: Friedman 1987, pp. 80–82.", "മറുപടി എങ്ങനെ വരുന്നു": "How an answer is produced", "1) AI നമ്മുടെ ഡാറ്റയിൽ നിന്നും മാർഗ്ഗരേഖ പ്രകാരവും മറുപടി തയ്യാറാക്കും (പുറത്തുനിന്ന് അവലംബങ്ങൾ മാത്രം) — “AI തയ്യാറാക്കിയത്” എന്ന കുറിപ്പോടെ. 2) എഡിറ്റർ പരിശോധിച്ചാൽ ✓ അടയാളം. 3) മറുപടി നമ്മുടെ ഡാറ്റയിൽ സൂക്ഷിക്കും — അടുത്ത ആൾക്ക് ഉടൻ.<br><br>ചോദ്യങ്ങൾ വാക്യത്തോടു ചേർത്ത് ഗവേഷണത്തിന് സൂക്ഷിക്കുന്നു (പ്രായ വിഭാഗം, രാജ്യം — പേരില്ലാതെ). കൂടുതൽ ചോദിച്ച ചോദ്യങ്ങൾ പുതിയ മുറികളായി മാറും.": "1) AI drafts the answer from our own data and under our guidelines (outside sources for references only) — marked “AI generated”. 2) When an editor verifies it, it gets a ✓. 3) The answer is saved in our data — instant for the next person.<br><br>Questions are stored with the verse for research (age group, country — no names). Frequently asked questions become new rooms.", "ഉള്ളടക്ക പതിപ്പ്": "Content version", "സ്ഥിരം: അക്കാദമിക · ഏതു ദൈവശാസ്ത്രത്തെയും അനുകൂലിക്കുന്നില്ല, എതിർക്കുന്നില്ല": "Default: academic · neither supports nor opposes any theology", "അക്കാദമിക പതിപ്പ് <span>✓</span>": "Academic version <span>✓</span>", "പാഠം · ഭാഷ · ചരിത്രം · സ്രോതസ്സുകൾ · അവലംബങ്ങൾ. വിശ്വാസപരമായ വ്യാഖ്യാനങ്ങൾ ഒന്നും കാണിക്കില്ല.": "Text · language · history · sources · references. No faith-based interpretation is shown.", "ദൈവശാസ്ത്ര പതിപ്പ് <span class=\"sw\"></span>": "Theological version <span class=\"sw\"></span>", "ഓൺ ചെയ്താൽ, “ദൈവശാസ്ത്രം” എന്നു അടയാളപ്പെടുത്തിയ ഭാഗങ്ങൾ കൂടി കാണിക്കും — എപ്പോഴും വേറിട്ട ലേബലോടെ, പാരമ്പര്യത്തിന്റെ പേരോടെ.": "When on, sections marked “theological” are also shown — always with a separate label and the name of the tradition.", "ഉദാഹരണം — ഓഫ് (ഇപ്പോൾ)": "Example — off (now)", "ഉല്പത്തി 1:1 · ദൈവനാമ വിശകലനം: എലോഹിം — ബഹുവചന രൂപം, ഏകവചന ക്രിയ; P സ്രോതസ്സ്; അവലംബം BDB §430.": "Genesis 1:1 · Divine Name Analysis: Elohim — plural form, singular verb; P source; reference BDB §430.", "ഉദാഹരണം — ഓൺ ചെയ്താൽ (മറഞ്ഞിരിക്കുന്നു)": "Example — when on (hidden now)", "<span class=\"bd locked\">ദൈവശാസ്ത്രം · പാരമ്പര്യം X</span> …ഈ ബഹുവചനത്തെ ചില പാരമ്പര്യങ്ങൾ ഇങ്ങനെ വ്യാഖ്യാനിക്കുന്നു… <span style=\"font-size:11px;color:var(--ink3)\">(is_theological = true — അക്കാദമിക പതിപ്പിൽ ഒരിക്കലും കാണില്ല)</span>": "<span class=\"bd locked\">Theological · Tradition X</span> …some traditions interpret this plural as… <span style=\"font-size:11px;color:var(--ink3)\">(is_theological = true — never shown in the academic version)</span>", "ദൈവശാസ്ത്രം · പാരമ്പര്യം X": "Theological · Tradition X", "(is_theological = true — അക്കാദമിക പതിപ്പിൽ ഒരിക്കലും കാണില്ല)": "(is_theological = true — never shown in the academic version)", "മറ്റു ബൈബിൾ പതിപ്പുകൾ കാണിക്കുക <span class=\"sw\"></span><span style=\"font-size:10px;color:var(--ink3);position:absolute;right:60px\">ഈ ഘട്ടത്തിൽ ലഭ്യമല്ല</span>": "Show other Bible versions <span class=\"sw\"></span><span style=\"font-size:10px;color:var(--ink3);position:absolute;right:60px\">Not available at this stage</span>", "ഈ ഘട്ടത്തിൽ ലഭ്യമല്ല": "Not available at this stage", "ഇന്നത്തെ 10 തിരച്ചിലുകൾ കഴിഞ്ഞു": "Today's 10 searches are used up", "നീതി": "righteousness", "പരിധിയില്ല": "No limit"};
+const phone=document.querySelector('.phone');const PHONE_ML=phone.innerHTML;const idx=document.getElementById('idx');
+let LANG='ml',screens=[],cur=0;
+function norm(s){return s.replace(/&nbsp;/g,' ').trim().replace(/\s+/g,' ').replace(/<br\s*\/?>/g,'<br>')}
+function tr(s){return LANG==='en'&&EN[norm(s)]||s}
+function walk(el){for(const c of [...el.children]){if(c.tagName==='SCRIPT')continue;const k=norm(c.innerHTML);if(EN[k]){c.innerHTML=EN[k];continue}walk(c)}}
+const H1=document.querySelector('.top h1');const H1_ML=H1.innerHTML;
+function render(){phone.innerHTML=PHONE_ML;H1.innerHTML=LANG==='en'?(EN[norm(H1_ML)]||H1_ML):H1_ML;if(LANG==='en')walk(phone);
+ phone.querySelectorAll('.sb').forEach(el=>{const q=tr(el.dataset.q||''),m=el.dataset.mode||'',left=tr(el.dataset.left||'');const L=LANG==='en'?{ph:'Search word · verse · contradicting verse',w:'word',v:'verse',c:'contradicting'}:{ph:'വാക്ക് · വാക്യം · വിരുദ്ധ വാക്യം തിരയുക',w:'വാക്ക്',v:'വാക്യം',c:'വിരുദ്ധം'};
+  el.innerHTML='<div class="box"><i>🔍</i><span>'+(q?'<span style="color:var(--ink)">'+q+'</span>':L.ph)+'</span><i>🎤</i></div><div class="modes">'+(m==='word'?'<b>'+L.w+'</b>':'<span>'+L.w+'</span>')+'<span>·</span><span>'+L.v+'</span><span>·</span><span>'+L.c+'</span>'+(left?'<em>'+left+'</em>':'')+'</div>';});
+ screens=[...phone.querySelectorAll('.screen')];idx.innerHTML='';screens.forEach((s,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.innerHTML='<span class="n">'+(i+1)+'</span>'+s.dataset.t;b.onclick=()=>go(i);li.appendChild(b);idx.appendChild(li);});
+ go(cur);}
+function go(i){cur=i;screens.forEach((s,k)=>s.classList.toggle('on',k===i));[...idx.querySelectorAll('button')].forEach((b,k)=>b.classList.toggle('on',k===i));
+ const n=NOTES[i];const T=IDS[i];document.getElementById('idtag').innerHTML='<b>'+T[0]+'</b><span>'+T[1]+'</span><code>'+T[2]+'</code>';document.getElementById('note').innerHTML='<h2>'+T[0]+' '+T[1]+' · '+screens[i].dataset.t+'</h2><p style="margin:0 0 6px"><span class="k" style="display:inline;margin:0 6px 0 0">Prototype</span>screen '+(i+1)+' · <span class="k" style="display:inline;margin:0 6px 0 0">Route</span><code>'+T[2]+'</code></p><div class="k">User action</div><p>'+n.u+'</p><div class="k">What must happen</div><ul>'+n.m.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="k">Requirement source</div><p>'+n.s+'</p><div class="k">Data the screen needs</div><p>'+n.d+'</p>'+(n.a?'<div class="ask"><b>Open note for Sebastian:</b> '+n.a+'</div>':'')+'<div class="nav2"><button onclick="go('+((i+screens.length-1)%screens.length)+')">‹ prev</button><button onclick="go('+((i+1)%screens.length)+')">next ›</button></div>';
+ try{localStorage.setItem(KEY,i)}catch(e){}}
+phone.addEventListener('click',e=>{const el=e.target.closest('[data-go]');if(el&&phone.contains(el)){e.stopPropagation();go(+el.dataset.go-1)}});
+function setLang(l){LANG=l;document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));try{localStorage.setItem('os-lang',l)}catch(e){}render()}
+document.querySelectorAll('.langsw button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+try{cur=+localStorage.getItem(KEY)||0}catch(e){}
+let l0='ml';try{l0=localStorage.getItem('os-lang')||'ml'}catch(e){}
+setLang(l0);
+
+/* phone-mode bar */
+(function(){const bar=document.createElement('div');bar.className='pbar';bar.innerHTML='<button id="pb-prev">◀</button><button id="pb-list">☰ screens</button><span class="cnt" id="pb-cnt"></span><button id="pb-note">i</button><button id="pb-next">▶</button>';document.body.appendChild(bar);
+const nav=document.querySelector('.index'),note=document.getElementById('note');
+function upd(){document.getElementById('pb-cnt').textContent=(cur+1)+' / '+screens.length}
+document.getElementById('pb-prev').onclick=()=>{go((cur-1+screens.length)%screens.length)};
+document.getElementById('pb-next').onclick=()=>{go((cur+1)%screens.length)};
+document.getElementById('pb-list').onclick=()=>{note.classList.remove('open');nav.classList.toggle('open')};
+document.getElementById('pb-note').onclick=()=>{nav.classList.remove('open');note.classList.toggle('open')};
+nav.addEventListener('click',e=>{if(e.target.closest('button'))nav.classList.remove('open')});
+const _go=go;go=function(i){_go(i);upd()};upd();})();
+</script>
+
+</body>
+</html>

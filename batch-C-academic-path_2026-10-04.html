@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OriginalScript Academic Path</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@500;700&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Serif+Hebrew&display=swap">
+<style>
+:root{
+  --bg:#f4f1ec; --panel:#ffffff; --ink:#1d1a17; --ink2:#5b544d; --ink3:#8c847b;
+  --line:#e6e0d8; --accent:#8b5a3c; --accent2:#6b4423; --accent-soft:#f6ede4;
+  --free:#e4f1e4; --free-ink:#2b5a2b; --trial:#fff5df; --trial-ink:#6b4a12;
+  --member:#f6ede4; --member-ink:#8b5a3c; --locked:#ede8f3; --locked-ink:#55466a;
+  --note:#fff6c7; --note-ink:#4d3f05; --note-line:#e8d27a;
+  --elohim:#fdf0d8; --yhwh:#e3f1e3;
+  --J:#b7791f; --E:#2f7f6f; --P:#5b5fa8; --D:#a8455b;
+  --phone:#ffffff; --status:#f9f7f4;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}}
+:root[data-theme="dark"]{
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Malayalam","Nirmala UI","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 32px;padding-inline:16px}
+h1,h2,h3{font-family:"Noto Serif Malayalam",Georgia,"Nirmala UI",serif;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+.top{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;padding-block:18px 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.top h1{font-size:22px}
+.top .sub{color:var(--ink2);font-size:13px}
+.langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}.langsw button{background:var(--panel);border:none;padding:6px 14px;color:var(--ink2)}.langsw button.on{background:var(--accent);color:#fff}
+.top .tag{margin-left:0;margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) minmax(280px,360px);gap:20px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}.index{position:static}.index ol{display:flex;flex-wrap:wrap;gap:6px}.index li{flex:0 0 auto}}
+.index{position:sticky;top:12px}
+.index h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-family:inherit}
+.index ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.index button{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
+.index button .n{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:11px;min-width:18px}
+.index button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2)}
+.stage{display:flex;justify-content:center}.idtag{display:flex;gap:10px;align-items:baseline;justify-content:center;margin:0 0 8px;font-size:12px;color:var(--ink2)}.idtag b{font-variant-numeric:tabular-nums;color:var(--accent2);background:var(--accent-soft);padding:2px 8px;border-radius:6px;font-size:13px}.idtag code{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink3)}
+.phone{width:390px;max-width:100%;height:844px;background:var(--phone);border-radius:38px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line)}
+.notch{height:26px;background:#000;border-radius:0 0 18px 18px;margin:0 auto;width:180px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.status{height:32px;padding:6px 18px;background:var(--status);display:flex;justify-content:space-between;font-size:11px;color:var(--ink3)}
+.brand{padding:8px 16px 4px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink3)}
+.brand b{color:var(--accent);font-family:"Noto Serif Malayalam",Georgia,serif;font-size:14px}
+.brand .acts{display:flex;gap:6px}
+.brand .acts button{background:none;border:1px solid var(--line);border-radius:12px;padding:2px 9px;font-size:11px;color:var(--ink2)}
+.sb{padding:6px 16px 8px;display:grid;gap:5px;background:var(--phone)}
+.sb .box{display:flex;align-items:center;gap:8px;border:1.5px solid var(--accent);border-radius:10px;padding:7px 10px;background:var(--panel)}
+.sb .box span{color:var(--ink3);font-size:13px;flex:1}
+.sb .box i{font-style:normal}
+.sb .modes{display:flex;gap:6px;font-size:11px;align-items:center}
+.sb .modes b{font-weight:500;padding:2px 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent2)}
+.sb .modes em{font-style:normal;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+.head{padding:10px 16px 8px;border-bottom:1px solid var(--line)}
+.head h2{font-size:22px;color:var(--ink)}
+.head p{margin:2px 0 0;font-size:12px;color:var(--ink3)}
+.body{flex:1;overflow-y:auto;padding:14px 16px;min-height:0}
+.foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--phone)}
+.btn{flex:1;padding:11px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:500}
+.btn.sec{background:transparent;color:var(--accent)}
+.hint{font-size:11px;color:var(--ink3);text-align:center;padding:6px 16px 0;background:var(--phone)}
+/* home */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{border-radius:12px;padding:16px 10px;text-align:center;background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);font-family:"Noto Serif Malayalam",serif;font-weight:700;font-size:15px}
+.tile small{display:block;font-family:inherit;font-weight:400;font-size:11px;color:var(--ink3);margin-top:2px}
+.menu{display:grid;gap:7px}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--ink);font-size:13.5px}
+.menu button.degree{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2);font-weight:600}
+.menu button:after{content:"›";color:var(--ink3);font-size:18px}
+/* lists */
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:0 16px}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 10px;color:var(--ink3)}
+.tabs button.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.books{display:grid;gap:2px}
+.books button{display:flex;justify-content:space-between;width:100%;background:none;border:none;border-bottom:1px solid var(--line);padding:10px 4px;color:var(--ink);font-size:14px}
+.books button span{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:12px}
+/* reader */
+.verse{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;cursor:pointer}
+.verse .n{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:11px;min-width:16px;padding-top:4px}
+.verse .t{font-size:16px;line-height:1.85;flex:1;font-family:"Noto Serif Malayalam",serif}
+.verse .c{color:var(--ink3);align-self:center}
+.nm{padding:1px 5px;border-radius:4px;font-weight:600;font-family:"Noto Sans Malayalam",sans-serif;font-size:14px}
+.nm.el{background:var(--elohim)}
+.nm.yh{background:var(--yhwh)}
+.hit{background:var(--trial);color:var(--trial-ink);border-radius:3px;padding:0 3px}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 0 0;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink3)}
+.pager b{background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;font-weight:500}
+.pager span{border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.audio{display:flex;justify-content:space-around;align-items:center;padding:8px 16px;border-top:1px solid var(--line);background:var(--status);font-size:20px;color:var(--accent)}
+.audio .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:18px}
+/* src colours */
+.src{border-left:5px solid;padding-left:8px}
+.src.J{border-color:var(--J)}.src.E{border-color:var(--E)}.src.P{border-color:var(--P)}.src.D{border-color:var(--D)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:10px;font-size:13px}
+.sw{width:40px;height:22px;border-radius:11px;background:var(--line);position:relative}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.sw.on{background:var(--accent)}.sw.on:after{left:20px}
+/* timeline */
+.tl{position:relative;padding-left:70px}
+.tl:before{content:"";position:absolute;left:52px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;margin-bottom:22px}
+.tl .ev b{position:absolute;left:-70px;width:50px;text-align:right;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink3);top:4px}
+.tl .ev:before{content:"";position:absolute;left:-23px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.chip{display:inline-block;padding:3px 10px;border-radius:6px;color:#fff;font-weight:600;font-size:13px;margin-right:4px}
+.chip.J{background:var(--J)}.chip.E{background:var(--E)}.chip.P{background:var(--P);color:#1d2a10}.chip.D{background:var(--D)}
+.tl .ev p{margin:4px 0 0;font-size:12px;color:var(--ink2)}
+.tbl{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table{border-collapse:collapse;font-size:12px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{color:#fff;font-weight:600}
+th.J{background:var(--J)}th.E{background:var(--E)}th.P{background:var(--P);color:#1d2a10}th.D{background:var(--D)}
+td:first-child{background:var(--status);font-weight:600;color:var(--ink2);white-space:nowrap}
+/* levels */
+.lvl{padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:9px;cursor:pointer}
+.lvl.feat{border:2px solid var(--accent)}
+.lvl .r{display:flex;justify-content:space-between;align-items:center}
+.lvl .r b{font-size:15px;font-weight:600}
+.bd{font-size:10.5px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.02em}
+.bd.free{background:var(--free);color:var(--free-ink)}.bd.trial{background:var(--trial);color:var(--trial-ink)}.bd.member{background:var(--member);color:var(--member-ink)}.bd.locked{background:var(--locked);color:var(--locked-ink)}
+.lvl p{margin:3px 0 0;font-size:12px;color:var(--ink2)}
+.lvl small{color:var(--ink3);font-size:11px}
+.rooms{display:grid;gap:9px}
+.room{padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.room b{font-size:14px;display:block}
+.room span{font-size:12px;color:var(--ink2)}
+.cm{padding:10px 12px;background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px}
+.cm .lb{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.cm h3{font-size:13.5px;margin-bottom:5px;font-family:inherit}
+.cm p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+.cm .heb{font-family:"Noto Serif Hebrew","Times New Roman",serif;direction:rtl;font-size:18px;color:var(--ink);margin:4px 0}
+.img{height:90px;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink3);font-size:12px;background:var(--status);margin-top:8px}
+.refs{font-size:11px;color:var(--ink3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.refs b{color:var(--ink2)}
+.side{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;background:var(--accent);color:#fff;border-radius:10px 0 0 10px;padding:10px 0;display:grid;gap:8px;justify-items:center;font-size:13px;box-shadow:-2px 2px 8px rgba(0,0,0,.2)}
+.side span{writing-mode:vertical-rl;font-size:10px;letter-spacing:.05em}
+.rel{position:relative}
+.req{background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;padding:12px;margin:14px 0}
+.req h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;font-family:inherit}
+.req div{display:flex;gap:8px;font-size:13px;color:var(--ink2);padding:4px 0}
+.req .ok{color:var(--free-ink)}
+.way{display:grid;gap:7px}
+.way button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:13px}
+.way button small{display:block;color:var(--ink3);font-size:11px}
+.field{display:grid;gap:5px;margin-bottom:12px;font-size:12px;color:var(--ink2)}
+.field textarea,.field select,.field .in{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--panel);color:var(--ink);font:inherit}
+.field textarea{min-height:90px;resize:vertical}
+.slider{display:flex;align-items:center;gap:10px;padding:6px 0}
+.slider .bar{flex:1;height:4px;background:var(--line);border-radius:2px;position:relative}
+.slider .bar:after{content:"";position:absolute;left:62%;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.sugg{display:grid;gap:4px;margin-top:6px}
+.sugg button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px;display:flex;justify-content:space-between}
+.sugg button small{color:var(--ink3);font-size:11px}
+.keys{margin-top:auto;background:var(--status);border-top:1px solid var(--line);padding:8px;display:grid;gap:5px}
+.keys div{display:flex;gap:4px;justify-content:center}
+.keys span{flex:1;max-width:32px;height:34px;border-radius:5px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:13px}
+.res{padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.res .ref{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.res .t{font-size:14.5px;line-height:1.75;font-family:"Noto Serif Malayalam",serif}
+.res .why{font-size:11px;color:var(--ink3);margin-top:2px}
+.pair{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;font-size:13.5px}
+.pair.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
+/* annotation panel */
+.note{background:var(--note);color:var(--note-ink);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px;font-size:13px;position:sticky;top:12px}
+.note h2{font-size:15px;margin-bottom:2px;font-family:inherit}
+.note .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin:10px 0 3px}
+.note p{margin:0 0 4px;line-height:1.5}
+.note ul{margin:0;padding-left:18px}
+.note li{margin:2px 0}
+.note .ask{margin-top:10px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.45);border-left:3px solid var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .note .ask{background:rgba(0,0,0,.25)}}
+:root[data-theme="dark"] .note .ask{background:rgba(0,0,0,.25)}
+.note .eng{font-family:"Segoe UI",system-ui,sans-serif}
+.nav2{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.nav2 button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.screen.on{animation:f .18s ease}@keyframes f{from{opacity:.4}to{opacity:1}}}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- phone mode: real handset (<=480px) shows the app full-screen ---- */
+@media (max-width:480px){
+  body{padding:0}
+  .top{padding:8px 12px;margin:0;border-bottom:1px solid var(--line);gap:6px;flex-wrap:nowrap;align-items:center}
+  .top h1{font-size:14px;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top .sub,.top .tag{display:none}
+  .langsw button{padding:4px 10px;font-size:12px}
+  .layout{display:block}
+  .index,#note{display:none}
+  .index.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px;z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .index.open ol{display:grid;gap:4px}
+  #note.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;z-index:30;border-radius:0;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .phone{width:100%;max-width:none;height:calc(100dvh - 42px - 52px);border-radius:0;box-shadow:none;border:none}
+  body .pbar{display:flex}
+}
+.pbar{display:none;position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--line);align-items:center;justify-content:space-between;padding:0 10px;z-index:40;gap:6px}
+.pbar button{background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.pbar .cnt{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>OriginalScript · Batch C — അക്കാദമിക പാത</h1>
+  <span class="sub">12 mobile screens · Malayalam UI · study-here, join, courses, module, tests, video hours, credit calculator, transcript, knowledge test, institutions, university pathway</span>
+  <span class="langsw"><button data-l="ml" class="on">മലയാളം</button><button data-l="en">English</button></span>
+  <span class="tag">Prototype · 13 Sep 2026</span>
+</div>
+
+<div class="layout">
+  <nav class="index"><h2>Screens</h2><ol id="idx"></ol></nav>
+
+  <div class="stage"><div><div class="idtag" id="idtag"></div><div class="phone"><div class="notch"></div>
+
+<!-- 1 STUDY HERE LANDING -->
+<section class="screen" data-t="Study here · get a Bible degree (landing)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button style="border-color:var(--free-ink);color:var(--free-ink)">● സാറ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഇവിടെ പഠിക്കൂ · ബൈബിൾ ബിരുദത്തിലേക്ക്</h2><p>കോളേജിൽ ചേരാതെ · യു.എസ്. ക്രെഡിറ്റ് സമ്പ്രദായത്തിൽ</p></div>
+  <div class="body">
+    <div class="cm" style="background:var(--accent-soft)"><div class="lb">നിങ്ങൾ ഇതിനകം</div><p><b style="font-size:20px">48.5 മണിക്കൂർ</b> വായിച്ചു · 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്<br>അക്കാദമിക നിലയിൽ ചേർന്നാൽ ഈ സമയം കണക്കിൽ വരും → <b>1.08 ക്രെഡിറ്റ്</b> (പരീക്ഷകൾ കഴിഞ്ഞാൽ)</p></div>
+    <h3 style="font-size:14px;margin:12px 0 6px">എങ്ങനെ പ്രവർത്തിക്കുന്നു</h3>
+    <div class="rooms">
+      <div class="room"><b>1 · ഇതേ നിലകൾ</b><span>ദ്രുത ഉത്തരം → വിദ്യാർത്ഥി പണ്ഡിതൻ → ആഴപണ്ഡിതൻ → മാസ്റ്റർ അനലിസ്റ്റ്… — വായനാ നിലയും കോഴ്സ് നിലയും ഒന്നു തന്നെ</span></div>
+      <div class="room"><b>2 · 15 + 30 = 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്</b><span>15 ക്ലാസ് മണിക്കൂർ (പാഠങ്ങൾ + പരീക്ഷകൾ) · 30 മറ്റു മണിക്കൂർ (നമ്മുടെ യൂട്യൂബ് വീഡിയോകൾ + ചോദ്യങ്ങൾ)</span></div>
+      <div class="room"><b>3 · പരീക്ഷകൾ</b><span>ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ ഒഴിവാക്കാം · മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷയും അന്തിമ പരീക്ഷയും നിർബന്ധം</span></div>
+      <div class="room"><b>4 · യൂണിവേഴ്സിറ്റി</b><span>ഇപ്പോൾ ഒരു യൂണിവേഴ്സിറ്റിയുമായും ബന്ധമില്ല. 20 പേരുടെ ബാച്ച് ആയാൽ യൂണിവേഴ്സിറ്റികളെ സമീപിക്കും; അവർ അംഗീകരിച്ചാൽ മണിക്കൂറുകൾ ക്രെഡിറ്റായി</span></div>
+    </div>
+    <div class="cm" style="margin-top:12px;border-left-color:var(--ink3)"><div class="lb">ചെലവ്</div><p>ചേരാൻ $10 (₹ 830) · ആദ്യ മാസങ്ങൾ സൗജന്യം · പിന്നീട് ചെറിയ പ്രതിമാസ തുക (വികസിത രാജ്യങ്ങൾക്ക്) · വികസ്വര രാജ്യങ്ങൾക്ക് സ്കോളർഷിപ്പ്</p></div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="3">കോഴ്സുകൾ കാണുക</button><button class="btn" data-go="2">ചേരുക · $10</button></div>
+</section>
+
+<!-- 2 JOIN -->
+<section class="screen" data-t="Join — $10">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="1">← തിരികെ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>അക്കാദമിക നിലയിൽ ചേരുക</h2><p>സാറ · +91 98470 12345 · ഇന്ത്യ</p></div>
+  <div class="body">
+    <div class="lvl feat"><div class="r"><b>ചേരൽ ഫീസ്</b><span class="bd member">$10 · ₹ 830</span></div><p>ഒറ്റത്തവണ · 48.5 മണിക്കൂർ ഉടൻ കണക്കിൽ · എല്ലാ കോഴ്സുകളും തുറക്കും</p></div>
+    <div class="lvl"><div class="r"><b>പ്രതിമാസം</b><span class="bd free">ആദ്യ 3 മാസം സൗജന്യം</span></div><p>അതിനുശേഷം: ഇന്ത്യ ₹ 99 / മാസം · യു.എസ്. $4.99 / മാസം · എപ്പോൾ വേണമെങ്കിലും നിർത്താം; നേടിയ മണിക്കൂറും ക്രെഡിറ്റും നിലനിൽക്കും</p></div>
+    <div class="lvl"><div class="r"><b>സ്കോളർഷിപ്പ്</b><span class="bd trial">അപേക്ഷിക്കാം</span></div><p>വികസ്വര രാജ്യങ്ങൾ · വിദ്യാർത്ഥികൾ · 60+ · ചേരൽ ഫീസ് ഒഴിവ് / പ്രതിമാസം സൗജന്യം</p></div>
+    <div class="field" style="margin-top:12px"><span>പണമടയ്ക്കൽ</span><div class="in">UPI · കാർഡ് · M‑Pesa · PayPal ▾</div></div>
+    <div class="toggle">രസീത് വാട്സ്ആപ്പിൽ <span class="sw on"></span></div>
+    <p style="font-size:11px;color:var(--ink3)">ഇത് ഒരു യൂണിവേഴ്സിറ്റി പ്രവേശനമല്ല. നമ്മുടെ പഠനഘടനയിൽ നിങ്ങൾ ചേരുന്നു; യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അവരുടെ വിലയിരുത്തലിനു ശേഷം മാത്രം.</p>
+  </div>
+  <div class="foot"><button class="btn sec">സ്കോളർഷിപ്പ്</button><button class="btn" data-go="3">$10 അടച്ച് ചേരുക</button></div>
+</section>
+
+<!-- 3 COURSE LIST -->
+<section class="screen" data-t="Courses by level">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button style="border-color:var(--free-ink);color:var(--free-ink)">● സാറ · അംഗം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>കോഴ്സുകൾ</h2><p>ഓരോ കോഴ്സും യു.എസ്. ബിരുദതല കോഴ്സിനു തുല്യമോ മികച്ചതോ</p></div>
+  <div class="body">
+    <div class="lvl" data-go="4"><div class="r"><b>നില 1 · വിദ്യാർത്ഥി പണ്ഡിതൻ</b><span class="bd free">✓ പൂർത്തിയായി</span></div><p>ബൈബിൾ പഠനത്തിന്റെ അടിസ്ഥാനങ്ങൾ · 6 മൊഡ്യൂൾ</p><small>15 + 30 മണിക്കൂർ · 1.0 ക്രെഡിറ്റ് · ശരാശരി 91%</small></div>
+    <div class="lvl feat" data-go="4"><div class="r"><b>നില 2 · ആഴപണ്ഡിതൻ</b><span class="bd trial">60% · തുടരുന്നു</span></div><p>പാഠവിമർശനം, കൈയെഴുത്തുപ്രതികൾ, ദൈവനാമങ്ങൾ കാലക്രമത്തിൽ · 6 മൊഡ്യൂൾ</p><small>ക്ലാസ് 9/15 · മറ്റു 18/30 · ഇടക്കാല പരീക്ഷ 3/4 · അന്തിമം: ബാക്കി</small><div class="pager" style="justify-content:flex-start;padding-top:6px"><span style="border:none;padding:0;width:100%;height:6px;background:var(--line);border-radius:3px;display:block;position:relative"><i style="position:absolute;left:0;top:0;height:100%;width:60%;background:var(--accent);border-radius:3px"></i></span></div></div>
+    <div class="lvl" data-go="4"><div class="r"><b>നില 3 · മാസ്റ്റർ അനലിസ്റ്റ്</b><span class="bd member">നില 2 കഴിഞ്ഞാൽ</span></div><p>സ്രോതസ്സ് വിമർശനം · J/E/P/D · ചരിത്ര സന്ദർഭം · 8 മൊഡ്യൂൾ</p><small>20 + 40 മണിക്കൂർ · 1.33 ക്രെഡിറ്റ്</small></div>
+    <div class="lvl" data-go="4"><div class="r"><b>നില 4 · പണ്ഡിത ശേഖരം</b><span class="bd locked">🔒</span></div><p>അവലംബ ഡാറ്റാബേസ് · ഗവേഷണ രീതി · 8 മൊഡ്യൂൾ</p><small>30 + 60 മണിക്കൂർ · 2.0 ക്രെഡിറ്റ്</small></div>
+    <div class="lvl" data-go="4"><div class="r"><b>നില 5 · PhD ഗവേഷകൻ</b><span class="bd locked">🔒 സ്ഥാപനം വഴി</span></div><p>രീതിശാസ്ത്രം · പ്രബന്ധം · പങ്കാളി സ്ഥാപനത്തിലൂടെ മാത്രം</p></div>
+    <div class="cm" style="margin-top:8px;border-left-color:var(--ink3)"><div class="lb">ആകെ</div><p>48.5 മണിക്കൂർ · 1.08 ക്രെഡിറ്റ് · <u data-go="8">കണക്ക് കാണുക</u> · <u data-go="9">ട്രാൻസ്ക്രിപ്റ്റ്</u></p></div>
+  </div>
+</section>
+
+<!-- 4 MODULE -->
+<section class="screen" data-t="Course module">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← കോഴ്സുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>നില 2 · മൊഡ്യൂൾ 4</h2><p>ദൈവനാമങ്ങൾ കാലക്രമത്തിൽ: എലോഹിം → യഹ്‌വെ → എൽ ഷദ്ദായ്</p></div>
+  <div class="body">
+    <div class="books">
+      <button><span style="color:var(--ink)">✓ പാഠം 1 · ഉല്പത്തി 1–2: രണ്ടു നാമങ്ങൾ</span><span>40 മി</span></button>
+      <button><span style="color:var(--ink)">✓ പാഠം 2 · പുറപ്പാട് 3 & 6: പേര് വെളിപ്പെടുന്നു</span><span>45 മി</span></button>
+      <button><span style="color:var(--ink3)">○ ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ (ഒഴിവാക്കാം)</span><span style="color:var(--ink3)">10 മി</span></button>
+      <button style="background:var(--accent-soft)"><span style="color:var(--accent2);font-weight:600">▶ പാഠം 3 · യെശയ്യാ & സങ്കീർത്തനങ്ങളിലെ നാമങ്ങൾ</span><span style="color:var(--accent2)">50 മി</span></button>
+      <button><span style="color:var(--ink3)">○ ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ (ഒഴിവാക്കാം)</span><span style="color:var(--ink3)">10 മി</span></button>
+      <button data-go="7"><span style="color:var(--ink)">🎥 വീഡിയോ 4.1–4.3 (യൂട്യൂബ്) + ചോദ്യങ്ങൾ</span><span>2 മ 15 മി</span></button>
+      <button data-go="5"><span style="color:var(--trial-ink);font-weight:600">✍ മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷ — നിർബന്ധം</span><span>30 മി</span></button>
+    </div>
+    <div class="cm" style="margin-top:12px"><div class="lb">ഈ മൊഡ്യൂളിൽ</div><p>ക്ലാസ് മണിക്കൂർ: 1.4 / 2.5 · മറ്റു മണിക്കൂർ: 0 / 5.0 · പാഠങ്ങൾ മുമ്പു പഠിച്ചവർക്ക് നേരിട്ട് പരീക്ഷ എഴുതാം</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">നിയമം</div><p>ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ ഒഴിവാക്കി പാഠങ്ങൾ പൂർത്തിയാക്കാം. ക്രെഡിറ്റിന് മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷയും നിലയുടെ അന്തിമ പരീക്ഷയും പാസാകണം.</p></div>
+  </div>
+  <div class="foot"><button class="btn" style="flex:1">പാഠം 3 തുടരുക →</button></div>
+</section>
+
+<!-- 5 INTERIM TEST -->
+<section class="screen" data-t="Interim module test (mandatory)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button style="border-color:var(--trial-ink);color:var(--trial-ink)">⏱ 24:10</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>മൊഡ്യൂൾ 4 · ഇടക്കാല പരീക്ഷ</h2><p>ചോദ്യം 3 / 10 · പാസ്: 70% · വീണ്ടും എഴുതാം</p></div>
+  <div class="body">
+    <div class="cm"><div class="lb">ചോദ്യം 3</div><p style="color:var(--ink);font-size:14.5px">പുറപ്പാട് 6:3 അനുസരിച്ച്, അബ്രാഹാമിനും യിസ്ഹാക്കിനും യാക്കോബിനും ദൈവം ഏതു പേരിൽ പ്രത്യക്ഷനായി?</p></div>
+    <div class="pair">യഹ്‌വെ</div>
+    <div class="pair on">എൽ ഷദ്ദായ് <span>●</span></div>
+    <div class="pair">അദോനായ്</div>
+    <div class="pair">എലോഹിം</div>
+    <div class="cm" style="border-left-color:var(--ink3);margin-top:12px"><div class="lb">വാക്യം കാണുക (അനുവദനീയം)</div><p>“…എൽ ഷദ്ദായ് എന്ന പേരിൽ ഞാൻ പ്രത്യക്ഷനായി; യഹ്‌വെ എന്ന എന്റെ നാമത്തിൽ ഞാൻ അവർക്ക് അറിയപ്പെട്ടില്ല.” — പുറപ്പാട് 6:3</p></div>
+    <div class="nav2"><button>← മുൻ</button><button>അടുത്തത് →</button></div>
+  </div>
+  <div class="hint">ക്ലാസ് മണിക്കൂറിൽ ചേരും · ഉത്തരം തനിയെ സൂക്ഷിക്കും — ഇടയ്ക്ക് നിർത്തി തിരികെ വരാം</div>
+</section>
+
+<!-- 6 FINAL TEST -->
+<section class="screen" data-t="Final level test (mandatory)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← കോഴ്സുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>നില 2 · അന്തിമ പരീക്ഷ</h2><p>25 ചോദ്യങ്ങൾ · 90 മിനിറ്റ് · പാസ്: 75%</p></div>
+  <div class="body">
+    <div class="req"><h3>എഴുതാൻ തയ്യാറോ</h3>
+      <div class="ok">✓ <span>6 മൊഡ്യൂളും പൂർത്തിയായി</span></div>
+      <div class="ok">✓ <span>4 ഇടക്കാല പരീക്ഷയും പാസായി (ശരാശരി 88%)</span></div>
+      <div class="ok">✓ <span>വീഡിയോ മണിക്കൂർ 30 / 30 · ചോദ്യങ്ങൾ 8 / 8</span></div>
+      <div>○ <span>ഐച്ഛികം: പുനരവലോകന ഗൈഡ് (PDF)</span></div>
+    </div>
+    <div class="cm"><div class="lb">പരീക്ഷ കഴിഞ്ഞാൽ</div><p>നില 2 സർട്ടിഫിക്കറ്റ് · ട്രാൻസ്ക്രിപ്റ്റിൽ 1.0 ക്രെഡിറ്റ് (45 മണിക്കൂർ) · നില 3 തുറക്കും · യൂണിവേഴ്സിറ്റി വിലയിരുത്തലിന് അർഹത</p></div>
+    <div class="cm" style="border-left-color:var(--trial-ink)"><div class="lb">ശ്രദ്ധിക്കുക</div><p>തുടങ്ങിയാൽ ടൈമർ ഓടും; ഇടയ്ക്ക് നിർത്താം, റദ്ദാക്കാനാവില്ല. ഫലം ഉടൻ. പാസായില്ലെങ്കിൽ 7 ദിവസം കഴിഞ്ഞ് വീണ്ടും.</p></div>
+    <div class="toggle">ക്യാമറ പരിശോധന (യൂണിവേഴ്സിറ്റി വിലയിരുത്തലിന് വേണ്ടി) <span class="sw on"></span></div>
+  </div>
+  <div class="foot"><button class="btn sec">ഗൈഡ് കാണുക</button><button class="btn">പരീക്ഷ തുടങ്ങുക</button></div>
+</section>
+
+<!-- 7 VIDEO HOURS -->
+<section class="screen" data-t="Video hours (YouTube) + Q&A">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="4">← മൊഡ്യൂൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>വീഡിയോ പഠനം · മൊഡ്യൂൾ 4</h2><p>“മറ്റു 30 മണിക്കൂറിൽ” ചേരും · നമ്മുടെ ചാനൽ · ഈ പേജിൽ കണ്ടാൽ മാത്രം</p></div>
+  <div class="body">
+    <div class="lvl"><div class="r"><b>▶ 4.1 · ഉല്പത്തി 1 & 2: രണ്ടു സൃഷ്ടിവിവരണങ്ങൾ</b><span class="bd free">✓ 45 മി</span></div><p>ചോദ്യങ്ങൾ 3/3 ✓ · മണിക്കൂർ ചേർത്തു</p></div>
+    <div class="lvl feat"><div class="r"><b>▶ 4.2 · പുറപ്പാട് 3: “ഞാൻ ആകുന്നവൻ”</b><span class="bd trial">27 / 52 മി</span></div><p>ഈ പേജിൽ കാണുന്നു · 5 മിനിറ്റ് നിഷ്ക്രിയമായാൽ നിർത്തും · കണ്ടുകഴിഞ്ഞ് 4 ചോദ്യങ്ങൾ</p><div class="pager" style="justify-content:flex-start;padding-top:6px"><span style="border:none;padding:0;width:100%;height:6px;background:var(--line);border-radius:3px;display:block;position:relative"><i style="position:absolute;left:0;top:0;height:100%;width:52%;background:var(--accent);border-radius:3px"></i></span></div><div class="img" style="height:120px;background:#111;color:#fff;border:none;border-radius:8px">▶ യൂട്യൂബ് പ്ലെയർ — ഈ പേജിൽ തന്നെ (27:14 / 52:00)</div></div>
+    <div class="lvl"><div class="r"><b>▶ 4.3 · എൽ ഷദ്ദായ്: പുറപ്പാട് 6</b><span class="bd locked">4.2 കഴിഞ്ഞ്</span></div><p>38 മി · 3 ചോദ്യങ്ങൾ</p></div>
+    <div class="cm" style="margin-top:8px"><div class="lb">വീഡിയോ 4.1 · ചോദ്യം 2 / 3 (ഉദാഹരണം)</div><p style="color:var(--ink)">ഉല്പത്തി 2:4b-ൽ ദൈവനാമം മാറുന്നത് ഏതു സ്രോതസ്സിന്റെ തുടക്കത്തെ കാണിക്കുന്നു?</p><div class="field" style="margin:8px 0 0"><div class="in">J (യാഹ്‌വിസ്റ്റ്)</div></div></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">എങ്ങനെ എണ്ണുന്നു</div><p>നമ്മുടെ പേജിലെ പ്ലെയറിൽ കണ്ടാൽ മാത്രം (യൂട്യൂബ് ചാനലിലെ അതേ വീഡിയോ) · ചോദ്യങ്ങൾ പൂർത്തിയാക്കിയാൽ മണിക്കൂർ ചേരും · ഈ നിലയിൽ: 18 / 30 മണിക്കൂർ</p></div>
+  </div>
+</section>
+
+<!-- 8 CREDIT CALCULATOR -->
+<section class="screen" data-t="Credit calculator (hours ÷ 45)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← കോഴ്സുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ക്രെഡിറ്റ് കണക്ക്</h2><p>യു.എസ്. സമ്പ്രദായം: 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്</p></div>
+  <div class="body">
+    <div class="cm" style="background:var(--accent-soft)"><div class="lb">ഇപ്പോൾ</div><p style="font-size:15px;color:var(--ink)">48.5 മണിക്കൂർ ÷ 45 = <b style="font-size:22px">1.08</b> ക്രെഡിറ്റ്</p><p style="font-size:11px">45 → 1.00 · ബാക്കി 3.5 ÷ 45 → 0.08</p></div>
+    <div class="tbl"><table style="min-width:0;width:100%">
+      <tr><th style="background:var(--accent)">ഘടകം</th><th style="background:var(--accent)">വേണ്ടത്</th><th style="background:var(--accent)">ഉള്ളത്</th><th style="background:var(--accent)">ബാക്കി</th></tr>
+      <tr><td>ക്ലാസ് (പാഠം + പരീക്ഷ)</td><td>15.0</td><td>15.0 ✓</td><td>0</td></tr>
+      <tr><td>മറ്റു (വീഡിയോ + ചോദ്യങ്ങൾ + വായന)</td><td>30.0</td><td>33.5 ✓</td><td>0</td></tr>
+      <tr><td>ഇടക്കാല പരീക്ഷകൾ</td><td>4</td><td>4 ✓</td><td>0</td></tr>
+      <tr><td>അന്തിമ പരീക്ഷ</td><td>1</td><td>0</td><td style="color:var(--trial-ink);font-weight:600">1</td></tr>
+    </table></div>
+    <div class="cm" style="margin-top:12px;border-left-color:var(--trial-ink)"><div class="lb">ട്രാൻസ്ക്രിപ്റ്റിൽ ചേരാൻ</div><p>മണിക്കൂർ തികഞ്ഞു; <b>നില 2 അന്തിമ പരീക്ഷ</b> മാത്രം ബാക്കി. പാസായാൽ 1.08 ക്രെഡിറ്റ് ട്രാൻസ്ക്രിപ്റ്റിൽ.</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">അടുത്ത ലക്ഷ്യങ്ങൾ</div><p>60 മണിക്കൂർ → നില 3 തുറക്കും (11.5 ബാക്കി)<br>90 മണിക്കൂർ → 2.0 ക്രെഡിറ്റ് (41.5 ബാക്കി)<br>ഇപ്പോഴത്തെ വേഗം 3.5 മ/ആഴ്ച → 2.0 ക്രെഡിറ്റ്: ~12 ആഴ്ച</p></div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="9">ട്രാൻസ്ക്രിപ്റ്റ്</button><button class="btn" data-go="6">അന്തിമ പരീക്ഷ →</button></div>
+</section>
+
+<!-- 9 TRANSCRIPT -->
+<section class="screen" data-t="Transcript">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← കോഴ്സുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>അക്കാദമിക ട്രാൻസ്ക്രിപ്റ്റ്</h2><p>സാറ ജോൺ · OS‑2024‑08621 · 13 സെപ്റ്റം. 2026</p></div>
+  <div class="body">
+    <div class="tbl"><table>
+      <tr><th style="background:var(--accent)">കോഴ്സ്</th><th style="background:var(--accent)">നില</th><th style="background:var(--accent)">മണിക്കൂർ</th><th style="background:var(--accent)">ക്രെഡിറ്റ്</th><th style="background:var(--accent)">ഗ്രേഡ്</th><th style="background:var(--accent)">തീയതി</th></tr>
+      <tr><td>ബൈബിൾ പഠനം: അടിസ്ഥാനങ്ങൾ</td><td>1</td><td>32.5</td><td>0.72</td><td>പാസ് (91%)</td><td>20 ഓഗ. 2026</td></tr>
+      <tr><td>പാഠവിമർശനവും ദൈവനാമങ്ങളും</td><td>2</td><td>16.0*</td><td>0.36*</td><td>തുടരുന്നു</td><td>—</td></tr>
+    </table></div>
+    <p style="font-size:11px;color:var(--ink3)">* അന്തിമ പരീക്ഷ കഴിയുമ്പോൾ അന്തിമമാകും</p>
+    <div class="cm"><div class="lb">ആകെ</div><p>48.5 മണിക്കൂർ · 1.08 ക്രെഡിറ്റ് · എല്ലാ പരീക്ഷയും പാസ് · ക്ലാസ് 15 / മറ്റു 33.5 (യു.എസ്. 15+30 ഘടന)</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">യൂണിവേഴ്സിറ്റിക്ക് അയയ്ക്കുമ്പോൾ</div><p>ഈ ട്രാൻസ്ക്രിപ്റ്റ് “ഹാജരായ മണിക്കൂറുകൾ” ആയി റിപ്പോർട്ട് ചെയ്യുന്നു; ക്രെഡിറ്റ് നൽകണോ എന്ന് യൂണിവേഴ്സിറ്റി നമ്മുടെ പഠനഘടന വിലയിരുത്തി തീരുമാനിക്കും. ഇപ്പോൾ ഒരു യൂണിവേഴ്സിറ്റിയുമായും ബന്ധമില്ല.</p></div>
+    <div class="nav2"><button>⬇ PDF</button><button>📧 യൂണിവേഴ്സിറ്റിക്ക്</button><button>🔗 പരിശോധനാ ലിങ്ക്</button></div>
+  </div>
+</section>
+
+<!-- 10 KNOWLEDGE TEST -->
+<section class="screen" data-t="Knowledge-test evaluation ($100) + scholarships">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="3">← കോഴ്സുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>അറിവ് വിലയിരുത്തൽ പരീക്ഷ</h2><p>മുമ്പ് പഠിച്ചവർക്ക് — ക്ലാസ് ഇല്ലാതെ നേരിട്ട് നിലയിലേക്ക്</p></div>
+  <div class="body">
+    <div class="cm"><div class="lb">ആർക്ക്</div><p>ഔപചാരിക വിദ്യാഭ്യാസമില്ലാതെ വർഷങ്ങളായി ബൈബിൾ പഠിച്ചവർ · സെമിനാരി/സഭാ ക്ലാസുകൾ കഴിഞ്ഞവർ · മറ്റു രാജ്യങ്ങളിലെ ബിരുദധാരികൾ</p></div>
+    <div class="lvl feat"><div class="r"><b>വിലയിരുത്തൽ ഫീസ്</b><span class="bd member">$100 (യു.എസ്.)</span></div><p>2 മണിക്കൂർ പരീക്ഷ + 30 മിനിറ്റ് വാചാ · പാസായാൽ ആ നിലയുടെ ക്ലാസ് മണിക്കൂർ അംഗീകരിക്കും; മറ്റു 30 മണിക്കൂർ (വീഡിയോ) പിന്നീട് പൂർത്തിയാക്കണം</p></div>
+    <div class="lvl"><div class="r"><b>പ്രോത്സാഹന സ്കോളർഷിപ്പ്</b><span class="bd free">ഫീസ് ഒഴിവ്</span></div><p>ഇന്ത്യ, ആഫ്രിക്ക, മറ്റു വികസ്വര രാജ്യങ്ങൾ · ആദ്യ 500 പേർ · 60+ വയസ്സ്</p></div>
+    <div class="field"><span>ഏതു നിലയ്ക്ക്</span><div class="in">നില 2 · ആഴപണ്ഡിതൻ ▾</div></div>
+    <div class="field"><span>തീയതി</span><div class="in">ശനി 20 സെപ്റ്റം. · രാവിലെ 10:00 IST ▾</div></div>
+    <p style="font-size:11px;color:var(--ink3)">ഫലം ട്രാൻസ്ക്രിപ്റ്റിൽ “വിലയിരുത്തലിലൂടെ” എന്നു രേഖപ്പെടും. യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അവരുടെ തീരുമാനം.</p>
+  </div>
+  <div class="foot"><button class="btn sec">സ്കോളർഷിപ്പ്</button><button class="btn">രജിസ്റ്റർ · $100</button></div>
+</section>
+
+<!-- 11 INSTITUTIONS -->
+<section class="screen" data-t="Institutions (public)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb" data-q="സ്ഥാപനങ്ങൾ" data-mode="word"></div>
+  <div class="head"><h2>സ്ഥാപനങ്ങൾ</h2><p>ആർക്കും കാണാം · പരിധിയില്ല · ഇപ്പോൾ: ചർച്ചയിലുള്ളവ</p></div>
+  <div class="body">
+    <div class="cm" style="border-left-color:var(--trial-ink);background:var(--trial)"><p style="color:var(--trial-ink)">ഇന്നുവരെ ഒരു യൂണിവേഴ്സിറ്റിയും നമ്മുടെ ക്രെഡിറ്റ് അംഗീകരിച്ചിട്ടില്ല. ഓരോ കോഴ്സിലും 20 പേരുടെ ബാച്ച് ആകുമ്പോൾ താഴെയുള്ളവരെ സമീപിക്കും.</p></div>
+    <div class="lvl"><div class="r"><b>യൂണിവേഴ്സിറ്റി A · കേരളം</b><span class="bd trial">ചർച്ചയിൽ</span></div><p>ബി.എ. തിയോളജി · മണിക്കൂർ തുല്യത: വിലയിരുത്തലിൽ</p><small>നില 2 ബാച്ച്: 14 / 20 പേർ</small></div>
+    <div class="lvl"><div class="r"><b>കോളേജ് B · നൈറോബി</b><span class="bd trial">ചർച്ചയിൽ</span></div><p>ഡിപ്ലോമ ഇൻ ബിബ്ലിക്കൽ സ്റ്റഡീസ്</p><small>നില 1 ബാച്ച്: 20 / 20 ✓ — സമീപിച്ചു</small></div>
+    <div class="lvl"><div class="r"><b>യൂണിവേഴ്സിറ്റി C · യു.എസ്.</b><span class="bd locked">ലക്ഷ്യം</span></div><p>ഭാഷ & സംസ്കാര പ്രോഗ്രാം · ഇന്ത്യൻ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അംഗീകരിക്കുന്ന പാത</p><small>ഇനിയും സമീപിച്ചിട്ടില്ല</small></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">സ്ഥാപനത്തിന്റെ പൊതു പേജിൽ</div><p>കോഴ്സുകൾ · ഫീസ് · പ്രവേശന നിബന്ധനകൾ · നമ്മുടെ നിലയുമായുള്ള ബന്ധം · സമ്പർക്കം. ചേരാൻ അക്കാദമിക അംഗത്വം വേണം.</p></div>
+  </div>
+</section>
+
+<!-- 12 UNIVERSITY PATHWAY -->
+<section class="screen" data-t="University pathway (batch of 20)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="11">← സ്ഥാപനങ്ങൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>യൂണിവേഴ്സിറ്റിയിലേക്കുള്ള പാത</h2><p>നമ്മുടെ മണിക്കൂറുകൾ എങ്ങനെ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റാകും</p></div>
+  <div class="body">
+    <div class="tl">
+      <div class="ev"><b>ഇപ്പോൾ</b><span class="chip" style="background:var(--accent)">1</span><p>നിങ്ങൾ നിലകൾ പഠിക്കുന്നു; മണിക്കൂറും പരീക്ഷയും നമ്മുടെ ഡാറ്റാബേസിൽ</p></div>
+      <div class="ev"><b>20 പേർ</b><span class="chip" style="background:var(--accent)">2</span><p>ഒരു കോഴ്സിൽ 20 പേരുടെ ബാച്ച് → യൂണിവേഴ്സിറ്റികളെ സമീപിക്കും: അവരുടെ റിക്രൂട്ടർ ആകാൻ</p></div>
+      <div class="ev"><b>കമ്മീഷൻ</b><span class="chip" style="background:var(--accent)">3</span><p>പ്രവേശനത്തിന് യൂണിവേഴ്സിറ്റി കമ്മീഷൻ നൽകും; അതുപയോഗിച്ച് മണിക്കൂർ തുല്യതയ്ക്ക് ചർച്ച (അന്തിമ പരീക്ഷയ്ക്കല്ല)</p></div>
+      <div class="ev"><b>അംഗീകാരം</b><span class="chip" style="background:var(--accent)">4</span><p>അംഗീകൃത യൂണിവേഴ്സിറ്റി നമ്മുടെ മണിക്കൂർ അംഗീകരിച്ചാൽ — ഇന്ത്യൻ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് യു.എസ്സിൽ സ്വീകരിക്കുന്ന അതേ പാത</p></div>
+      <div class="ev"><b>പിന്നീട്</b><span class="chip" style="background:var(--accent)">5</span><p>നമ്മുടെ സിസ്റ്റം വഴി അവരുടെ കോഴ്സിൽ ചേരാം; നമ്മുടെ സ്വന്തം അംഗീകാരം വരെ ഈ പാത</p></div>
+    </div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">നിങ്ങളുടെ ബാച്ച്</div><p>നില 2 · യൂണിവേഴ്സിറ്റി A: 14 / 20 · 6 പേർ കൂടി ചേർന്നാൽ സമീപിക്കും · <u>സുഹൃത്തിനെ ക്ഷണിക്കുക</u></p></div>
+  </div>
+  <div class="foot"><button class="btn" style="flex:1">ഈ ബാച്ചിൽ എന്നെ ചേർക്കുക</button></div>
+</section>
+
+  </div></div></div>
+
+  <aside class="note eng" id="note"></aside>
+</div>
+
+<script>
+const NOTES = [
+ {u:"A reader taps 'Study here · get a Bible degree' on the home menu (or the ÷45 bridge on the hours screen).",m:["Opens with what they already have: 48.5 h → 1.08 credits once tests are passed — the hours were never wasted.","Four plain facts: same ladder as reading levels; 15 + 30 = 45 h = 1 credit; interim questions skippable, module interim test + level final test mandatory; NO university tie yet, batch of 20 → we approach universities.","Cost stated honestly: $10 join, free months, small monthly for developed countries, scholarships for developing countries."],s:"Doc p.14 (whole paragraph); chat: 45-hour credit, tests rule; project rule 4 income model",d:"study_sessions totals; pricing table per country",a:"Prices are admin-editable per country tier (decided 13 Sep); the ₹ figure is an example."},
+ {u:"Reader decides to join.",m:["One-time $10; first 3 months free then ₹99 / $4.99 monthly (example figures — you set them); stopping never removes earned hours or credits.","Scholarship path on the same screen (developing countries, students, 60+).","Payment methods for the target countries: UPI, card, M‑Pesa, PayPal. Receipt by WhatsApp.","Disclaimer line: this is not a university admission."],s:"Doc p.14 '$10 to join and a small amount monthly after some free months for developed countries'",d:"memberships (user_id, joined_at, fee_paid, plan, country_tier); payments",a:"Decided 13 Sep: prices stay OPEN — build them as admin-editable settings per country tier (join fee, free months, monthly), never hard-coded. Figures on this screen are examples."},
+ {u:"Member sees the course ladder.",m:["Same six names as the reading lobby, with Level numbers; hours and credit per level grow (1.0 → 1.33 → 2.0) because higher levels have more rooms.","Progress line shows the four things that matter: class hours, other hours, interim tests, final test.","Level 5 only through a partner institution."],s:"Decisions 13 Sep: same ladder; rooms grow per level",d:"courses (level, class_hours, other_hours, credit); user_course_progress",a:"Credit and hours per level are admin-editable settings; 1.0 / 1.0 / 1.33 / 2.0 are examples."},
+ {u:"Member opens a module.",m:["Lessons ✓, interim questions marked 'skippable' (○), video block, and the mandatory interim test at the end (highlighted).","Note: someone who already learned this may go straight to the test (doc rule).","Hour counters per module: class and other."],s:"Chat 13 Sep: 'he can skip interim questions… must complete interim module tests and final module test… can attend only the tests if already completed the class learning'",d:"modules, lessons, interim_questions, module_tests",a:""},
+ {u:"Member takes the mandatory interim test.",m:["10 questions, 30 min, pass 70%, retakes allowed; verse lookup allowed (open-text, academic).","Answers autosave — can stop and return (elderly / poor network).","Time counts toward class hours."],s:"Chat rules on tests; doc p.14",d:"test_attempts (user_id, test_id, answers, score, started_at)",a:"Open-book (verse lookup allowed) or closed? I made it open-book because the goal is understanding, not memory."},
+ {u:"Member reaches the level final test.",m:["Readiness checklist must be all green before 'Start' is enabled: modules, interim tests, 30 video hours + video Q&A.","States what passing gives: certificate, credit on transcript, next level, eligibility for university evaluation.","Optional camera check switch — only useful if a university later asks for proctoring."],s:"Chat rules: final module test mandatory for credit",d:"final_tests; certificates",a:"Do you want proctoring (camera) at all at this stage? It adds cost; universities may require it later."},
+ {u:"Member watches the module videos on our YouTube channel.",m:["Videos open on YouTube through OUR link only; the user must be logged in to YouTube; watch time is tracked through the link; auto-stop after 5 min inactivity.","Hours are added only after the video's Q&A is completed.","Counter per level: 18 / 30 other hours."],s:"Chat 13 Sep: 'YouTube video links of our own channel… hours counted if watched through the link provided in the site… questions based on the videos have to be answered'",d:"videos (youtube_id, module_id, minutes, questions[]); video_watch (user_id, video_id, seconds, completed_qa)",a:"Decided 13 Sep: videos play embedded on OUR page (YouTube player API, same channel, views still count) so watch time is tracked per user. The page must stay open; the 5-minute idle stop applies."},
+ {u:"Member checks how credits are computed.",m:["The formula in one line: 48.5 ÷ 45 = 1.08 (1.00 + 3.5/45).","Table of the four requirements with have / need / missing — here only the final test is missing.","Next targets in hours and weeks at the user's current pace."],s:"Chat correction: Total_Hours ÷ 45 = credits; 15 classroom + 30 outside",d:"computed from study_sessions + test_attempts",a:""},
+ {u:"Member views / sends the transcript.",m:["Course, level, hours, credit, grade, date; in-progress rows starred.","Totals show the 15 + 30 structure explicitly so a registrar can read it.","Honest note: reported as attended hours; the university decides credit; no university tie yet.","PDF, email to university, verification link."],s:"Project rule 4: database reports attended hours and completed modules to universities",d:"transcripts (snapshot + verification token)",a:""},
+ {u:"Someone who already knows the material wants credit for it.",m:["$100 evaluation for US applicants: 2-hour test + 30-min oral; passing recognises the CLASS hours of that level; the 30 'other' hours (videos) must still be done.","Scholarship (fee waived) for developing countries, first 500, 60+.","Transcript marks it 'by evaluation'."],s:"Doc p.14 'evaluation of a knowledge test by paying 100 USD for US people after some incentive scholarships'",d:"evaluations (user_id, level, date, fee, result)",a:"Decided 13 Sep: keep the minimum required hours — passing the evaluation recognises class hours only; the 30 other hours remain required."},
+ {u:"Anyone — visitor included — browses institutions.",m:["No login, no quota: public page.","Truthful status badges: in discussion / target / (later) accepting. Batch counters per course (14 / 20).","Public details only; enrolment needs membership."],s:"Chat 13 Sep: 'they can browse institutions freely and see their public details'; doc p.14 batch of 20",d:"institutions (public fields); cohorts (course_id, count)",a:"Institution names are placeholders — real names only after they agree to be listed."},
+ {u:"Member reads how our hours become university credit.",m:["Five honest steps: learn → batch of 20 → we become the university's recruiter → commission funds the hour-equivalency negotiation (not the final exam) → accredited university accepts hours, the same path by which Indian university credits are accepted in the US → later, students join their courses through us, until we get our own accreditation.","Personal line: my batch 14 / 20, invite a friend."],s:"Doc p.14 second paragraph, verbatim logic",d:"cohorts; referrals",a:""}
+];
+const IDS=[["4.1", "STUDY-HOME", "/study"], ["4.2", "JOIN", "/study/join"], ["4.3", "COURSES", "/study/courses"], ["4.3.L.M", "MODULE", "/study/courses/{level}/modules/{n}"], ["4.3.L.M.T", "M-TEST", "/study/courses/{level}/modules/{n}/test"], ["4.3.L.F", "F-TEST", "/study/courses/{level}/final"], ["4.3.L.M.V", "M-VIDEO", "/study/courses/{level}/modules/{n}/videos"], ["4.4", "CREDITS", "/study/credits"], ["4.5", "TRANSCRIPT", "/study/transcript"], ["4.6", "EVAL", "/study/evaluation"], ["4.7", "INST", "/institutions"], ["4.8", "PATHWAY", "/study/pathway"]];
+const KEY='os-batch-c';
+const EN={"OriginalScript · Batch C — അക്കാദമിക പാത": "OriginalScript · Batch C — Academic Path", "● സാറ": "● Sarah", "ഇവിടെ പഠിക്കൂ · ബൈബിൾ ബിരുദത്തിലേക്ക്": "Study here · towards a Bible degree", "കോളേജിൽ ചേരാതെ · യു.എസ്. ക്രെഡിറ്റ് സമ്പ്രദായത്തിൽ": "Without joining a college · in the US credit system", "നിങ്ങൾ ഇതിനകം": "You already have", "<b style=\"font-size:20px\">48.5 മണിക്കൂർ</b> വായിച്ചു · 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്<br>അക്കാദമിക നിലയിൽ ചേർന്നാൽ ഈ സമയം കണക്കിൽ വരും → <b>1.08 ക്രെഡിറ്റ്</b> (പരീക്ഷകൾ കഴിഞ്ഞാൽ)": "<b style=\"font-size:20px\">48.5 hours</b> of reading · 45 hours = 1 credit<br>If you join the academic level this time counts → <b>1.08 credits</b> (after the tests)", "48.5 മണിക്കൂർ": "48.5 hours", "1.08 ക്രെഡിറ്റ്": "1.08 credits", "എങ്ങനെ പ്രവർത്തിക്കുന്നു": "How it works", "1 · ഇതേ നിലകൾ": "1 · The same levels", "ദ്രുത ഉത്തരം → വിദ്യാർത്ഥി പണ്ഡിതൻ → ആഴപണ്ഡിതൻ → മാസ്റ്റർ അനലിസ്റ്റ്… — വായനാ നിലയും കോഴ്സ് നിലയും ഒന്നു തന്നെ": "Quick Answer → Student Scholar → Deep Scholar → Master Analyst… — reading level and course level are one and the same", "2 · 15 + 30 = 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്": "2 · 15 + 30 = 45 hours = 1 credit", "15 ക്ലാസ് മണിക്കൂർ (പാഠങ്ങൾ + പരീക്ഷകൾ) · 30 മറ്റു മണിക്കൂർ (നമ്മുടെ യൂട്യൂബ് വീഡിയോകൾ + ചോദ്യങ്ങൾ)": "15 class hours (lessons + tests) · 30 other hours (our YouTube videos + questions)", "3 · പരീക്ഷകൾ": "3 · Tests", "ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ ഒഴിവാക്കാം · മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷയും അന്തിമ പരീക്ഷയും നിർബന്ധം": "Interim questions can be skipped · the module interim test and the final test are mandatory", "4 · യൂണിവേഴ്സിറ്റി": "4 · University", "ഇപ്പോൾ ഒരു യൂണിവേഴ്സിറ്റിയുമായും ബന്ധമില്ല. 20 പേരുടെ ബാച്ച് ആയാൽ യൂണിവേഴ്സിറ്റികളെ സമീപിക്കും; അവർ അംഗീകരിച്ചാൽ മണിക്കൂറുകൾ ക്രെഡിറ്റായി": "No tie to any university yet. When a batch of 20 forms we approach universities; if they accept, the hours become credit", "ചെലവ്": "Cost", "ചേരാൻ $10 (₹ 830) · ആദ്യ മാസങ്ങൾ സൗജന്യം · പിന്നീട് ചെറിയ പ്രതിമാസ തുക (വികസിത രാജ്യങ്ങൾക്ക്) · വികസ്വര രാജ്യങ്ങൾക്ക് സ്കോളർഷിപ്പ്": "$10 to join (₹ 830) · first months free · then a small monthly fee (developed countries) · scholarships for developing countries", "കോഴ്സുകൾ കാണുക": "See courses", "ചേരുക · $10": "Join · $10", "← തിരികെ": "← Back", "അക്കാദമിക നിലയിൽ ചേരുക": "Join the academic level", "സാറ · +91 98470 12345 · ഇന്ത്യ": "Sarah · +91 98470 12345 · India", "ചേരൽ ഫീസ്": "Joining fee", "ഒറ്റത്തവണ · 48.5 മണിക്കൂർ ഉടൻ കണക്കിൽ · എല്ലാ കോഴ്സുകളും തുറക്കും": "One time · 48.5 hours counted at once · all courses open", "പ്രതിമാസം": "Monthly", "ആദ്യ 3 മാസം സൗജന്യം": "First 3 months free", "അതിനുശേഷം: ഇന്ത്യ ₹ 99 / മാസം · യു.എസ്. $4.99 / മാസം · എപ്പോൾ വേണമെങ്കിലും നിർത്താം; നേടിയ മണിക്കൂറും ക്രെഡിറ്റും നിലനിൽക്കും": "After that: India ₹ 99 / month · US $4.99 / month · stop any time; earned hours and credits stay", "സ്കോളർഷിപ്പ്": "Scholarship", "അപേക്ഷിക്കാം": "Apply", "വികസ്വര രാജ്യങ്ങൾ · വിദ്യാർത്ഥികൾ · 60+ · ചേരൽ ഫീസ് ഒഴിവ് / പ്രതിമാസം സൗജന്യം": "Developing countries · students · 60+ · joining fee waived / monthly free", "പണമടയ്ക്കൽ": "Payment", "UPI · കാർഡ് · M‑Pesa · PayPal ▾": "UPI · card · M‑Pesa · PayPal ▾", "രസീത് വാട്സ്ആപ്പിൽ <span class=\"sw on\"></span>": "Receipt on WhatsApp <span class=\"sw on\"></span>", "ഇത് ഒരു യൂണിവേഴ്സിറ്റി പ്രവേശനമല്ല. നമ്മുടെ പഠനഘടനയിൽ നിങ്ങൾ ചേരുന്നു; യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അവരുടെ വിലയിരുത്തലിനു ശേഷം മാത്രം.": "This is not a university admission. You join our study structure; university credit only after their evaluation.", "$10 അടച്ച് ചേരുക": "Pay $10 and join", "● സാറ · അംഗം": "● Sarah · member", "കോഴ്സുകൾ": "Courses", "ഓരോ കോഴ്സും യു.എസ്. ബിരുദതല കോഴ്സിനു തുല്യമോ മികച്ചതോ": "Each course equal to or better than a US undergraduate course", "നില 1 · വിദ്യാർത്ഥി പണ്ഡിതൻ": "Level 1 · Student Scholar", "✓ പൂർത്തിയായി": "✓ Completed", "ബൈബിൾ പഠനത്തിന്റെ അടിസ്ഥാനങ്ങൾ · 6 മൊഡ്യൂൾ": "Foundations of Bible study · 6 modules", "15 + 30 മണിക്കൂർ · 1.0 ക്രെഡിറ്റ് · ശരാശരി 91%": "15 + 30 hours · 1.0 credit · average 91%", "നില 2 · ആഴപണ്ഡിതൻ": "Level 2 · Deep Scholar", "60% · തുടരുന്നു": "60% · in progress", "പാഠവിമർശനം, കൈയെഴുത്തുപ്രതികൾ, ദൈവനാമങ്ങൾ കാലക്രമത്തിൽ · 6 മൊഡ്യൂൾ": "Textual criticism, manuscripts, divine names over time · 6 modules", "ക്ലാസ് 9/15 · മറ്റു 18/30 · ഇടക്കാല പരീക്ഷ 3/4 · അന്തിമം: ബാക്കി": "Class 9/15 · other 18/30 · interim tests 3/4 · final: pending", "നില 3 · മാസ്റ്റർ അനലിസ്റ്റ്": "Level 3 · Master Analyst", "നില 2 കഴിഞ്ഞാൽ": "After Level 2", "സ്രോതസ്സ് വിമർശനം · J/E/P/D · ചരിത്ര സന്ദർഭം · 8 മൊഡ്യൂൾ": "Source criticism · J/E/P/D · historical context · 8 modules", "20 + 40 മണിക്കൂർ · 1.33 ക്രെഡിറ്റ്": "20 + 40 hours · 1.33 credits", "നില 4 · പണ്ഡിത ശേഖരം": "Level 4 · Scholar's Archive", "അവലംബ ഡാറ്റാബേസ് · ഗവേഷണ രീതി · 8 മൊഡ്യൂൾ": "Reference database · research method · 8 modules", "30 + 60 മണിക്കൂർ · 2.0 ക്രെഡിറ്റ്": "30 + 60 hours · 2.0 credits", "നില 5 · PhD ഗവേഷകൻ": "Level 5 · PhD Researcher", "🔒 സ്ഥാപനം വഴി": "🔒 Through an institution", "രീതിശാസ്ത്രം · പ്രബന്ധം · പങ്കാളി സ്ഥാപനത്തിലൂടെ മാത്രം": "Methodology · thesis · through a partner institution only", "ആകെ": "Total", "48.5 മണിക്കൂർ · 1.08 ക്രെഡിറ്റ് · <u data-go=\"8\">കണക്ക് കാണുക</u> · <u data-go=\"9\">ട്രാൻസ്ക്രിപ്റ്റ്</u>": "48.5 hours · 1.08 credits · <u data-go=\"8\">See the calculation</u> · <u data-go=\"9\">Transcript</u>", "കണക്ക് കാണുക": "See the calculation", "ട്രാൻസ്ക്രിപ്റ്റ്": "Transcript", "← കോഴ്സുകൾ": "← Courses", "നില 2 · മൊഡ്യൂൾ 4": "Level 2 · Module 4", "ദൈവനാമങ്ങൾ കാലക്രമത്തിൽ: എലോഹിം → യഹ്‌വെ → എൽ ഷദ്ദായ്": "Divine names over time: Elohim → YHWH → El Shaddai", "✓ പാഠം 1 · ഉല്പത്തി 1–2: രണ്ടു നാമങ്ങൾ": "✓ Lesson 1 · Genesis 1–2: two names", "40 മി": "40 min", "✓ പാഠം 2 · പുറപ്പാട് 3 &amp; 6: പേര് വെളിപ്പെടുന്നു": "✓ Lesson 2 · Exodus 3 &amp; 6: the name is revealed", "45 മി": "45 min", "○ ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ (ഒഴിവാക്കാം)": "○ Interim questions (can be skipped)", "10 മി": "10 min", "▶ പാഠം 3 · യെശയ്യാ &amp; സങ്കീർത്തനങ്ങളിലെ നാമങ്ങൾ": "▶ Lesson 3 · Names in Isaiah &amp; the Psalms", "50 മി": "50 min", "🎥 വീഡിയോ 4.1–4.3 (യൂട്യൂബ്) + ചോദ്യങ്ങൾ": "🎥 Videos 4.1–4.3 (YouTube) + questions", "2 മ 15 മി": "2 h 15 min", "✍ മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷ — നിർബന്ധം": "✍ Module interim test — mandatory", "30 മി": "30 min", "ഈ മൊഡ്യൂളിൽ": "In this module", "ക്ലാസ് മണിക്കൂർ: 1.4 / 2.5 · മറ്റു മണിക്കൂർ: 0 / 5.0 · പാഠങ്ങൾ മുമ്പു പഠിച്ചവർക്ക് നേരിട്ട് പരീക്ഷ എഴുതാം": "Class hours: 1.4 / 2.5 · other hours: 0 / 5.0 · those who studied the lessons before may go straight to the test", "നിയമം": "Rule", "ഇടയ്ക്കുള്ള ചോദ്യങ്ങൾ ഒഴിവാക്കി പാഠങ്ങൾ പൂർത്തിയാക്കാം. ക്രെഡിറ്റിന് മൊഡ്യൂൾ ഇടക്കാല പരീക്ഷയും നിലയുടെ അന്തിമ പരീക്ഷയും പാസാകണം.": "You may skip the interim questions and finish the lessons. For credit you must pass the module interim test and the level's final test.", "പാഠം 3 തുടരുക →": "Continue lesson 3 →", "മൊഡ്യൂൾ 4 · ഇടക്കാല പരീക്ഷ": "Module 4 · Interim test", "ചോദ്യം 3 / 10 · പാസ്: 70% · വീണ്ടും എഴുതാം": "Question 3 / 10 · pass: 70% · retakes allowed", "ചോദ്യം 3": "Question 3", "പുറപ്പാട് 6:3 അനുസരിച്ച്, അബ്രാഹാമിനും യിസ്ഹാക്കിനും യാക്കോബിനും ദൈവം ഏതു പേരിൽ പ്രത്യക്ഷനായി?": "According to Exodus 6:3, by which name did God appear to Abraham, Isaac and Jacob?", "യഹ്‌വെ": "YHWH", "എൽ ഷദ്ദായ് <span>●</span>": "El Shaddai <span>●</span>", "അദോനായ്": "Adonai", "എലോഹിം": "Elohim", "വാക്യം കാണുക (അനുവദനീയം)": "See the verse (allowed)", "“…എൽ ഷദ്ദായ് എന്ന പേരിൽ ഞാൻ പ്രത്യക്ഷനായി; യഹ്‌വെ എന്ന എന്റെ നാമത്തിൽ ഞാൻ അവർക്ക് അറിയപ്പെട്ടില്ല.” — പുറപ്പാട് 6:3": "“…I appeared by the name El Shaddai; by my name YHWH I was not known to them.” — Exodus 6:3", "← മുൻ": "← Previous", "അടുത്തത് →": "Next →", "ക്ലാസ് മണിക്കൂറിൽ ചേരും · ഉത്തരം തനിയെ സൂക്ഷിക്കും — ഇടയ്ക്ക് നിർത്തി തിരികെ വരാം": "Counts as class hours · answers save automatically — you can stop and come back", "നില 2 · അന്തിമ പരീക്ഷ": "Level 2 · Final test", "25 ചോദ്യങ്ങൾ · 90 മിനിറ്റ് · പാസ്: 75%": "25 questions · 90 minutes · pass: 75%", "എഴുതാൻ തയ്യാറോ": "Ready to sit it", "6 മൊഡ്യൂളും പൂർത്തിയായി": "All 6 modules completed", "4 ഇടക്കാല പരീക്ഷയും പാസായി (ശരാശരി 88%)": "All 4 interim tests passed (average 88%)", "വീഡിയോ മണിക്കൂർ 30 / 30 · ചോദ്യങ്ങൾ 8 / 8": "Video hours 30 / 30 · questions 8 / 8", "ഐച്ഛികം: പുനരവലോകന ഗൈഡ് (PDF)": "Optional: review guide (PDF)", "പരീക്ഷ കഴിഞ്ഞാൽ": "After the test", "നില 2 സർട്ടിഫിക്കറ്റ് · ട്രാൻസ്ക്രിപ്റ്റിൽ 1.0 ക്രെഡിറ്റ് (45 മണിക്കൂർ) · നില 3 തുറക്കും · യൂണിവേഴ്സിറ്റി വിലയിരുത്തലിന് അർഹത": "Level 2 certificate · 1.0 credit (45 hours) on the transcript · Level 3 opens · eligible for university evaluation", "ശ്രദ്ധിക്കുക": "Note", "തുടങ്ങിയാൽ ടൈമർ ഓടും; ഇടയ്ക്ക് നിർത്താം, റദ്ദാക്കാനാവില്ല. ഫലം ഉടൻ. പാസായില്ലെങ്കിൽ 7 ദിവസം കഴിഞ്ഞ് വീണ്ടും.": "Once started the timer runs; you can pause but not cancel. Result immediately. If you do not pass, retake after 7 days.", "ക്യാമറ പരിശോധന (യൂണിവേഴ്സിറ്റി വിലയിരുത്തലിന് വേണ്ടി) <span class=\"sw on\"></span>": "Camera check (for university evaluation) <span class=\"sw on\"></span>", "ഗൈഡ് കാണുക": "See the guide", "പരീക്ഷ തുടങ്ങുക": "Start the test", "← മൊഡ്യൂൾ": "← Module", "വീഡിയോ പഠനം · മൊഡ്യൂൾ 4": "Video learning · Module 4", "“മറ്റു 30 മണിക്കൂറിൽ” ചേരും · നമ്മുടെ ചാനൽ · ഈ പേജിൽ കണ്ടാൽ മാത്രം": "Counts toward the “other 30 hours” · our channel · only when watched on this page", "▶ 4.1 · ഉല്പത്തി 1 &amp; 2: രണ്ടു സൃഷ്ടിവിവരണങ്ങൾ": "▶ 4.1 · Genesis 1 &amp; 2: two creation accounts", "✓ 45 മി": "✓ 45 min", "ചോദ്യങ്ങൾ 3/3 ✓ · മണിക്കൂർ ചേർത്തു": "Questions 3/3 ✓ · hours added", "▶ 4.2 · പുറപ്പാട് 3: “ഞാൻ ആകുന്നവൻ”": "▶ 4.2 · Exodus 3: “I am who I am”", "27 / 52 മി": "27 / 52 min", "ഈ പേജിൽ കാണുന്നു · 5 മിനിറ്റ് നിഷ്ക്രിയമായാൽ നിർത്തും · കണ്ടുകഴിഞ്ഞ് 4 ചോദ്യങ്ങൾ": "Watching on this page · stops after 5 min idle · 4 questions after watching", "▶ യൂട്യൂബ് പ്ലെയർ — ഈ പേജിൽ തന്നെ (27:14 / 52:00)": "▶ YouTube player — on this page (27:14 / 52:00)", "▶ 4.3 · എൽ ഷദ്ദായ്: പുറപ്പാട് 6": "▶ 4.3 · El Shaddai: Exodus 6", "4.2 കഴിഞ്ഞ്": "After 4.2", "38 മി · 3 ചോദ്യങ്ങൾ": "38 min · 3 questions", "വീഡിയോ 4.1 · ചോദ്യം 2 / 3 (ഉദാഹരണം)": "Video 4.1 · question 2 / 3 (example)", "ഉല്പത്തി 2:4b-ൽ ദൈവനാമം മാറുന്നത് ഏതു സ്രോതസ്സിന്റെ തുടക്കത്തെ കാണിക്കുന്നു?": "The change of divine name at Genesis 2:4b marks the start of which source?", "J (യാഹ്‌വിസ്റ്റ്)": "J (Jahwist)", "എങ്ങനെ എണ്ണുന്നു": "How it is counted", "നമ്മുടെ പേജിലെ പ്ലെയറിൽ കണ്ടാൽ മാത്രം (യൂട്യൂബ് ചാനലിലെ അതേ വീഡിയോ) · ചോദ്യങ്ങൾ പൂർത്തിയാക്കിയാൽ മണിക്കൂർ ചേരും · ഈ നിലയിൽ: 18 / 30 മണിക്കൂർ": "Only when watched in the player on our page (the same video as on the YouTube channel) · hours are added when the questions are completed · this level: 18 / 30 hours", "ക്രെഡിറ്റ് കണക്ക്": "Credit calculation", "യു.എസ്. സമ്പ്രദായം: 45 മണിക്കൂർ = 1 ക്രെഡിറ്റ്": "US system: 45 hours = 1 credit", "ഇപ്പോൾ": "Now", "48.5 മണിക്കൂർ ÷ 45 = <b style=\"font-size:22px\">1.08</b> ക്രെഡിറ്റ്": "48.5 hours ÷ 45 = <b style=\"font-size:22px\">1.08</b> credits", "45 → 1.00 · ബാക്കി 3.5 ÷ 45 → 0.08": "45 → 1.00 · remaining 3.5 ÷ 45 → 0.08", "ഘടകം": "Item", "വേണ്ടത്": "Needed", "ഉള്ളത്": "Have", "ബാക്കി": "Missing", "ക്ലാസ് (പാഠം + പരീക്ഷ)": "Class (lessons + tests)", "മറ്റു (വീഡിയോ + ചോദ്യങ്ങൾ + വായന)": "Other (videos + questions + reading)", "ഇടക്കാല പരീക്ഷകൾ": "Interim tests", "അന്തിമ പരീക്ഷ": "Final test", "ട്രാൻസ്ക്രിപ്റ്റിൽ ചേരാൻ": "To reach the transcript", "മണിക്കൂർ തികഞ്ഞു; <b>നില 2 അന്തിമ പരീക്ഷ</b> മാത്രം ബാക്കി. പാസായാൽ 1.08 ക്രെഡിറ്റ് ട്രാൻസ്ക്രിപ്റ്റിൽ.": "Hours complete; only the <b>Level 2 final test</b> remains. Passing puts 1.08 credits on the transcript.", "നില 2 അന്തിമ പരീക്ഷ": "Level 2 final test", "അടുത്ത ലക്ഷ്യങ്ങൾ": "Next targets", "60 മണിക്കൂർ → നില 3 തുറക്കും (11.5 ബാക്കി)<br>90 മണിക്കൂർ → 2.0 ക്രെഡിറ്റ് (41.5 ബാക്കി)<br>ഇപ്പോഴത്തെ വേഗം 3.5 മ/ആഴ്ച → 2.0 ക്രെഡിറ്റ്: ~12 ആഴ്ച": "60 hours → Level 3 opens (11.5 left)<br>90 hours → 2.0 credits (41.5 left)<br>Current pace 3.5 h/week → 2.0 credits in ~12 weeks", "അന്തിമ പരീക്ഷ →": "Final test →", "അക്കാദമിക ട്രാൻസ്ക്രിപ്റ്റ്": "Academic transcript", "സാറ ജോൺ · OS‑2024‑08621 · 13 സെപ്റ്റം. 2026": "Sarah John · OS‑2024‑08621 · 13 Sep 2026", "കോഴ്സ്": "Course", "നില": "Level", "മണിക്കൂർ": "Hours", "ക്രെഡിറ്റ്": "Credits", "ഗ്രേഡ്": "Grade", "തീയതി": "Date", "ബൈബിൾ പഠനം: അടിസ്ഥാനങ്ങൾ": "Bible Study: Foundations", "പാസ് (91%)": "Pass (91%)", "20 ഓഗ. 2026": "20 Aug 2026", "പാഠവിമർശനവും ദൈവനാമങ്ങളും": "Textual Criticism and Divine Names", "തുടരുന്നു": "In progress", "* അന്തിമ പരീക്ഷ കഴിയുമ്പോൾ അന്തിമമാകും": "* Final when the final test is passed", "48.5 മണിക്കൂർ · 1.08 ക്രെഡിറ്റ് · എല്ലാ പരീക്ഷയും പാസ് · ക്ലാസ് 15 / മറ്റു 33.5 (യു.എസ്. 15+30 ഘടന)": "48.5 hours · 1.08 credits · all tests passed · class 15 / other 33.5 (US 15+30 structure)", "യൂണിവേഴ്സിറ്റിക്ക് അയയ്ക്കുമ്പോൾ": "When sent to a university", "ഈ ട്രാൻസ്ക്രിപ്റ്റ് “ഹാജരായ മണിക്കൂറുകൾ” ആയി റിപ്പോർട്ട് ചെയ്യുന്നു; ക്രെഡിറ്റ് നൽകണോ എന്ന് യൂണിവേഴ്സിറ്റി നമ്മുടെ പഠനഘടന വിലയിരുത്തി തീരുമാനിക്കും. ഇപ്പോൾ ഒരു യൂണിവേഴ്സിറ്റിയുമായും ബന്ധമില്ല.": "This transcript reports “attended hours”; whether to grant credit is the university's decision after evaluating our study structure. No tie to any university yet.", "📧 യൂണിവേഴ്സിറ്റിക്ക്": "📧 To a university", "🔗 പരിശോധനാ ലിങ്ക്": "🔗 Verification link", "അറിവ് വിലയിരുത്തൽ പരീക്ഷ": "Knowledge evaluation test", "മുമ്പ് പഠിച്ചവർക്ക് — ക്ലാസ് ഇല്ലാതെ നേരിട്ട് നിലയിലേക്ക്": "For those who studied before — straight to a level without classes", "ആർക്ക്": "For whom", "ഔപചാരിക വിദ്യാഭ്യാസമില്ലാതെ വർഷങ്ങളായി ബൈബിൾ പഠിച്ചവർ · സെമിനാരി/സഭാ ക്ലാസുകൾ കഴിഞ്ഞവർ · മറ്റു രാജ്യങ്ങളിലെ ബിരുദധാരികൾ": "People who studied the Bible for years without formal education · seminary/church class graduates · degree holders from other countries", "വിലയിരുത്തൽ ഫീസ്": "Evaluation fee", "$100 (യു.എസ്.)": "$100 (US)", "2 മണിക്കൂർ പരീക്ഷ + 30 മിനിറ്റ് വാചാ · പാസായാൽ ആ നിലയുടെ ക്ലാസ് മണിക്കൂർ അംഗീകരിക്കും; മറ്റു 30 മണിക്കൂർ (വീഡിയോ) പിന്നീട് പൂർത്തിയാക്കണം": "2-hour test + 30-minute oral · passing recognises that level's class hours; the other 30 hours (videos) must still be completed", "പ്രോത്സാഹന സ്കോളർഷിപ്പ്": "Incentive scholarship", "ഫീസ് ഒഴിവ്": "Fee waived", "ഇന്ത്യ, ആഫ്രിക്ക, മറ്റു വികസ്വര രാജ്യങ്ങൾ · ആദ്യ 500 പേർ · 60+ വയസ്സ്": "India, Africa, other developing countries · first 500 · age 60+", "ഏതു നിലയ്ക്ക്": "For which level", "നില 2 · ആഴപണ്ഡിതൻ ▾": "Level 2 · Deep Scholar ▾", "ശനി 20 സെപ്റ്റം. · രാവിലെ 10:00 IST ▾": "Sat 20 Sep · 10:00 am IST ▾", "ഫലം ട്രാൻസ്ക്രിപ്റ്റിൽ “വിലയിരുത്തലിലൂടെ” എന്നു രേഖപ്പെടും. യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അവരുടെ തീരുമാനം.": "The result is recorded on the transcript as “by evaluation”. University credit is their decision.", "രജിസ്റ്റർ · $100": "Register · $100", "പ്രവേശിക്കുക": "Sign in", "സ്ഥാപനങ്ങൾ": "Institutions", "ആർക്കും കാണാം · പരിധിയില്ല · ഇപ്പോൾ: ചർച്ചയിലുള്ളവ": "Open to everyone · no limit · currently: in discussion", "ഇന്നുവരെ ഒരു യൂണിവേഴ്സിറ്റിയും നമ്മുടെ ക്രെഡിറ്റ് അംഗീകരിച്ചിട്ടില്ല. ഓരോ കോഴ്സിലും 20 പേരുടെ ബാച്ച് ആകുമ്പോൾ താഴെയുള്ളവരെ സമീപിക്കും.": "To date no university has accepted our credits. When a course reaches a batch of 20 we approach the ones below.", "യൂണിവേഴ്സിറ്റി A · കേരളം": "University A · Kerala", "ചർച്ചയിൽ": "In discussion", "ബി.എ. തിയോളജി · മണിക്കൂർ തുല്യത: വിലയിരുത്തലിൽ": "BA Theology · hour equivalence: under evaluation", "നില 2 ബാച്ച്: 14 / 20 പേർ": "Level 2 batch: 14 / 20 people", "കോളേജ് B · നൈറോബി": "College B · Nairobi", "ഡിപ്ലോമ ഇൻ ബിബ്ലിക്കൽ സ്റ്റഡീസ്": "Diploma in Biblical Studies", "നില 1 ബാച്ച്: 20 / 20 ✓ — സമീപിച്ചു": "Level 1 batch: 20 / 20 ✓ — approached", "യൂണിവേഴ്സിറ്റി C · യു.എസ്.": "University C · US", "ലക്ഷ്യം": "Target", "ഭാഷ &amp; സംസ്കാര പ്രോഗ്രാം · ഇന്ത്യൻ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് അംഗീകരിക്കുന്ന പാത": "Language &amp; culture programme · the route by which Indian university credit is accepted", "ഇനിയും സമീപിച്ചിട്ടില്ല": "Not yet approached", "സ്ഥാപനത്തിന്റെ പൊതു പേജിൽ": "On the institution's public page", "കോഴ്സുകൾ · ഫീസ് · പ്രവേശന നിബന്ധനകൾ · നമ്മുടെ നിലയുമായുള്ള ബന്ധം · സമ്പർക്കം. ചേരാൻ അക്കാദമിക അംഗത്വം വേണം.": "Courses · fees · admission conditions · relation to our levels · contact. Enrolling needs academic membership.", "← സ്ഥാപനങ്ങൾ": "← Institutions", "യൂണിവേഴ്സിറ്റിയിലേക്കുള്ള പാത": "Path to a university", "നമ്മുടെ മണിക്കൂറുകൾ എങ്ങനെ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റാകും": "How our hours become university credit", "നിങ്ങൾ നിലകൾ പഠിക്കുന്നു; മണിക്കൂറും പരീക്ഷയും നമ്മുടെ ഡാറ്റാബേസിൽ": "You study the levels; hours and tests are in our database", "20 പേർ": "20 people", "ഒരു കോഴ്സിൽ 20 പേരുടെ ബാച്ച് → യൂണിവേഴ്സിറ്റികളെ സമീപിക്കും: അവരുടെ റിക്രൂട്ടർ ആകാൻ": "A batch of 20 in one course → we approach universities: to become their recruiter", "കമ്മീഷൻ": "Commission", "പ്രവേശനത്തിന് യൂണിവേഴ്സിറ്റി കമ്മീഷൻ നൽകും; അതുപയോഗിച്ച് മണിക്കൂർ തുല്യതയ്ക്ക് ചർച്ച (അന്തിമ പരീക്ഷയ്ക്കല്ല)": "The university pays a commission on admissions; with it we negotiate hour equivalence (not the final exam)", "അംഗീകാരം": "Recognition", "അംഗീകൃത യൂണിവേഴ്സിറ്റി നമ്മുടെ മണിക്കൂർ അംഗീകരിച്ചാൽ — ഇന്ത്യൻ യൂണിവേഴ്സിറ്റി ക്രെഡിറ്റ് യു.എസ്സിൽ സ്വീകരിക്കുന്ന അതേ പാത": "If an accredited university accepts our hours — the same path by which Indian university credit is accepted in the US", "പിന്നീട്": "Later", "നമ്മുടെ സിസ്റ്റം വഴി അവരുടെ കോഴ്സിൽ ചേരാം; നമ്മുടെ സ്വന്തം അംഗീകാരം വരെ ഈ പാത": "Join their course through our system; this path until our own accreditation", "നിങ്ങളുടെ ബാച്ച്": "Your batch", "നില 2 · യൂണിവേഴ്സിറ്റി A: 14 / 20 · 6 പേർ കൂടി ചേർന്നാൽ സമീപിക്കും · <u>സുഹൃത്തിനെ ക്ഷണിക്കുക</u>": "Level 2 · University A: 14 / 20 · we approach them when 6 more join · <u>Invite a friend</u>", "സുഹൃത്തിനെ ക്ഷണിക്കുക": "Invite a friend", "ഈ ബാച്ചിൽ എന്നെ ചേർക്കുക": "Add me to this batch"};
+const phone=document.querySelector('.phone');const PHONE_ML=phone.innerHTML;const idx=document.getElementById('idx');
+let LANG='ml',screens=[],cur=0;
+function norm(s){return s.replace(/&nbsp;/g,' ').trim().replace(/\s+/g,' ').replace(/<br\s*\/?>/g,'<br>')}
+function tr(s){return LANG==='en'&&EN[norm(s)]||s}
+function walk(el){for(const c of [...el.children]){if(c.tagName==='SCRIPT')continue;const k=norm(c.innerHTML);if(EN[k]){c.innerHTML=EN[k];continue}walk(c)}}
+const H1=document.querySelector('.top h1');const H1_ML=H1.innerHTML;
+function render(){phone.innerHTML=PHONE_ML;H1.innerHTML=LANG==='en'?(EN[norm(H1_ML)]||H1_ML):H1_ML;if(LANG==='en')walk(phone);
+ phone.querySelectorAll('.sb').forEach(el=>{const q=tr(el.dataset.q||''),m=el.dataset.mode||'',left=tr(el.dataset.left||'');const L=LANG==='en'?{ph:'Search word · verse · contradicting verse',w:'word',v:'verse',c:'contradicting'}:{ph:'വാക്ക് · വാക്യം · വിരുദ്ധ വാക്യം തിരയുക',w:'വാക്ക്',v:'വാക്യം',c:'വിരുദ്ധം'};
+  el.innerHTML='<div class="box"><i>🔍</i><span>'+(q?'<span style="color:var(--ink)">'+q+'</span>':L.ph)+'</span><i>🎤</i></div><div class="modes">'+(m==='word'?'<b>'+L.w+'</b>':'<span>'+L.w+'</span>')+'<span>·</span><span>'+L.v+'</span><span>·</span><span>'+L.c+'</span>'+(left?'<em>'+left+'</em>':'')+'</div>';});
+ screens=[...phone.querySelectorAll('.screen')];idx.innerHTML='';screens.forEach((s,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.innerHTML='<span class="n">'+(i+1)+'</span>'+s.dataset.t;b.onclick=()=>go(i);li.appendChild(b);idx.appendChild(li);});
+ go(cur);}
+function go(i){cur=i;screens.forEach((s,k)=>s.classList.toggle('on',k===i));[...idx.querySelectorAll('button')].forEach((b,k)=>b.classList.toggle('on',k===i));
+ const n=NOTES[i];const T=IDS[i];document.getElementById('idtag').innerHTML='<b>'+T[0]+'</b><span>'+T[1]+'</span><code>'+T[2]+'</code>';document.getElementById('note').innerHTML='<h2>'+T[0]+' '+T[1]+' · '+screens[i].dataset.t+'</h2><p style="margin:0 0 6px"><span class="k" style="display:inline;margin:0 6px 0 0">Prototype</span>screen '+(i+1)+' · <span class="k" style="display:inline;margin:0 6px 0 0">Route</span><code>'+T[2]+'</code></p><div class="k">User action</div><p>'+n.u+'</p><div class="k">What must happen</div><ul>'+n.m.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="k">Requirement source</div><p>'+n.s+'</p><div class="k">Data the screen needs</div><p>'+n.d+'</p>'+(n.a?'<div class="ask"><b>Open note for Sebastian:</b> '+n.a+'</div>':'')+'<div class="nav2"><button onclick="go('+((i+screens.length-1)%screens.length)+')">‹ prev</button><button onclick="go('+((i+1)%screens.length)+')">next ›</button></div>';
+ try{localStorage.setItem(KEY,i)}catch(e){}}
+phone.addEventListener('click',e=>{const el=e.target.closest('[data-go]');if(el&&phone.contains(el)){e.stopPropagation();go(+el.dataset.go-1)}});
+function setLang(l){LANG=l;document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));try{localStorage.setItem('os-lang',l)}catch(e){}render()}
+document.querySelectorAll('.langsw button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+try{cur=+localStorage.getItem(KEY)||0}catch(e){}
+let l0='ml';try{l0=localStorage.getItem('os-lang')||'ml'}catch(e){}
+setLang(l0);
+
+/* phone-mode bar */
+(function(){const bar=document.createElement('div');bar.className='pbar';bar.innerHTML='<button id="pb-prev">◀</button><button id="pb-list">☰ screens</button><span class="cnt" id="pb-cnt"></span><button id="pb-note">i</button><button id="pb-next">▶</button>';document.body.appendChild(bar);
+const nav=document.querySelector('.index'),note=document.getElementById('note');
+function upd(){document.getElementById('pb-cnt').textContent=(cur+1)+' / '+screens.length}
+document.getElementById('pb-prev').onclick=()=>{go((cur-1+screens.length)%screens.length)};
+document.getElementById('pb-next').onclick=()=>{go((cur+1)%screens.length)};
+document.getElementById('pb-list').onclick=()=>{note.classList.remove('open');nav.classList.toggle('open')};
+document.getElementById('pb-note').onclick=()=>{nav.classList.remove('open');note.classList.toggle('open')};
+nav.addEventListener('click',e=>{if(e.target.closest('button'))nav.classList.remove('open')});
+const _go=go;go=function(i){_go(i);upd()};upd();})();
+</script>
+
+</body>
+</html>

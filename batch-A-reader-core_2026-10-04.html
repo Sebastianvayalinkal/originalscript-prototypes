@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OriginalScript Reader Core</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@500;700&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Serif+Hebrew&display=swap">
+<style>
+:root{
+  --bg:#f4f1ec; --panel:#ffffff; --ink:#1d1a17; --ink2:#5b544d; --ink3:#8c847b;
+  --line:#e6e0d8; --accent:#8b5a3c; --accent2:#6b4423; --accent-soft:#f6ede4;
+  --free:#e4f1e4; --free-ink:#2b5a2b; --trial:#fff5df; --trial-ink:#6b4a12;
+  --member:#f6ede4; --member-ink:#8b5a3c; --locked:#ede8f3; --locked-ink:#55466a;
+  --note:#fff6c7; --note-ink:#4d3f05; --note-line:#e8d27a;
+  --elohim:#fdf0d8; --yhwh:#e3f1e3;
+  --J:#b7791f; --E:#2f7f6f; --P:#5b5fa8; --D:#a8455b;
+  --phone:#ffffff; --status:#f9f7f4;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}}
+:root[data-theme="dark"]{
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Malayalam","Nirmala UI","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 32px;padding-inline:16px}
+h1,h2,h3{font-family:"Noto Serif Malayalam",Georgia,"Nirmala UI",serif;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+.top{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;padding-block:18px 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.top h1{font-size:22px}
+.top .sub{color:var(--ink2);font-size:13px}
+.langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}.langsw button{background:var(--panel);border:none;padding:6px 14px;color:var(--ink2)}.langsw button.on{background:var(--accent);color:#fff}
+.top .tag{margin-left:0;margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) minmax(280px,360px);gap:20px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}.index{position:static}.index ol{display:flex;flex-wrap:wrap;gap:6px}.index li{flex:0 0 auto}}
+.index{position:sticky;top:12px}
+.index h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-family:inherit}
+.index ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.index button{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
+.index button .n{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:11px;min-width:18px}
+.index button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2)}
+.stage{display:flex;justify-content:center}.idtag{display:flex;gap:10px;align-items:baseline;justify-content:center;margin:0 0 8px;font-size:12px;color:var(--ink2)}.idtag b{font-variant-numeric:tabular-nums;color:var(--accent2);background:var(--accent-soft);padding:2px 8px;border-radius:6px;font-size:13px}.idtag code{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink3)}
+.phone{width:390px;max-width:100%;height:844px;background:var(--phone);border-radius:38px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line)}
+.notch{height:26px;background:#000;border-radius:0 0 18px 18px;margin:0 auto;width:180px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.status{height:32px;padding:6px 18px;background:var(--status);display:flex;justify-content:space-between;font-size:11px;color:var(--ink3)}
+.brand{padding:8px 16px 4px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink3)}
+.brand b{color:var(--accent);font-family:"Noto Serif Malayalam",Georgia,serif;font-size:14px}
+.brand .acts{display:flex;gap:6px}
+.brand .acts button{background:none;border:1px solid var(--line);border-radius:12px;padding:2px 9px;font-size:11px;color:var(--ink2)}
+.sb{padding:6px 16px 8px;display:grid;gap:5px;background:var(--phone)}
+.sb .box{display:flex;align-items:center;gap:8px;border:1.5px solid var(--accent);border-radius:10px;padding:7px 10px;background:var(--panel)}
+.sb .box span{color:var(--ink3);font-size:13px;flex:1}
+.sb .box i{font-style:normal}
+.sb .modes{display:flex;gap:6px;font-size:11px;align-items:center}
+.sb .modes b{font-weight:500;padding:2px 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent2)}
+.sb .modes em{font-style:normal;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+.head{padding:10px 16px 8px;border-bottom:1px solid var(--line)}
+.head h2{font-size:22px;color:var(--ink)}
+.head p{margin:2px 0 0;font-size:12px;color:var(--ink3)}
+.body{flex:1;overflow-y:auto;padding:14px 16px;min-height:0}
+.foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--phone)}
+.btn{flex:1;padding:11px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:500}
+.btn.sec{background:transparent;color:var(--accent)}
+.hint{font-size:11px;color:var(--ink3);text-align:center;padding:6px 16px 0;background:var(--phone)}
+/* home */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{border-radius:12px;padding:16px 10px;text-align:center;background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);font-family:"Noto Serif Malayalam",serif;font-weight:700;font-size:15px}
+.tile small{display:block;font-family:inherit;font-weight:400;font-size:11px;color:var(--ink3);margin-top:2px}
+.menu{display:grid;gap:7px}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--ink);font-size:13.5px}
+.menu button.degree{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2);font-weight:600}
+.menu button:after{content:"›";color:var(--ink3);font-size:18px}
+/* lists */
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:0 16px}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 10px;color:var(--ink3)}
+.tabs button.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.books{display:grid;gap:2px}
+.books button{display:flex;justify-content:space-between;width:100%;background:none;border:none;border-bottom:1px solid var(--line);padding:10px 4px;color:var(--ink);font-size:14px}
+.books button span{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:12px}
+/* reader */
+.verse{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;cursor:pointer}
+.verse .n{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:11px;min-width:16px;padding-top:4px}
+.verse .t{font-size:16px;line-height:1.85;flex:1;font-family:"Noto Serif Malayalam",serif}
+.verse .c{color:var(--ink3);align-self:center}
+.nm{padding:1px 5px;border-radius:4px;font-weight:600;font-family:"Noto Sans Malayalam",sans-serif;font-size:14px}
+.nm.el{background:var(--elohim)}
+.nm.yh{background:var(--yhwh)}
+.hit{background:var(--trial);color:var(--trial-ink);border-radius:3px;padding:0 3px}
+.tl-strip{display:flex;align-items:center;gap:8px;padding:4px 0 8px 26px;cursor:pointer;font-size:11px;color:var(--ink2)}.tl-strip .tl-bar{flex:0 0 70px;height:4px;background:var(--line);border-radius:2px;position:relative}.tl-strip .dot{position:absolute;top:-3px;width:10px;height:10px;border-radius:50%}.dot.hap{background:var(--accent)}.dot.wri{background:var(--P)}.tl-txt b{font-weight:600}
+.ev-row{display:grid;grid-template-columns:54px 1fr;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}.ev-row .y{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:11px;text-align:right;padding-top:2px}.ev-row .e{display:flex;gap:6px;align-items:flex-start}.ev-row .e i{width:8px;height:8px;border-radius:50%;flex:none;margin-top:5px}.gap{text-align:center;font-size:10.5px;color:#fff;background:#8d6e63;border-radius:4px;padding:2px 6px;margin:4px 0}.lane{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;margin-right:4px}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 0 0;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink3)}
+.pager b{background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;font-weight:500}
+.pager span{border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.audio{display:flex;justify-content:space-around;align-items:center;padding:8px 16px;border-top:1px solid var(--line);background:var(--status);font-size:20px;color:var(--accent)}
+.audio .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:18px}
+/* src colours */
+.src{border-left:5px solid;padding-left:8px}
+.src.J{border-color:var(--J)}.src.E{border-color:var(--E)}.src.P{border-color:var(--P)}.src.D{border-color:var(--D)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:10px;font-size:13px}
+.sw{width:40px;height:22px;border-radius:11px;background:var(--line);position:relative}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.sw.on{background:var(--accent)}.sw.on:after{left:20px}
+/* timeline */
+.tl{position:relative;padding-left:70px}
+.tl:before{content:"";position:absolute;left:52px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;margin-bottom:22px}
+.tl .ev b{position:absolute;left:-70px;width:50px;text-align:right;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink3);top:4px}
+.tl .ev:before{content:"";position:absolute;left:-23px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.chip{display:inline-block;padding:3px 10px;border-radius:6px;color:#fff;font-weight:600;font-size:13px;margin-right:4px}
+.chip.J{background:var(--J)}.chip.E{background:var(--E)}.chip.P{background:var(--P);color:#1d2a10}.chip.D{background:var(--D)}
+.tl .ev p{margin:4px 0 0;font-size:12px;color:var(--ink2)}
+.tbl{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table{border-collapse:collapse;font-size:12px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{color:#fff;font-weight:600}
+th.J{background:var(--J)}th.E{background:var(--E)}th.P{background:var(--P);color:#1d2a10}th.D{background:var(--D)}
+td:first-child{background:var(--status);font-weight:600;color:var(--ink2);white-space:nowrap}
+/* levels */
+.lvl{padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:9px;cursor:pointer}
+.lvl.feat{border:2px solid var(--accent)}
+.lvl .r{display:flex;justify-content:space-between;align-items:center}
+.lvl .r b{font-size:15px;font-weight:600}
+.bd{font-size:10.5px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.02em}
+.bd.free{background:var(--free);color:var(--free-ink)}.bd.trial{background:var(--trial);color:var(--trial-ink)}.bd.member{background:var(--member);color:var(--member-ink)}.bd.locked{background:var(--locked);color:var(--locked-ink)}
+.lvl p{margin:3px 0 0;font-size:12px;color:var(--ink2)}
+.lvl small{color:var(--ink3);font-size:11px}
+.rooms{display:grid;gap:9px}
+.room{padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.room b{font-size:14px;display:block}
+.room span{font-size:12px;color:var(--ink2)}
+.cm{padding:10px 12px;background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px}
+.cm .lb{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.cm h3{font-size:13.5px;margin-bottom:5px;font-family:inherit}
+.cm p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+.cm .heb{font-family:"Noto Serif Hebrew","Times New Roman",serif;direction:rtl;font-size:18px;color:var(--ink);margin:4px 0}
+.img{height:90px;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink3);font-size:12px;background:var(--status);margin-top:8px}
+.refs{font-size:11px;color:var(--ink3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.refs b{color:var(--ink2)}
+.side{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;background:var(--accent);color:#fff;border-radius:10px 0 0 10px;padding:10px 0;display:grid;gap:8px;justify-items:center;font-size:13px;box-shadow:-2px 2px 8px rgba(0,0,0,.2)}
+.side span{writing-mode:vertical-rl;font-size:10px;letter-spacing:.05em}
+.rel{position:relative}
+.req{background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;padding:12px;margin:14px 0}
+.req h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;font-family:inherit}
+.req div{display:flex;gap:8px;font-size:13px;color:var(--ink2);padding:4px 0}
+.req .ok{color:var(--free-ink)}
+.way{display:grid;gap:7px}
+.way button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:13px}
+.way button small{display:block;color:var(--ink3);font-size:11px}
+.field{display:grid;gap:5px;margin-bottom:12px;font-size:12px;color:var(--ink2)}
+.field textarea,.field select,.field .in{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--panel);color:var(--ink);font:inherit}
+.field textarea{min-height:90px;resize:vertical}
+.slider{display:flex;align-items:center;gap:10px;padding:6px 0}
+.slider .bar{flex:1;height:4px;background:var(--line);border-radius:2px;position:relative}
+.slider .bar:after{content:"";position:absolute;left:62%;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.sugg{display:grid;gap:4px;margin-top:6px}
+.sugg button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px;display:flex;justify-content:space-between}
+.sugg button small{color:var(--ink3);font-size:11px}
+.keys{margin-top:auto;background:var(--status);border-top:1px solid var(--line);padding:8px;display:grid;gap:5px}
+.keys div{display:flex;gap:4px;justify-content:center}
+.keys span{flex:1;max-width:32px;height:34px;border-radius:5px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:13px}
+.res{padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.res .ref{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.res .t{font-size:14.5px;line-height:1.75;font-family:"Noto Serif Malayalam",serif}
+.res .why{font-size:11px;color:var(--ink3);margin-top:2px}
+.pair{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;font-size:13.5px}
+.pair.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
+/* annotation panel */
+.note{background:var(--note);color:var(--note-ink);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px;font-size:13px;position:sticky;top:12px}
+.note h2{font-size:15px;margin-bottom:2px;font-family:inherit}
+.note .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin:10px 0 3px}
+.note p{margin:0 0 4px;line-height:1.5}
+.note ul{margin:0;padding-left:18px}
+.note li{margin:2px 0}
+.note .ask{margin-top:10px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.45);border-left:3px solid var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .note .ask{background:rgba(0,0,0,.25)}}
+:root[data-theme="dark"] .note .ask{background:rgba(0,0,0,.25)}
+.note .eng{font-family:"Segoe UI",system-ui,sans-serif}
+.nav2{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.nav2 button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.screen.on{animation:f .18s ease}@keyframes f{from{opacity:.4}to{opacity:1}}}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- phone mode: real handset (<=480px) shows the app full-screen ---- */
+@media (max-width:480px){
+  body{padding:0}
+  .top{padding:8px 12px;margin:0;border-bottom:1px solid var(--line);gap:6px;flex-wrap:nowrap;align-items:center}
+  .top h1{font-size:14px;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top .sub,.top .tag{display:none}
+  .langsw button{padding:4px 10px;font-size:12px}
+  .layout{display:block}
+  .index,#note{display:none}
+  .index.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px;z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .index.open ol{display:grid;gap:4px}
+  #note.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;z-index:30;border-radius:0;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .phone{width:100%;max-width:none;height:calc(100dvh - 42px - 52px);border-radius:0;box-shadow:none;border:none}
+  body .pbar{display:flex}
+}
+.pbar{display:none;position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--line);align-items:center;justify-content:space-between;padding:0 10px;z-index:40;gap:6px}
+.pbar button{background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.pbar .cnt{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>OriginalScript · Batch A — വായന കോർ</h1>
+  <span class="sub">20 mobile screens · Malayalam UI · reader, search, colour layer, elevator lobby, rooms, commentary, verse dates, historical timeline, places</span>
+  <span class="langsw"><button data-l="ml" class="on">മലയാളം</button><button data-l="en">English</button></span>
+  <span class="tag">Prototype · 13 Sep 2026</span>
+</div>
+
+<div class="layout">
+  <nav class="index"><h2>Screens</h2><ol id="idx"></ol></nav>
+
+  <div class="stage"><div><div class="idtag" id="idtag"></div><div class="phone"><div class="notch"></div>
+
+<!-- 1 HOME -->
+<section class="screen" data-t="Home menu">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>www.OriginalScript.org</b><div class="acts"><button>പ്രവേശിക്കുക</button><button>ഭാഷ: ML</button></div></div>
+  <div class="sb"></div>
+  <div class="body">
+    <p style="margin:0 0 10px;font-size:11.5px;color:var(--accent);text-align:center;line-height:1.5">Their words. Their reasons. Discover the Original Script.<br>മൂലവാക്കുകൾ തിരിച്ചറിയുക · മൂല ഉദ്ദേശ്യം കണ്ടെത്തുക</p>
+    <div class="tiles">
+      <div class="tile" data-go="4">📜 പഴയ നിയമം<small>39 പുസ്തകങ്ങൾ</small></div>
+      <div class="tile" data-go="4">✝ പുതിയ നിയമം<small>27 പുസ്തകങ്ങൾ</small></div>
+    </div>
+    <div class="menu">
+      <button>ആദ്യഭാഷയും അർത്ഥവും</button>
+      <button>ദൈവധാരണകൾ</button>
+      <button>കമെന്ററികൾ</button>
+      <button class="degree">ഇവിടെ പഠിക്കൂ · ബൈബിൾ ബിരുദം നേടൂ</button>
+      <button>സമാന്തര വാക്കുകളും വാക്യങ്ങളും</button>
+      <button>ശാസ്ത്രവും ബൈബിളും</button>
+      <button>പാഠവും സന്ദർഭവും</button>
+      <button>ആത്മീയത</button>
+      <button>പാപബോധം · നീതിബോധം · സ്നേഹബോധം</button>
+      <button>സ്രോതസ്സ് വിമർശനവും ഡോക്യുമെന്ററി ഹൈപ്പോതെസിസും</button>
+      <button>ചോദ്യോത്തരങ്ങൾ</button>
+      <button data-go="19">⏳ കാലരേഖ · ബിഗ് ബാംഗ് മുതൽ ഇന്നു വരെ</button>
+    </div>
+  </div>
+</section>
+
+<!-- 2 SEARCH TYPING -->
+<section class="screen" data-t="Search — typing">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb" data-q="വെളിചം|" data-mode="word"></div>
+  <div class="body" style="padding-top:6px">
+    <p style="margin:0;font-size:11px;color:var(--ink3)">അക്ഷരത്തെറ്റ് സാരമില്ല — ഉദ്ദേശിച്ചത് ഇതാണോ?</p>
+    <div class="sugg">
+      <button data-go="3">വെളിച്ചം <small>218 വാക്യങ്ങൾ</small></button>
+      <button>വെളിച്ചങ്ങൾ <small>4 വാക്യങ്ങൾ</small></button>
+      <button>velicham → വെളിച്ചം <small>ശബ്ദാനുകരണം (phonetic)</small></button>
+    </div>
+    <p style="margin:14px 0 4px;font-size:11px;color:var(--ink3)">അടുത്തിടെ തിരഞ്ഞവ</p>
+    <div class="sugg">
+      <button>ഉല്പത്തി 1:1 <small>വാക്യം</small></button>
+      <button>എലോഹിം <small>ദൈവനാമം</small></button>
+    </div>
+  </div>
+  <div class="keys">
+    <div><span>ക</span><span>ഖ</span><span>ഗ</span><span>ഘ</span><span>ങ</span><span>ച</span><span>ഛ</span><span>ജ</span><span>ഝ</span><span>ഞ</span></div>
+    <div><span>ട</span><span>ഠ</span><span>ഡ</span><span>ഢ</span><span>ണ</span><span>ത</span><span>ഥ</span><span>ദ</span><span>ധ</span><span>ന</span></div>
+    <div><span>പ</span><span>ഫ</span><span>ബ</span><span>ഭ</span><span>മ</span><span>യ</span><span>ര</span><span>ല</span><span>വ</span><span>ശ</span></div>
+    <div><span style="max-width:60px">ABC</span><span style="max-width:120px">space</span><span style="max-width:60px">തിരയുക</span></div>
+  </div>
+</section>
+
+<!-- 3 SEARCH RESULTS -->
+<section class="screen" data-t="Search results (visitor)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb" data-q="വെളിച്ചം" data-mode="word" data-left="ഇന്ന് 7 തിരച്ചിലുകൾ ബാക്കി"></div>
+  <div class="body" style="padding-top:4px">
+    <p style="margin:0 0 4px;font-size:11px;color:var(--ink3)">218 വാക്യങ്ങൾ · പഴയ നിയമം 172 · പുതിയ നിയമം 46</p>
+    <div class="res" data-go="5"><div class="ref">ഉല്പത്തി 1:3</div><div class="t"><span class="hit">വെളിച്ചം</span> ഉണ്ടാകട്ടെ എന്നു <span class="nm el">[എലോഹിം]</span> കല്പിച്ചു; <span class="hit">വെളിച്ചം</span> ഉണ്ടായി.</div></div>
+    <div class="res" data-go="5"><div class="ref">ഉല്പത്തി 1:4</div><div class="t"><span class="hit">വെളിച്ചം</span> നല്ലതു എന്നു <span class="nm el">[എലോഹിം]</span> കണ്ടു; <span class="nm el">[എലോഹിം]</span> <span class="hit">വെളിച്ചവും</span> ഇരുളും തമ്മിൽ വേർപിരിച്ചു.</div></div>
+    <div class="res"><div class="ref">സങ്കീർത്തനങ്ങൾ 27:1</div><div class="t"><span class="nm yh">[യഹ്‌വെ]</span> എന്റെ <span class="hit">വെളിച്ചവും</span> എന്റെ രക്ഷയും ആകുന്നു; ഞാൻ ആരെ ഭയപ്പെടും?</div></div>
+    <div class="res"><div class="ref">യോഹന്നാൻ 1:5</div><div class="t"><span class="hit">വെളിച്ചം</span> ഇരുളിൽ പ്രകാശിക്കുന്നു; ഇരുളോ അതിനെ പിടിച്ചടക്കിയില്ല.</div><div class="why">വിരുദ്ധ വാക്യങ്ങൾ: 3 · സമാന്തരം: 5</div></div>
+    <div class="res"><div class="ref">യെശയ്യാ 45:7</div><div class="t"><span class="hit">വെളിച്ചത്തെ</span> നിർമ്മിക്കുകയും ഇരുളിനെ സൃഷ്ടിക്കുകയും … ചെയ്യുന്ന <span class="nm yh">[യഹ്‌വെ]</span> ഞാൻ ആകുന്നു.</div><div class="why">വിരുദ്ധം: 1 യോഹന്നാൻ 1:5 “ദൈവത്തിൽ ഇരുളില്ല”</div></div>
+    <div class="pager"><span>‹</span><b>1</b><span>2</span><span>3</span><span>…</span><span>22</span><span>›</span></div>
+  </div>
+  <div class="hint">സന്ദർശകർക്ക് ഓരോ വാക്യവും തിരഞ്ഞു തുറക്കാം · പ്രവേശിച്ചാൽ പരിധിയില്ലാതെ, അടുത്ത/മുൻ വാക്യം നേരിട്ട്</div>
+</section>
+
+<!-- 4 BOOK LIST -->
+<section class="screen" data-t="Book list">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb"></div>
+  <div class="body" style="padding-top:0">
+    <div class="tabs"><button>പഴയ നിയമം</button><button class="on">പുതിയ നിയമം</button></div>
+    <div class="books">
+      <button data-go="5">മത്തായി <span>28</span></button>
+      <button>മർക്കൊസ് <span>16</span></button>
+      <button>ലൂക്കൊസ് <span>24</span></button>
+      <button>യോഹന്നാൻ <span>21</span></button>
+      <button>പ്രവൃത്തികൾ <span>28</span></button>
+      <button>റോമർ <span>16</span></button>
+      <button>1 കൊരിന്ത്യർ <span>16</span></button>
+      <button>2 കൊരിന്ത്യർ <span>13</span></button>
+      <button>ഗലാത്യർ <span>6</span></button>
+      <button>എഫെസ്യർ <span>6</span></button>
+      <button>ഫിലിപ്പിയർ <span>4</span></button>
+      <button>കൊലൊസ്സ്യർ <span>4</span></button>
+      <button>1 തെസ്സലൊനീക്യർ <span>5</span></button>
+      <button>2 തെസ്സലൊനീക്യർ <span>3</span></button>
+      <button>1 തിമൊഥെയൊസ് <span>6</span></button>
+    </div>
+  </div>
+  <div class="hint">തുടർന്നു വായിക്കുക: ഉല്പത്തി 1 · വാക്യം 3 · 62% (സ്വയം സൂക്ഷിച്ചത്)</div>
+</section>
+
+<!-- 5 CHAPTER READER -->
+<section class="screen" data-t="Chapter reader">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="10">Aa</button><button data-go="11">ML</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഉല്പത്തി 1</h2><p>മൂലഭാഷ: എബ്രായ · ദൈവനാമങ്ങൾ അടയാളപ്പെടുത്തിയത് · ഓരോ വാക്യവും തുറക്കാം</p></div>
+  <div class="body">
+    <div class="verse" data-go="12"><span class="n">1</span><span class="t">ആദിയിൽ <span class="nm el">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.</span><span class="c">›</span></div>
+    <div class="tl-strip" data-go="18"><span class="tl-lab">⏳</span><div class="tl-bar"><i class="dot hap" style="left:4%"></i><i class="dot wri" style="left:88%"></i></div><span class="tl-txt"><b>സംഭവം</b> ≈1380 കോടി BC · D &nbsp;|&nbsp; <b>എഴുത്ത്</b> 560–450 BC (P) · C</span></div>
+    <div class="verse" data-go="12"><span class="n">2</span><span class="t">ഭൂമി പാഴായും ശൂന്യമായും ഇരുന്നു; ആഴത്തിന്മീതെ ഇരുൾ ഉണ്ടായിരുന്നു. <span class="nm el">[എലോഹിം]</span>ന്റെ ആത്മാവു വെള്ളത്തിന്മീതെ പരിവർത്തിച്ചുകൊണ്ടിരുന്നു.</span><span class="c">›</span></div>
+    <div class="verse" data-go="12"><span class="n">3</span><span class="t">വെളിച്ചം ഉണ്ടാകട്ടെ എന്നു <span class="nm el">[എലോഹിം]</span> കല്പിച്ചു; വെളിച്ചം ഉണ്ടായി.</span><span class="c">›</span></div>
+    <div class="verse" data-go="12"><span class="n">4</span><span class="t">വെളിച്ചം നല്ലതു എന്നു <span class="nm el">[എലോഹിം]</span> കണ്ടു; <span class="nm el">[എലോഹിം]</span> വെളിച്ചവും ഇരുളും തമ്മിൽ വേർപിരിച്ചു.</span><span class="c">›</span></div>
+    <div class="verse" data-go="12"><span class="n">5</span><span class="t"><span class="nm el">[എലോഹിം]</span> വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു. സന്ധ്യയായി ഉഷസ്സുമായി, ഒന്നാം ദിവസം.</span><span class="c">›</span></div>
+    <div class="pager"><span>‹</span><b>1</b><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>›</span></div>
+    <p style="text-align:center;font-size:11px;color:var(--ink3);margin:6px 0 0">പേജ് 1 / 6 · ഉല്പത്തി 1:1–5</p>
+  </div>
+  <div class="audio"><span>⏮</span><span>◀◀</span><span class="play" data-go="9">▶</span><span>▶▶</span><span>⏭</span></div>
+</section>
+
+<!-- 6 COLOUR LAYER -->
+<section class="screen" data-t="Reader — colour layer on">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>Aa</button><button>ML</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഉല്പത്തി 2</h2><p>സ്രോതസ്സ് നിറങ്ങൾ: ഓൺ · J / E / P / D</p></div>
+  <div class="body">
+    <div class="toggle">സ്രോതസ്സ് നിറങ്ങൾ (Documentary Hypothesis) <span class="sw on"></span></div>
+    <div class="legend"><span><i style="background:var(--J)"></i>J യാഹ്‌വിസ്റ്റ്</span><span><i style="background:var(--E)"></i>E എലോഹിസ്റ്റ്</span><span><i style="background:var(--P)"></i>P പുരോഹിത</span><span><i style="background:var(--D)"></i>D ഡ്യൂട്ടറോനോമിസ്റ്റ്</span></div>
+    <div class="verse src P"><span class="n">3</span><span class="t"><span class="nm el">[എലോഹിം]</span> ഏഴാം ദിവസത്തെ അനുഗ്രഹിച്ചു ശുദ്ധീകരിച്ചു; താൻ സൃഷ്ടിച്ചുണ്ടാക്കിയ സകല പ്രവൃത്തിയിൽനിന്നും അന്നു നിവൃത്തനായി.</span></div>
+    <div class="verse src P"><span class="n">4a</span><span class="t">ആകാശവും ഭൂമിയും സൃഷ്ടിച്ച ചരിത്രം ഇതാകുന്നു.</span></div>
+    <div class="verse src J"><span class="n">4b</span><span class="t"><span class="nm yh">[യഹ്‌വെ]</span> <span class="nm el">[എലോഹിം]</span> ഭൂമിയും ആകാശവും ഉണ്ടാക്കിയ നാളിൽ —</span></div>
+    <div class="verse src J"><span class="n">7</span><span class="t"><span class="nm yh">[യഹ്‌വെ]</span> <span class="nm el">[എലോഹിം]</span> നിലത്തെ പൊടികൊണ്ടു മനുഷ്യനെ നിർമ്മിച്ചു, അവന്റെ മൂക്കിൽ ജീവശ്വാസം ഊതി; മനുഷ്യൻ ജീവനുള്ള ദേഹിയായി തീർന്നു.</span></div>
+    <div class="cm" style="margin-top:12px"><div class="lb">ഇവിടെ ശ്രദ്ധിക്കുക</div><p>അതേ വാക്യഭാഗത്ത് ദൈവനാമം മാറുന്നു: P സ്രോതസ്സിൽ <b>എലോഹിം</b> മാത്രം; J സ്രോതസ്സ് തുടങ്ങുമ്പോൾ (2:4b) <b>യഹ്‌വെ എലോഹിം</b>. കാലം മാറുമ്പോൾ ഒരേ വാക്ക് എങ്ങനെ മാറുന്നു എന്നതിന്റെ ആദ്യ തെളിവ്.</p></div>
+    <div class="nav2"><button data-go="7">കാലരേഖ →</button><button data-go="8">താരതമ്യ പട്ടിക →</button></div>
+  </div>
+</section>
+
+<!-- 7 JEPD TIMELINE -->
+<section class="screen" data-t="JEPD timeline panel">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>Aa</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>സ്രോതസ്സുകളുടെ കാലരേഖ</h2><p>Documentary Hypothesis · ആദ്യകാല വാമൊഴി & ലിഖിത സ്രോതസ്സുകളിൽ നിന്ന്</p></div>
+  <div class="body">
+    <div class="tl">
+      <div class="ev"><b>≈ 922 BCE</b><span class="chip J">J</span><span class="chip E">E</span><p>രാജ്യം പിളർന്ന ശേഷം: J — യെഹൂദയിൽ (ദൈവം = യഹ്‌വെ); E — വടക്കൻ ഇസ്രായേലിൽ (ദൈവം = എലോഹിം, പുറപ്പാട് 3 വരെ)</p></div>
+      <div class="ev"><b>≈ 722 BCE</b><span class="chip J">JE</span><p>സമര്യയുടെ പതനത്തിനു ശേഷം J-യും E-യും ഒന്നിച്ചു ചേർത്തു</p></div>
+      <div class="ev"><b>≈ 621 BCE</b><span class="chip D">D</span><p>യോശീയാവിന്റെ കാലം · ഹിൽക്കീയാവ് · യെരൂശലേം കേന്ദ്രീകൃതം</p></div>
+      <div class="ev"><b>≈ 539 BCE</b><span class="chip P">P</span><p>പ്രവാസകാലം/ശേഷം · പുരോഹിത പാരമ്പര്യം · വംശാവലികളും പട്ടികകളും</p></div>
+      <div class="ev"><b>≈ 400 BCE</b><span class="chip J">J</span><span class="chip E">E</span><span class="chip P">P</span><span class="chip D">D</span><p>അന്തിമ സംയോജനം — ഇന്നത്തെ തോറ (പഞ്ചഗ്രന്ഥം)</p></div>
+    </div>
+    <div class="refs"><b>അവലംബം:</b> Wellhausen, Prolegomena (1878) · Friedman, Who Wrote the Bible? (1987) · Westminster Leningrad Codex</div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="6">← വാക്യങ്ങൾ</button><button class="btn" data-go="8">താരതമ്യ പട്ടിക →</button></div>
+</section>
+
+<!-- 8 JEPD TABLE -->
+<section class="screen" data-t="JEPD comparison table">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>Aa</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>നാലു സ്രോതസ്സുകൾ — താരതമ്യം</h2><p>വലത്തോട്ട് സ്ക്രോൾ ചെയ്യുക →</p></div>
+  <div class="body">
+    <div class="tbl"><table>
+      <tr><th></th><th class="J">J യാഹ്‌വിസ്റ്റ്</th><th class="E">E എലോഹിസ്റ്റ്</th><th class="P">P പുരോഹിത</th><th class="D">D ഡ്യൂട്ടറോനോമിസ്റ്റ്</th></tr>
+      <tr><td>എഴുതിയ കാലം</td><td>≈ 800 BCE</td><td>≈ 750 BCE</td><td>പല ഘട്ടങ്ങളിൽ (യെഹെസ്കേൽ – എസ്രാ)</td><td>621 BCE · യോശീയാവ്</td></tr>
+      <tr><td>ദൈവനാമം</td><td>യഹ്‌വെ</td><td>എലോഹിം (പുറ. 3 വരെ)</td><td>എലോഹിം</td><td>യഹ്‌വെ</td></tr>
+      <tr><td>ഊന്നൽ</td><td>യെഹൂദ · നേതാക്കൾ</td><td>വടക്കൻ ഇസ്രായേൽ · പ്രവാചകർ</td><td>യെഹൂദ · ആരാധനാക്രമം</td><td>കേന്ദ്ര ദേവാലയം · യെരൂശലേം</td></tr>
+      <tr><td>ദൈവത്തെക്കുറിച്ചുള്ള ഭാഷ</td><td>മനുഷ്യരൂപം — നടക്കുന്നു, സംസാരിക്കുന്നു</td><td>സ്വപ്നങ്ങളിലൂടെ</td><td>മഹത്വപൂർണ്ണം</td><td>ദൈവത്തിന്റെ പ്രവൃത്തികളെ ഓർമ്മിപ്പിക്കുന്നു</td></tr>
+      <tr><td>പർവ്വതം</td><td>സീനായ്</td><td>ഹോരേബ്</td><td>—</td><td>ഹോരേബ്</td></tr>
+      <tr><td>രീതി</td><td>കഥ</td><td>പ്രവചനം</td><td>വംശാവലികൾ, പട്ടികകൾ</td><td>നീണ്ട പ്രസംഗങ്ങൾ</td></tr>
+    </table></div>
+    <div class="refs"><b>അവലംബം:</b> Friedman (1987) · Baden, The Composition of the Pentateuch (2012). ദൈവശാസ്ത്ര നിലപാടില്ല — ചരിത്ര-പാഠ വിശകലനം മാത്രം.</div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="7">← കാലരേഖ</button><button class="btn" data-go="6">വാക്യങ്ങളിലേക്ക്</button></div>
+</section>
+
+<!-- 9 AUDIO -->
+<section class="screen" data-t="Audio player (listening)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>Aa</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഉല്പത്തി 1 · കേൾക്കുന്നു</h2><p>വായിക്കുന്ന വാക്യം തനിയെ അടയാളപ്പെടും</p></div>
+  <div class="body">
+    <div class="verse"><span class="n">3</span><span class="t" style="color:var(--ink3)">വെളിച്ചം ഉണ്ടാകട്ടെ എന്നു [എലോഹിം] കല്പിച്ചു; വെളിച്ചം ഉണ്ടായി.</span></div>
+    <div class="verse" style="background:var(--accent-soft);margin:0 -8px;padding:8px;border-radius:8px"><span class="n">4</span><span class="t">വെളിച്ചം നല്ലതു എന്നു <span class="nm el">[എലോഹിം]</span> കണ്ടു; <span class="nm el">[എലോഹിം]</span> വെളിച്ചവും ഇരുളും തമ്മിൽ വേർപിരിച്ചു.</span></div>
+    <div class="verse"><span class="n">5</span><span class="t" style="color:var(--ink3)">[എലോഹിം] വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു…</span></div>
+    <div style="margin-top:22px">
+      <div class="slider"><span style="font-size:11px;font-variant-numeric:tabular-nums">03:12</span><div class="bar"></div><span style="font-size:11px;font-variant-numeric:tabular-nums">08:45</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);padding:0 4px"><span>വേഗം: 1.0×</span><span>ശബ്ദം: മലയാളം (സ്ത്രീ)</span><span>ഉറക്കടൈമർ: ഓഫ്</span></div>
+    </div>
+    <div class="cm" style="margin-top:18px"><div class="lb">ഈ സെഷൻ</div><p>കേൾവി സമയം: 03:12 · ഇന്നത്തെ പഠനസമയം: 41 മിനിറ്റ്</p></div>
+  </div>
+  <div class="audio"><span>⏮</span><span>◀◀ 15</span><span class="play">❚❚</span><span>15 ▶▶</span><span>⏭</span></div>
+</section>
+
+<!-- 10 ACCESSIBILITY -->
+<section class="screen" data-t="Text size & accessibility">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="5">← വായന</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>അക്ഷരവും കാഴ്ചയും</h2><p>മാറ്റങ്ങൾ തനിയെ സൂക്ഷിക്കും — അടുത്ത തവണയും ഇതേപോലെ</p></div>
+  <div class="body">
+    <div class="cm"><div class="lb">മുൻകാഴ്ച</div><p style="font-size:21px;line-height:1.8;color:var(--ink);font-family:'Noto Serif Malayalam',serif">ആദിയിൽ <span class="nm el" style="font-size:19px">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.</p></div>
+    <div class="toggle" style="display:block"><div style="display:flex;justify-content:space-between"><span>അക്ഷര വലുപ്പം</span><span style="color:var(--ink3)">വലുത് (21px)</span></div><div class="slider"><span style="font-size:12px">A</span><div class="bar"></div><span style="font-size:20px">A</span></div></div>
+    <div class="toggle">കട്ടിയുള്ള അക്ഷരം <span class="sw"></span></div>
+    <div class="toggle">ഉയർന്ന കോൺട്രാസ്റ്റ് <span class="sw"></span></div>
+    <div class="toggle">വരികൾക്കിടയിൽ കൂടുതൽ ഇടം <span class="sw on"></span></div>
+    <div class="toggle">ദൈവനാമങ്ങൾ നിറത്തിൽ കാണിക്കുക <span class="sw on"></span></div>
+    <div class="toggle">വാക്യം തൊട്ടാൽ ഉറക്കെ വായിക്കുക <span class="sw"></span></div>
+  </div>
+</section>
+
+<!-- 11 LANGUAGE -->
+<section class="screen" data-t="Language & translation switch">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="5">← വായന</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഭാഷ</h2><p>ആപ്പിന്റെ ഭാഷയും ബൈബിൾ പാഠത്തിന്റെ ഭാഷയും ഒന്നിച്ചു മാറും</p></div>
+  <div class="body">
+    <div class="pair on">മലയാളം <span>✓</span></div>
+    <div class="pair">English <span></span></div>
+    <div class="pair">हिन्दी <span></span></div>
+    <div class="pair">Afrikaans <span></span></div>
+    <div class="toggle" style="margin-top:14px">മൂലഭാഷാ വരി ചേർത്തു കാണിക്കുക <span class="sw on"></span></div>
+    <div class="cm"><div class="lb">ഉല്പത്തി 1:1 — മൂലഭാഷ + മലയാളം</div><div class="heb">בְּרֵאשִׁ֖ית בָּרָ֣א אֱלֹהִ֑ים אֵ֥ת הַשָּׁמַ֖יִם וְאֵ֥ת הָאָֽרֶץ׃</div><p>ആദിയിൽ <span class="nm el">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.</p><p style="font-size:11px;margin-top:4px">אֱלֹהִים = എലോഹിം · വാക്കിന്റെ പിന്നിലെ പേര് അതേപടി — “ദൈവം” എന്നു മാറ്റാതെ</p></div>
+    <div class="toggle" data-go="17">ഇംഗ്ലീഷ് പതിപ്പ് പകുതി സ്ക്രീനിൽ കാണിക്കുക <span class="sw"></span></div>
+    <div class="toggle">വാക്കിൽ തൊട്ടാൽ എബ്രായ/ഗ്രീക്ക് അർത്ഥം <span class="sw on"></span></div>
+  </div>
+</section>
+
+<!-- 12 LOBBY -->
+<section class="screen" data-t="Verse → Elevator Lobby (levels)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>നിങ്ങളുടെ നില തിരഞ്ഞെടുക്കുക</h2><p>ഉല്പത്തി 1:1 — 6 വായനാ പാതകൾ · ഇതേ നിലകൾ തന്നെ ക്രെഡിറ്റ് നിലകൾ</p></div>
+  <div class="body">
+    <div class="lvl feat" data-go="13"><div class="r"><b>ദ്രുത ഉത്തരം</b><span class="bd free">സൗജന്യം</span></div><p>ഈ വാക്യം ലളിതമായ ഭാഷയിൽ</p><small>⏱ 5 മിനിറ്റ്</small></div>
+    <div class="lvl" data-go="13"><div class="r"><b>വിദ്യാർത്ഥി പണ്ഡിതൻ</b><span class="bd trial">ട്രയൽ 5 മണിക്കൂർ</span></div><p>അക്കാദമിക സന്ദർഭം, അവലംബങ്ങളോടെ · നില 1</p><small>⏱ 15 മിനിറ്റ്</small></div>
+    <div class="lvl" data-go="13"><div class="r"><b>ആഴപണ്ഡിതൻ</b><span class="bd member">അംഗം</span></div><p>കൈയെഴുത്തുപ്രതി വ്യത്യാസങ്ങൾ, പാഠവിമർശനം · നില 2</p><small>⏱ 30 മിനിറ്റ്</small></div>
+    <div class="lvl" data-go="13"><div class="r"><b>മാസ്റ്റർ അനലിസ്റ്റ്</b><span class="bd member">പ്രീമിയം</span></div><p>സ്രോതസ്സ് വിമർശനം · J/E/P/D വിശകലനം · നില 3</p><small>⏱ 45 മിനിറ്റ്</small></div>
+    <div class="lvl" data-go="15"><div class="r"><b>പണ്ഡിത ശേഖരം</b><span class="bd locked">🔒 പൂട്ടിയത്</span></div><p>പൂർണ്ണ അവലംബ ഡാറ്റാബേസ് · നില 4</p><small>മാസ്റ്റർ അനലിസ്റ്റ് പൂർത്തിയാക്കുക</small></div>
+    <div class="lvl" data-go="15"><div class="r"><b>PhD ഗവേഷകൻ</b><span class="bd locked">🔒 പൂട്ടിയത്</span></div><p>രീതിശാസ്ത്രം · സ്ഥാപനങ്ങൾ വഴി മാത്രം</p><small>സ്ഥാപന പ്രവേശനം</small></div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="5">← വാക്യങ്ങൾ</button><button class="btn" data-go="13">മുറികൾ കാണുക →</button></div>
+</section>
+
+<!-- 13 ROOMS -->
+<section class="screen" data-t="Rooms of a level">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>വിദ്യാർത്ഥി പണ്ഡിതൻ</h2><p>ഉല്പത്തി 1:1 — 8 മുറികൾ · ഓരോന്നും ഒരു വർഗ്ഗം ലിങ്കുകൾ</p></div>
+  <div class="body">
+    <div class="rooms">
+      <div class="room" data-go="14"><b>📖 സന്ദർഭ പ്രവാഹം</b><span>മുൻ-പിൻ വാക്യങ്ങൾ ഈ അർത്ഥം എങ്ങനെ ഒരുക്കുന്നു</span></div>
+      <div class="room" data-go="14"><b>✨ ദൈവനാമ വിശകലനം</b><span>ഇവിടെ എന്തുകൊണ്ട് [എലോഹിം], [യഹ്‌വെ] അല്ല — കാലക്രമത്തിൽ മാറ്റം</span></div>
+      <div class="room" data-go="6"><b>📜 സ്രോതസ്സ് നിർണ്ണയം</b><span>J / E / P / D — നിറങ്ങളിൽ</span></div>
+      <div class="room"><b>🔗 ബന്ധപ്പെട്ട വാക്യങ്ങൾ</b><span>സമാന്തരം 5 · വിരുദ്ധം 2 · മറ്റേ നിയമത്തിൽ 3</span></div>
+      <div class="room"><b>⚡ യുക്തി ശൃംഖല</b><span>മുൻധാരണകൾ → നിഗമനം</span></div>
+      <div class="room" data-go="7"><b>📅 ചരിത്ര സന്ദർഭം · കാലരേഖ</b><span>എപ്പോൾ, ആര് എഴുതി · കാലത്തിനനുസരിച്ച ചിത്രങ്ങൾ</span></div>
+      <div class="room"><b>🔤 ഭാഷാ കുറിപ്പുകൾ</b><span>എബ്രായ വ്യാകരണം, പദോൽപ്പത്തി</span></div>
+      <div class="room"><b>🖼 ചിത്രങ്ങളും മാധ്യമങ്ങളും</b><span>വാക്യത്തോടു ചേർന്ന ചിത്രങ്ങൾ · വീഡിയോ</span></div>
+    </div>
+    <div class="cm" style="margin-top:12px;border-left-color:var(--ink3)"><div class="lb">നില പൂർത്തിയാക്കാൻ</div><p>✓ പൂർണ്ണ വിലയിരുത്തൽ — ഈ നിലയിലെ എല്ലാ മുറികളും കഴിഞ്ഞ ശേഷം</p></div>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="12">← നിലകൾ</button><button class="btn" data-go="14">വായിക്കുക →</button></div>
+</section>
+
+<!-- 14 COMMENTARY -->
+<section class="screen rel" data-t="Commentary + side toggle">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>ദൈവശാസ്ത്ര പതിപ്പ്: ഓഫ്</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ദൈവനാമ വിശകലനം</h2><p>ഉല്പത്തി 1:1 — വിദ്യാർത്ഥി പണ്ഡിതൻ</p></div>
+  <div class="body" style="padding-right:44px">
+    <div class="cm"><div class="lb">വാക്യം</div><div class="heb">בְּרֵאשִׁית בָּרָא אֱלֹהִים</div><p>ആദിയിൽ <span class="nm el">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.</p></div>
+    <div class="cm"><h3>✨ എന്തുകൊണ്ട് ഇവിടെ എലോഹിം?</h3><p>ഉല്പത്തി 1:1–2:4a മുഴുവൻ ഒരേ നാമം — <b>എലോഹിം</b> (35 തവണ). സൃഷ്ടിയുടെ ദൈവം എല്ലാ ജനതകളുടെയും ദൈവം എന്ന നിലയിൽ; ഇസ്രായേലിന്റെ മാത്രം അല്ല. വ്യാകരണപരമായി ബഹുവചന രൂപം, ഏകവചന ക്രിയ (בָּרָא).</p></div>
+    <div class="cm"><h3>🕰 ഒരേ വാക്ക്, മാറുന്ന കാലം</h3><p><b>ഉല്പത്തി 1</b> (P): എലോഹിം → <b>ഉല്പത്തി 2:4b</b> (J): യഹ്‌വെ എലോഹിം → <b>പുറപ്പാട് 3:14</b>: “ഞാൻ ആകുന്നവൻ” → <b>പുറപ്പാട് 6:3</b>: “എൽ ഷദ്ദായ് എന്ന പേരിൽ ഞാൻ പ്രത്യക്ഷനായി; യഹ്‌വെ എന്ന പേരിൽ അവർ എന്നെ അറിഞ്ഞില്ല.” — നാമം കാലക്രമത്തിൽ വെളിപ്പെടുന്നു എന്ന് പാഠം തന്നെ പറയുന്നു.</p></div>
+    <div class="cm"><h3>📚 എന്നാൽ “ദൈവം” എന്നു വിവർത്തനം ചെയ്താൽ?</h3><p>ഈ മാറ്റം അപ്രത്യക്ഷമാകും. അതുകൊണ്ടാണ് OriginalScript നാമങ്ങൾ അതേപടി സൂക്ഷിക്കുന്നത്.</p><div class="img">🖼 കമെന്ററി ചിത്രം · ലെനിൻഗ്രാഡ് കോഡെക്സ് fol. 1v (CDN)</div></div>
+    <div class="refs"><b>അവലംബം:</b> Westminster Leningrad Codex, Gen 1:1 · BDB Lexicon §430 · Friedman 1987, pp. 50–61 · Sefaria.org</div>
+    <div class="nav2"><button data-go="16">❓ ഈ വാക്യത്തെക്കുറിച്ച് ചോദിക്കുക</button></div>
+  </div>
+  <div class="side"><b>▲</b><span>1:2 അതേ മുറി</span><b>1:1</b><span>അതേ മുറി 2:4b</span><b>▼</b></div>
+  <div class="foot"><button class="btn sec" data-go="13">← മുറികൾ</button><button class="btn" data-go="5">അടുത്ത വാക്യം →</button></div>
+</section>
+
+<!-- 15 LOCKED -->
+<section class="screen" data-t="Locked level (unlock paths)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb"></div>
+  <div class="body" style="text-align:center;padding-top:26px">
+    <div style="font-size:56px">🔒</div>
+    <h2 style="font-size:22px;margin:8px 0 6px">പണ്ഡിത ശേഖരം</h2>
+    <p style="font-size:13px;color:var(--ink2);margin:0 0 6px">മിക്ക നിലകളും തുറന്നു. ഇത് തുറക്കാൻ മാസ്റ്റർ അനലിസ്റ്റ് നില ആദ്യം പൂർത്തിയാക്കുക.</p>
+    <div class="req" style="text-align:left"><h3>തുറക്കാനുള്ള നിബന്ധനകൾ</h3>
+      <div class="ok">✓ <span>എല്ലാ സൗജന്യ നിലകളും (പൂർത്തിയായി)</span></div>
+      <div class="ok">✓ <span>വിദ്യാർത്ഥി പണ്ഡിതൻ (പൂർത്തിയായി)</span></div>
+      <div class="ok">✓ <span>ആഴപണ്ഡിതൻ (പൂർത്തിയായി)</span></div>
+      <div>◔ <span style="color:var(--accent);font-weight:600">മാസ്റ്റർ അനലിസ്റ്റ് — 75% · 11.5 മണിക്കൂർ ബാക്കി</span></div>
+    </div>
+    <div class="way" style="text-align:left">
+      <button>1 · ഇപ്പോഴത്തെ നില തുടരുക <small>മാസ്റ്റർ അനലിസ്റ്റ് പൂർത്തിയാക്കിയാൽ തനിയെ തുറക്കും</small></button>
+      <button>2 · സ്ഥാപന പ്രവേശനം <small>പങ്കാളി സ്ഥാപനത്തിൽ ചേർന്നാൽ ഉടൻ പ്രവേശനം</small></button>
+      <button>3 · പ്രീമിയം അപ്ഗ്രേഡ് <small>പ്രതിമാസം · എപ്പോൾ വേണമെങ്കിലും നിർത്താം</small></button>
+    </div>
+    <p style="font-size:11px;color:var(--ink3);margin-top:12px">ഇത് തടസ്സമല്ല — സ്വന്തം വേഗത്തിൽ തുടരാം.</p>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="12">← നിലകൾ</button><button class="btn" data-go="14">തുടരുക</button></div>
+</section>
+
+<!-- 16 ASK -->
+<section class="screen" data-t="Ask a question on this verse">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="14">← കമെന്ററി</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഈ വാക്യത്തെക്കുറിച്ച് ചോദിക്കുക</h2><p>ഉല്പത്തി 1:1 · ചോദ്യം ഈ വാക്യത്തോടു ചേർത്ത് ഗവേഷണത്തിനായി സൂക്ഷിക്കും</p></div>
+  <div class="body">
+    <div class="field"><span>നിങ്ങളുടെ ചോദ്യം</span><textarea>എലോഹിം ബഹുവചനമാണെങ്കിൽ ക്രിയ എന്തുകൊണ്ട് ഏകവചനം?</textarea></div>
+    <div class="field"><span>ചോദ്യത്തിന്റെ തരം</span><div class="in">ഭാഷ / വ്യാകരണം ▾</div></div>
+    <div class="field"><span>പ്രായ വിഭാഗം (ഐച്ഛികം · ഗവേഷണത്തിന്)</span><div class="in">60+ ▾</div></div>
+    <div class="field"><span>രാജ്യം (ഐച്ഛികം)</span><div class="in">ഇന്ത്യ ▾</div></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">മുമ്പ് ഇതേ വാക്യത്തിൽ ചോദിച്ചവ</div><p>“എന്തുകൊണ്ട് ‘ദൈവം’ എന്നല്ല ‘എലോഹിം’ എന്നെഴുതുന്നത്?” — 214 പേർ<br>“ആദിയിൽ എന്നതിന് കാലം ഏതാണ്?” — 96 പേർ</p></div>
+    <p style="font-size:11px;color:var(--ink3)">മറുപടി ചോദ്യോത്തര വിഭാഗത്തിൽ വരും. പ്രവേശിച്ചാൽ വാട്സ്ആപ്പിലും അറിയിക്കും.</p>
+  </div>
+  <div class="foot"><button class="btn sec" data-go="14">റദ്ദാക്കുക</button><button class="btn">ചോദ്യം അയയ്ക്കുക</button></div>
+</section>
+
+<!-- 17 SPLIT -->
+<section class="screen" data-t="English in the lower half (split view)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="11">ML + EN</button></div></div>
+  <div class="sb"></div>
+  <div class="body" style="padding:0;display:grid;grid-template-rows:1fr 8px 1fr;min-height:0">
+    <div style="padding:10px 16px;overflow-y:auto">
+      <p style="margin:0 0 4px;font-size:11px;color:var(--ink3)">ഉല്പത്തി 1 · മലയാളം</p>
+      <div class="verse" data-go="12"><span class="n">1</span><span class="t">ആദിയിൽ <span class="nm el">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.</span></div>
+      <div class="verse" data-go="12" style="background:var(--accent-soft);margin:0 -8px;padding:8px;border-radius:8px"><span class="n">2</span><span class="t">ഭൂമി പാഴായും ശൂന്യമായും ഇരുന്നു; ആഴത്തിന്മീതെ ഇരുൾ ഉണ്ടായിരുന്നു. <span class="nm el">[എലോഹിം]</span>ന്റെ ആത്മാവു വെള്ളത്തിന്മീതെ പരിവർത്തിച്ചുകൊണ്ടിരുന്നു.</span></div>
+      <div class="verse" data-go="12"><span class="n">3</span><span class="t">വെളിച്ചം ഉണ്ടാകട്ടെ എന്നു <span class="nm el">[എലോഹിം]</span> കല്പിച്ചു; വെളിച്ചം ഉണ്ടായി.</span></div>
+    </div>
+    <div style="background:var(--line);position:relative"><span style="position:absolute;left:50%;top:-8px;width:44px;height:22px;border-radius:11px;background:var(--accent);transform:translateX(-50%);color:#fff;font-size:10px;display:grid;place-items:center">⇅</span></div>
+    <div style="padding:10px 16px;overflow-y:auto;font-family:Georgia,serif">
+      <p style="margin:0 0 4px;font-size:11px;color:var(--ink3);font-family:'Noto Sans Malayalam',sans-serif">Genesis 1 · English</p>
+      <div class="verse" data-go="12"><span class="n">1</span><span class="t" style="font-family:Georgia,serif;font-size:15px">In the beginning <span class="nm el">[Elohim]</span> created the heavens and the earth.</span></div>
+      <div class="verse" data-go="12" style="background:var(--accent-soft);margin:0 -8px;padding:8px;border-radius:8px"><span class="n">2</span><span class="t" style="font-family:Georgia,serif;font-size:15px">The earth was formless and void, and darkness was over the face of the deep; the Spirit of <span class="nm el">[Elohim]</span> was hovering over the waters.</span></div>
+      <div class="verse" data-go="12"><span class="n">3</span><span class="t" style="font-family:Georgia,serif;font-size:15px">And <span class="nm el">[Elohim]</span> said, “Let there be light,” and there was light.</span></div>
+    </div>
+  </div>
+  <div class="hint">മുകളിൽ മലയാളം · താഴെ ഇംഗ്ലീഷ് · ഒന്നിച്ചു സ്ക്രോൾ · അതിർത്തി മുകളിലേക്കോ താഴേക്കോ വലിക്കാം · ഫോൺ ചരിച്ചാൽ അടുത്തടുത്ത്</div>
+  <div class="audio"><span>⏮</span><span>◀◀</span><span class="play" data-go="9">▶</span><span>▶▶</span><span>⏭</span></div>
+</section>
+
+<!-- 18 VERSE TIMELINE PANEL -->
+<section class="screen" data-t="Verse timeline — happened · written">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="5">← വായന</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഉല്പത്തി 1:1 · കാലം</h2><p>എപ്പോൾ സംഭവിച്ചു · എപ്പോൾ എഴുതി · തെളിവുകൾ · വർഷങ്ങൾ ക്രിസ്തുവിന്റെ ജനനം (5 BC) മുതൽ</p></div>
+  <div class="body">
+    <div class="cm" style="border-left-color:var(--accent)"><div class="lb">സംഭവം · GN-1-0 · ആത്മവിശ്വാസം D</div><p style="color:var(--ink)"><b>“ആദിയിൽ” — പ്രപഞ്ചത്തിന്റെ തുടക്കം</b><br>≈ 1,380 കോടി വർഷം മുമ്പ് · ശാസ്ത്രീയം</p><p style="font-size:12px"><b>തെളിവ് 1 · ബൈബിൾ പാഠം:</b> ഉല്പ. 1:1–2<br><b>യുക്തി:</b> കാലവും സ്ഥലവും തുടങ്ങിയത് 1,380 കോടി വർഷം മുമ്പ് എന്ന് ശാസ്ത്രം<br><b>തെളിവ് 3 · ബൈബിളിനു പുറത്ത്:</b> എനൂമ എലിഷ് (c. 1100 BC); യൂബിലീസ് 2<br><b>തെളിവ് 4 · ശാസ്ത്രം:</b> പ്ലാങ്ക് ഉപഗ്രഹം 2018: 13.787 ± 0.02 ശതകോടി വർഷം</p><p style="font-size:11px;color:var(--ink3)">വ്യത്യാസങ്ങൾ: ഉല്പത്തി 1 സൃഷ്ടിയുടെ ദൈവശാസ്ത്ര ക്രമമാണ്, ശാസ്ത്രീയ കാലക്രമമല്ല</p></div>
+    <div class="cm" style="border-left-color:var(--P)"><div class="lb">എഴുത്ത് · C-P · ആത്മവിശ്വാസം C</div><p style="color:var(--ink)"><b>പുരോഹിത സ്രോതസ്സ് (P)</b><br>560–450 BC · മികച്ച കണക്ക് 520 BC · ക്രിസ്തുവിന് 515 വർഷം മുമ്പ്</p><p style="font-size:12px"><b>യുക്തി:</b> ഔപചാരിക പട്ടികകൾ, കൃത്യ തീയതികൾ, ശബ്ബത്ത് — ബാബിലോണിയൻ പ്രവാസകാലത്തോ ശേഷമോ പുരോഹിതർ എഴുതിയത്<br><b>തെളിവ് 4:</b> കെതെഫ് ഹിന്നോം താളിയോലകൾ (c. 600 BC) ഒരു P പാഠം ഉദ്ധരിക്കുന്നു (സംഖ്യ 6:24–26)</p><p style="font-size:11px;color:var(--ink3)">ബദൽ: പാരമ്പര്യം — മോശ, c. 1446–1406 BC (എല്ലാം സൂക്ഷിച്ചിരിക്കുന്നു)</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">ഇടവേള</div><p>സംഭവത്തിനും എഴുത്തിനും ഇടയിൽ: ≈ 1,380 കോടി വർഷം · എഴുത്തിനും ഇന്നിനും ഇടയിൽ: ≈ 2,545 വർഷം</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">ഇതേ സംഭവം പറയുന്ന മറ്റു വാക്യങ്ങൾ</div><p>യോഹന്നാൻ 1:1–5 · എബ്രായർ 11:3 · സങ്കീ. 104 · സദൃശ. 8:22–31 · ഇയ്യോബ് 38</p></div>
+    <div class="nav2"><button data-go="19">ചരിത്ര കാലരേഖയിൽ കാണുക →</button><button data-go="12">വാക്യ മുറികൾ</button></div>
+  </div>
+  <div class="hint">അടിസ്ഥാന വർഷം: യേശുവിന്റെ ജനനം = 5 BC (4/6 BC ബദലുകൾ കുറിപ്പിൽ) · BC = നെഗറ്റീവ്, വർഷം 0 ഇല്ല</div>
+</section>
+
+<!-- 19 HISTORICAL TIMELINE -->
+<section class="screen" data-t="Historical timeline (Big Bang → today)">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>🗺</button><button>ഫിൽട്ടർ</button></div></div>
+  <div class="sb" data-q="സീനായ്" data-mode="word"></div>
+  <div class="head"><h2>ചരിത്ര കാലരേഖ</h2><p>735 സംഭവങ്ങൾ · 9 പാതകൾ · പച്ച = ശാസ്ത്രീയം · മഞ്ഞ = ബൈബിൾ കണക്ക് · ഓറഞ്ച് = പാരമ്പര്യം</p></div>
+  <div class="body" style="padding-top:8px">
+    <div class="legend" style="margin-bottom:8px"><span><i style="background:#6b7a8f"></i>പ്രപഞ്ചം</span><span><i style="background:#8a9a5b"></i>ഭൂമി &amp; ജീവൻ</span><span><i style="background:#b7791f"></i>നാഗരികത</span><span><i style="background:#2f7f6f"></i>വിശ്വാസം &amp; പിളർപ്പുകൾ</span><span><i style="background:#5b5fa8"></i>പാഠം &amp; ലിപി</span><span><i style="background:#a8455b"></i>ബൈബിൾ ആഖ്യാനം</span></div>
+    <div class="ev-row"><span class="y">c. 1270 BC</span><span class="e"><i style="background:#b7791f"></i><span><span class="lane" style="background:#fff2cc">നാഗരികത</span>റമെസ്സെസ് II പി-റമെസ്സെ പണിയുന്നു · A<br><small>തെളിവ്: ഖാന്തിർ ഉത്ഖനനം</small></span></span></div>
+    <div class="ev-row" style="background:var(--accent-soft);margin:0 -8px;padding:6px 8px;border-radius:6px"><span class="y">c. 1250 BC</span><span class="e"><i style="background:#a8455b"></i><span><span class="lane" style="background:#fff2cc">ബൈബിൾ ആഖ്യാനം</span><b>സീനായിയിൽ ന്യായപ്രമാണം (പുറ. 20)</b> · D<br><small>സംഭവിച്ചത്: 1446 / 1250 BC (രണ്ടു നിലപാടുകൾ) · എഴുതിയത്: 850–450 BC · <u>വാക്യങ്ങൾ →</u></small></span></span></div>
+    <div class="ev-row"><span class="y">1208 BC</span><span class="e"><i style="background:#b7791f"></i><span><span class="lane" style="background:#e2efda">നാഗരികത</span>മെർനെപ്താ സ്റ്റെല — “ഇസ്രായേൽ” ആദ്യ പരാമർശം · A<br><small>തെളിവ്: കെയ്‌റോ മ്യൂസിയം JE 31408</small></span></span></div>
+    <div class="gap">≈ 200 വർഷം കടന്നുപോകുന്നു</div>
+    <div class="ev-row"><span class="y">c. 1000 BC</span><span class="e"><i style="background:#a8455b"></i><span><span class="lane" style="background:#fff2cc">ബൈബിൾ ആഖ്യാനം</span>ദാവീദ് യെരൂശലേം പിടിക്കുന്നു (2 ശമൂ. 5) · C<br><small>സ്ഥലം: യെബൂസ് → യെരൂശലേം · <u>സ്ഥല ചരിത്രം →</u></small></span></span></div>
+    <div class="ev-row"><span class="y">c. 960 BC</span><span class="e"><i style="background:#a8455b"></i><span><span class="lane" style="background:#fff2cc">ബൈബിൾ ആഖ്യാനം</span>ശലോമോന്റെ ദേവാലയം · C</span></span></div>
+    <div class="ev-row"><span class="y">c. 850 BC</span><span class="e"><i style="background:#5b5fa8"></i><span><span class="lane" style="background:#e2efda">പാഠം &amp; ലിപി</span>J സ്രോതസ്സ് എഴുതപ്പെടുന്നു · C</span></span></div>
+    <div class="ev-row"><span class="y">722 BC</span><span class="e"><i style="background:#b7791f"></i><span><span class="lane" style="background:#e2efda">നാഗരികത</span>സമര്യയുടെ പതനം (അസ്സീറിയ) · A<br><small>തെളിവ്: സർഗോൻ II വാർഷികങ്ങൾ</small></span></span></div>
+    <div class="pager"><span>‹ 10,000 BC</span><b>1300–700 BC</b><span>700 BC ›</span></div>
+    <div class="nav2"><button>⏮ ബിഗ് ബാംഗ്</button><button>യേശു (5 BC)</button><button>ഇന്ന് ⏭</button></div>
+  </div>
+  <div class="hint">തെളിവില്ലാത്ത ഒരു തീയതിയും ഇല്ല · ഓരോ വരിയും: തെളിവ് · എവിടെ കാണാം · ലിങ്ക് · ബദലുകൾ</div>
+</section>
+
+<!-- 20 PLACE PAGE -->
+<section class="screen" data-t="Place — name history & map">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button data-go="19">← കാലരേഖ</button></div></div>
+  <div class="sb" data-q="യെരൂശലേം" data-mode="word"></div>
+  <div class="head"><h2>യെരൂശലേം · PL-JER</h2><p>ഒരേ സ്ഥലം, മാറുന്ന പേരുകൾ · 31.777 N, 35.235 E · സ്ഥാന ആത്മവിശ്വാസം A</p></div>
+  <div class="body">
+    <div class="img" style="height:110px">🗺 ഭൂപടം — ഇന്നത്തെ സ്ഥാനം · കാലം മാറ്റാൻ സ്ലൈഡർ</div>
+    <div class="ev-row"><span class="y">c. 1360 BC</span><span class="e"><i style="background:#b7791f"></i><span><b>ഉറുസലിം</b> · അക്കാദിയൻ (ക്യൂണിഫോം) · “ശാലേമിന്റെ അടിത്തറ”<br><small>തെളിവ്: അമർണ കത്തുകൾ EA 285–290 · A · ദൈവനാമം നഗരനാമത്തിനുള്ളിൽ</small></span></span></div>
+    <div class="ev-row"><span class="y">—</span><span class="e"><i style="background:#a8455b"></i><span><b>ശാലേം</b> · എബ്രായ · ചുരുക്കരൂപം<br><small>ഉല്പ. 14:18; സങ്കീ. 76:2 · ബൈബിൾ പാഠം മാത്രം</small></span></span></div>
+    <div class="ev-row"><span class="y">—</span><span class="e"><i style="background:#a8455b"></i><span><b>യെബൂസ്</b> · എബ്രായ · യെബൂസ്യരിൽ നിന്ന് (ജനതയുടെ പേര്)<br><small>ന്യായാ. 19:10; 1 ദിന. 11:4 · ഒരു ലിഖിതവും ഈ പേര് ഉപയോഗിക്കുന്നില്ല</small></span></span></div>
+    <div class="ev-row"><span class="y">c. 1000 BC</span><span class="e"><i style="background:#a8455b"></i><span><b>യെരൂശലേം / ദാവീദിന്റെ നഗരം</b> · എബ്രായ<br><small>2 ശമൂ. 5:6–9</small></span></span></div>
+    <div class="ev-row"><span class="y">135 AD</span><span class="e"><i style="background:#b7791f"></i><span><b>ഏലിയ കാപ്പിറ്റോലിന</b> · ലാറ്റിൻ · ഹാഡ്രിയൻ പുനർനാമകരണം<br><small>നാണയങ്ങൾ; കാസിയസ് ഡിയോ 69.12 · A</small></span></span></div>
+    <div class="ev-row"><span class="y">638 AD →</span><span class="e"><i style="background:#2f7f6f"></i><span><b>അൽ-ഖുദ്‌സ്</b> · അറബി · “വിശുദ്ധം” · ഇന്നും<br><small>പേരുകൾ ഭാഷയോടെ, മുൻഗണനയില്ലാതെ</small></span></span></div>
+    <div class="cm" style="border-left-color:var(--ink3);margin-top:10px"><div class="lb">ഈ സ്ഥലത്തെ സംഭവങ്ങൾ</div><p>മെൽക്കീസേദെക്ക് (ഉല്പ. 14) · ദാവീദ് പിടിക്കുന്നു (1000 BC) · ദേവാലയം (960 BC) · നെബൂഖദ്‌നേസർ നശിപ്പിക്കുന്നു (586 BC) · റോമൻ നാശം (70 AD) — <u>കാലരേഖയിൽ →</u></p></div>
+  </div>
+</section>
+
+  </div></div></div>
+
+  <aside class="note eng" id="note"></aside>
+</div>
+
+<script>
+const NOTES = [
+ {u:"Visitor opens the site.",m:["Search box is the first thing under the brand line — on every screen (rule: search visible everywhere).","Home = OT / NT tiles + the 11 categories from Sebastian's Malayalam mockup, in that order. 'Study here · get a Bible degree' is the only highlighted row (gentle push).","Tagline stays in English as in the mockup."],s:"Doc p.2–6 image 1 (home menu); chat rule: search on every screen",d:"categories table; book counts",a:"Tile icons are placeholders — do you want the OT/NT figures from your mockup drawn as line art?"},
+ {u:"Visitor types a word with a spelling mistake.",m:["Fuzzy + phonetic suggestions (EN / ML / HI) appear as they type — no 'no results' dead end.","Three search modes: word · verse · contradicting passages.","Recent searches shown for quick re-entry (elderly users)."],s:"Doc p.2 'Fuzzy & Phonetic Search'; p.7 'Search by word, verse, opposite' (opposite = contradicting passages — decided 13 Sep)",d:"search index with phonetic keys; per-user recent list",a:"Should phonetic input (Manglish) be a visible toggle or always on?"},
+ {u:"Visitor sees results for വെളിച്ചം.",m:["Hit words highlighted (as in the mockup screenshot).","Quota counter on the search bar: 10/day for visitors, counts down.","Each result opens the verse. Visitor CANNOT tap next/prev inside the reader — must search again. Bottom hint says it politely (gentle push, no gate).","Contradicting-passage links shown under a result when they exist.","Simple numbered pages, not infinite scroll."],s:"Doc image 6 (search results); chat rules on visitor quota + search-only navigation; p.2 'Simple Integer Pagination'",d:"search_queries table (quota), verse index, contradiction pairs",a:"Decided 13 Sep: this base text is fine for now; final text must be translated from the original Hebrew/Greek. See screen 17 for the half-screen English option."},
+ {u:"Reader picks a book.",m:["OT / NT tabs; chapter count on the right, exactly like the mockup list.","Bottom bar = auto-resume: last verse + scroll % saved by the heartbeat, shown even before login for this device."],s:"Doc image 2 (NT list); p.1 'Resume Reading (Bookmark Tracking)'",d:"books table; user_bookmark (verse_id, scroll_pct)",a:""},
+ {u:"Reader reads Genesis 1.",m:["Divine names restored and colour-tagged: [എലോഹിം] amber, [യഹ്‌വെ] green.","Every verse is a link (chevron) → Elevator Lobby (screen 12).","Page 1/6 pagination instead of infinite scroll.","Audio bar always at the bottom (listening habit).","Aa = text size (screen 10), ML = language (screen 11). Logged-in users also get ‹ › chapter arrows; visitors do not."],s:"Doc image 3 (chapter reader with audio); p.9 'Each verse is a link'; chat rules on divine names",d:"verses (text, divine_name_tags, page_no), audio files per chapter",a:"Should the whole 5-verse page be one API call (single payload) including all room content? Doc says yes — this affects DB design."},
+ {u:"Reader switches on the colour layer.",m:["J/E/P/D source colours as a left stripe on each verse (colours from your comparison table image).","Legend on top. Half-verses (2:4a / 2:4b) supported — this is where P hands over to J and the divine name changes.","Explanation box makes the 'same word changes with time' point immediately."],s:"Doc p.12 'Original script colour coding layer' + images 9, 10, 11",d:"verse_source (verse_id, part, source J/E/P/D/R)",a:"Colours are OriginalScript's own set (J amber, E teal, P indigo, D wine) — nothing copied from any published diagram. Decided 13 Sep."},
+ {u:"Reader opens the timeline room.",m:["Vertical timeline 922 → 400 BCE from your diagram, with the historical trigger for each date.","References at the bottom on every scholarly panel (rule 3: academic references)."],s:"Doc image 10 (JEPD timeline)",d:"timeline_events table",a:""},
+ {u:"Reader opens the comparison table.",m:["Table scrolls sideways inside its own box; page never scrolls sideways.","Rows: date, divine name, emphasis, speech about God, mountain name, style — from your table image.","Neutrality line under the table."],s:"Doc image 11 (JEPD table)",d:"static content page",a:""},
+ {u:"Reader taps ▶ on the audio bar.",m:["Verse being read is highlighted and auto-scrolls.","15-second skip, speed, voice, sleep timer.","Session box shows listening time + today's study time."],s:"Doc image 3 (player controls); chat: 'multiple reading and listening habits'",d:"audio track + verse timestamps; listening_seconds in study_sessions",a:"Decided 13 Sep: listening time counts as study hours, same as reading."},
+ {u:"Older reader adjusts text.",m:["Live preview at the top so they see the effect before scrolling.","Everything auto-saves (font scale persisted per doc).","Extra toggles: line spacing, name colours, tap-to-read-aloud."],s:"Doc image 5 (iOS text size); p.1–2 'Requirements for Elderly'",d:"user_prefs (font_scale, bold, contrast)",a:""},
+ {u:"Reader changes language.",m:["One switch changes UI language AND Bible text language together (independent parallel systems per language).","For every language other than English: 'Show English in half screen' toggle (screen 17) — about half of prospective users know both.","Original-language line (Hebrew/Greek) can be shown above the translation; the divine name is never translated to 'God'.","Tap-a-word lookup toggle."],s:"Chat rules: EN/ML/AF/HI parallel systems; translation layer on verse screen",d:"verse text per language; lexicon entries",a:""},
+ {u:"Reader taps a verse.",m:["The Elevator Lobby from your approved design: Quick Answer (free) → Student Scholar (trial 5 h) → Deep Scholar (member) → Master Analyst (premium) → Scholar's Archive (locked) → PhD Researcher (institution).","These ARE the credit levels (decided 13 Sep) — subtitle says so; each level card shows its Level number.","Locked cards open the unlock screen, never a dead end."],s:"Approved 5-screen Elevator Lobby design; chat: same ladder",d:"levels table; user_level_progress",a:""},
+ {u:"Reader enters a level.",m:["8 rooms = the 'group of links of a specific class' from p.9: contextual flow, divine-name analysis, source attribution, connected passages (parallel / contradicting / other testament), logic chain, history + timeline + images by time, linguistic notes, images & media.","Rooms link straight into screens 6, 7, 14.","Level assessment shown at the end (needed for credit)."],s:"Doc p.9–11; Elevator Lobby rooms screen",d:"rooms per level; content items per verse per room",a:"Decided 13 Sep: rooms differ per level — higher levels get more rooms / specialisations. Quick Answer ≈ 3 rooms, Student Scholar 8, Deep Scholar 10+, Master Analyst adds source-criticism specialisations, Archive/PhD add methodology rooms."},
+ {u:"Reader reads a commentary.",m:["Side toggle on the right edge (your Android mockup note): ▲/▼ jumps to the SAME room for the previous/next verse.","Original text + translation at the top; 'same word, changing time' section traces Elohim → YHWH Elohim → Ex 3:14 → Ex 6:3 with verse references.","Commentary image slot (multi-image upload via CDN).","Header button: Theological version OFF by default (is_theological filter).","References line is mandatory on every commentary.","Ask-a-question link at the bottom."],s:"Doc image 8 (side toggle); p.1 'Strict Content Neutrality' + 'Commentary Image Uploads'; rule 3 references",d:"commentary (verse_id, room_id, level, is_theological, images[], references[])",a:"Decided 13 Sep: the side toggle (same room, next verse) is FREE for visitors."},
+ {u:"Reader taps a locked level.",m:["Shows what is done (✓) and how far the current level is.","Three unlock paths, all optional: keep going, institution, premium. Closing line says it is not a barrier."],s:"Elevator Lobby locked screen; chat: gentle push, no hard gates",d:"user_level_progress; institution_enrollments",a:""},
+ {u:"Reader asks a question about the verse.",m:["Question is stored against the verse with timestamp; optional age group and country for research (demographic metadata).","Shows what others asked on the same verse (turns questions into content).","Logged-in users get the reply on WhatsApp."],s:"Doc p.1 'Academic Question Logger'",d:"reader_questions (verse_id, text, ts, age_band, country, user_id)",a:""},
+ {u:"A reader who knows both languages turns on the English half-screen.",m:["Available for every language except English (ML / HI / AF + English).","Portrait phone: reader's language in the TOP half, English in the LOWER half — full width for both (side by side would give Malayalam only ~170 px and wrap 3–4 words per line). Landscape phone / tablet: side by side.","Both halves scroll together; tapping a verse highlights it in both; the ⇅ divider drags up or down to give one language more room.","Divine names restored on both sides. English is a clarity aid, not the source: the final text on both sides is translated from the Hebrew/Greek."],s:"Sebastian 13 Sep: 'option to show the English version in half screen for all languages other than English'",d:"verse text in two languages per verse_id (same verse numbering)",a:""},
+ {u:"Reader taps the ⏳ strip under a verse.",m:["Two dated facts per verse, from the OT/NT Verse Timeline files: HAPPENED (incident row: earliest · latest · best year, confidence A–D) and WRITTEN (written row: source J/E/P/D or book, years, confidence).","Evidence 1–4 shown in the sheet's order: Bible text clue → logic → archaeology/inscriptions → non-biblical writings → astronomy/carbon/geology. Discrepancies kept, never hidden.","Years from Christ computed from the fixed anchor (birth = 5 BC) with a note; BC negative, no year 0.","'Same event' verses come from the shared Event No.; 'See in history' jumps to the big timeline centred on the best year."],s:"OT/NT Verse Timeline xlsx (24 Sep) — one INCIDENT + one WRITTEN row per verse; decision 4 Oct: anchor fixed at −5",d:"verse_dates (verse_id, kind=happened|written, event_no, y_early, y_late, y_best, confidence, evidence1..4, logic, discrepancies, month_day); events (event_no → verses[])",a:"Verses marked 'undated' (genealogies etc.) show the strip greyed with 'not datable' — agree?"},
+{u:"Reader opens the Historical Timeline from the home menu or from a verse.",m:["735 events on 9 tracks (Cosmic, Earth & Life, Human, Civilisation, Faith & Splits, Text & Script, Bible narrative, Tradition, Today) — one list sorted by best year, track shown as a coloured dot + lane chip.","GAP rows exactly as in the sheet (brown, darker = bigger gap).","Data-type colour on the chip: Scientific green · Bible-calculated yellow · Tradition orange.","Every row shows confidence and evidence; tap → full row (evidence, where to see it, link, alternatives). Bible rows link to their verses; rows with a Place ID link to the place page.","Jump buttons: Big Bang · Jesus (5 BC) · today; search box finds an event by name; filter by track."],s:"Historical_Timeline_2026-10-03.xlsx — Timeline sheet (735 EVENT + 54 GAP rows); decision 4 Oct: home-menu category + link from every verse",d:"historical_events (ht_id, row_type, track, title, description, data_type, y_early, y_late, y_best, basis, confidence, bible_ref, place_id, evidence, where, link, alternatives)",a:"Phone default is this list; the time-space grid (desktop) and the 2D map with time slider are the next screens — build them after the list is approved."},
+{u:"Reader opens a place from the timeline or from a verse.",m:["One place, many names: every name with its language/script, meaning, years used, type of change, evidence type and first evidence — from the Place Names sheet (Major group: full history).","Neutral: all current names shown with their language, no preference.","Map pin from latitude/longitude with location confidence; time slider changes the label on the pin.","Events at this place listed from historical_events where place_id matches."],s:"Historical_Timeline_2026-10-03.xlsx — Place Names sheet (112 Major rows, 85 old/new, 64 timeline places)",d:"places (place_id, today_name, lat, lon, loc_confidence); place_names (place_id, name, language, meaning, used_from, used_until, change_type, evidence_type, first_evidence, note)",a:"Coordinates are approximate in the sheet — replace with OpenBible.info data before the map goes live."}
+];
+const IDS=[["1", "HOME", "/"], ["1.1", "SRCH", "/search"], ["1.1.2", "SRCH-RES", "/search/results?q="], ["1.2", "OT", "/ot"], ["1.2.B.C", "OT-CHAP", "/ot/{book}/{chapter}"], ["1.5.5", "TOOL-COLOR", "/ot/{book}/{chapter}?sources=1"], ["1.5.6", "TOOL-TL", "/sources/timeline"], ["1.5.7", "TOOL-TBL", "/sources/table"], ["1.5.4", "TOOL-AUDIO", "/ot/{book}/{chapter}?play=1"], ["1.5.1", "TOOL-TEXT", "/settings/display"], ["1.5.2", "TOOL-LANG", "/settings/language"], ["1.2.B.C.V", "VERSE", "/ot/{book}/{chapter}/{verse}"], ["1.2.B.C.V.L", "LEVEL", "/ot/{book}/{chapter}/{verse}/{level}"], ["1.2.B.C.V.L.R", "ROOM", "/ot/{book}/{chapter}/{verse}/{level}/{room}"], ["1.7", "LOCK", "/ot/{book}/{chapter}/{verse}/{level}/locked"], ["1.6", "ASK", "/ot/{book}/{chapter}/{verse}/ask"], ["1.5.3", "TOOL-SPLIT", "/ot/{book}/{chapter}?split=en"], ["1.5.8", "TOOL-DATES", "/ot/{book}/{chapter}/{verse}/dates"], ["1.9", "TIMELINE", "/timeline"], ["1.10.P", "PLACE", "/places/{place-id}"]];
+const KEY='os-batch-a';
+const EN={"OriginalScript · Batch A — വായന കോർ": "OriginalScript · Batch A — Reader Core", "പ്രവേശിക്കുക": "Sign in", "ഭാഷ: ML": "Language: EN", "Their words. Their reasons. Discover the Original Script.<br>മൂലവാക്കുകൾ തിരിച്ചറിയുക · മൂല ഉദ്ദേശ്യം കണ്ടെത്തുക": "Their words. Their reasons. Discover the Original Script.<br>Recognise the original words · discover the original intent", "📜 പഴയ നിയമം<small>39 പുസ്തകങ്ങൾ</small>": "📜 Old Testament<small>39 books</small>", "39 പുസ്തകങ്ങൾ": "39 books", "✝ പുതിയ നിയമം<small>27 പുസ്തകങ്ങൾ</small>": "✝ New Testament<small>27 books</small>", "27 പുസ്തകങ്ങൾ": "27 books", "ആദ്യഭാഷയും അർത്ഥവും": "Original language & meaning", "ദൈവധാരണകൾ": "Divine concepts", "കമെന്ററികൾ": "Commentaries", "ഇവിടെ പഠിക്കൂ · ബൈബിൾ ബിരുദം നേടൂ": "Study here · earn a Bible degree", "സമാന്തര വാക്കുകളും വാക്യങ്ങളും": "Cross words & parallel passages", "ശാസ്ത്രവും ബൈബിളും": "Science & the Bible", "പാഠവും സന്ദർഭവും": "Text & context", "ആത്മീയത": "Spirituality", "പാപബോധം · നീതിബോധം · സ്നേഹബോധം": "Sin consciousness · righteousness consciousness · love consciousness", "സ്രോതസ്സ് വിമർശനവും ഡോക്യുമെന്ററി ഹൈപ്പോതെസിസും": "Source criticism & the Documentary Hypothesis", "ചോദ്യോത്തരങ്ങൾ": "Questions & answers", "അക്ഷരത്തെറ്റ് സാരമില്ല — ഉദ്ദേശിച്ചത് ഇതാണോ?": "Spelling mistake? No problem — did you mean:", "വെളിച്ചം <small>218 വാക്യങ്ങൾ</small>": "light <small>218 verses</small>", "218 വാക്യങ്ങൾ": "218 verses", "വെളിച്ചങ്ങൾ <small>4 വാക്യങ്ങൾ</small>": "lights <small>4 verses</small>", "4 വാക്യങ്ങൾ": "4 verses", "velicham → വെളിച്ചം <small>ശബ്ദാനുകരണം (phonetic)</small>": "lite → light <small>phonetic match</small>", "ശബ്ദാനുകരണം (phonetic)": "phonetic match", "അടുത്തിടെ തിരഞ്ഞവ": "Recent searches", "ഉല്പത്തി 1:1 <small>വാക്യം</small>": "Genesis 1:1 <small>verse</small>", "വാക്യം": "verse", "എലോഹിം <small>ദൈവനാമം</small>": "Elohim <small>divine name</small>", "ദൈവനാമം": "divine name", "ക": "q", "ഖ": "w", "ഗ": "e", "ഘ": "r", "ങ": "t", "ച": "y", "ഛ": "u", "ജ": "i", "ഝ": "o", "ഞ": "p", "ട": "a", "ഠ": "s", "ഡ": "d", "ഢ": "f", "ണ": "g", "ത": "h", "ഥ": "j", "ദ": "k", "ധ": "l", "ന": ";", "പ": "z", "ഫ": "x", "ബ": "c", "ഭ": "v", "മ": "b", "യ": "n", "ര": "m", "ല": ",", "വ": ".", "ശ": "?", "തിരയുക": "Search", "218 വാക്യങ്ങൾ · പഴയ നിയമം 172 · പുതിയ നിയമം 46": "218 verses · Old Testament 172 · New Testament 46", "ഉല്പത്തി 1:3": "Genesis 1:3", "<span class=\"hit\">വെളിച്ചം</span> ഉണ്ടാകട്ടെ എന്നു <span class=\"nm el\">[എലോഹിം]</span> കല്പിച്ചു; <span class=\"hit\">വെളിച്ചം</span> ഉണ്ടായി.": "And <span class=\"nm el\">[Elohim]</span> said, “Let there be <span class=\"hit\">light</span>,” and there was <span class=\"hit\">light</span>.", "വെളിച്ചം": "light", "[എലോഹിം]": "[Elohim]", "ഉല്പത്തി 1:4": "Genesis 1:4", "<span class=\"hit\">വെളിച്ചം</span> നല്ലതു എന്നു <span class=\"nm el\">[എലോഹിം]</span> കണ്ടു; <span class=\"nm el\">[എലോഹിം]</span> <span class=\"hit\">വെളിച്ചവും</span> ഇരുളും തമ്മിൽ വേർപിരിച്ചു.": "<span class=\"nm el\">[Elohim]</span> saw that the <span class=\"hit\">light</span> was good; and <span class=\"nm el\">[Elohim]</span> separated the <span class=\"hit\">light</span> from the darkness.", "വെളിച്ചവും": "light", "സങ്കീർത്തനങ്ങൾ 27:1": "Psalm 27:1", "<span class=\"nm yh\">[യഹ്‌വെ]</span> എന്റെ <span class=\"hit\">വെളിച്ചവും</span> എന്റെ രക്ഷയും ആകുന്നു; ഞാൻ ആരെ ഭയപ്പെടും?": "<span class=\"nm yh\">[YHWH]</span> is my <span class=\"hit\">light</span> and my salvation; whom shall I fear?", "[യഹ്‌വെ]": "[YHWH]", "യോഹന്നാൻ 1:5": "John 1:5", "<span class=\"hit\">വെളിച്ചം</span> ഇരുളിൽ പ്രകാശിക്കുന്നു; ഇരുളോ അതിനെ പിടിച്ചടക്കിയില്ല.": "The <span class=\"hit\">light</span> shines in the darkness, and the darkness has not overcome it.", "വിരുദ്ധ വാക്യങ്ങൾ: 3 · സമാന്തരം: 5": "Contradicting passages: 3 · Parallels: 5", "യെശയ്യാ 45:7": "Isaiah 45:7", "<span class=\"hit\">വെളിച്ചത്തെ</span> നിർമ്മിക്കുകയും ഇരുളിനെ സൃഷ്ടിക്കുകയും … ചെയ്യുന്ന <span class=\"nm yh\">[യഹ്‌വെ]</span> ഞാൻ ആകുന്നു.": "I form the <span class=\"hit\">light</span> and create darkness … I, <span class=\"nm yh\">[YHWH]</span>, do all these things.", "വെളിച്ചത്തെ": "light", "വിരുദ്ധം: 1 യോഹന്നാൻ 1:5 “ദൈവത്തിൽ ഇരുളില്ല”": "Contradicts: 1 John 1:5 “in God there is no darkness”", "സന്ദർശകർക്ക് ഓരോ വാക്യവും തിരഞ്ഞു തുറക്കാം · പ്രവേശിച്ചാൽ പരിധിയില്ലാതെ, അടുത്ത/മുൻ വാക്യം നേരിട്ട്": "Visitors open each verse by searching · sign in for no limit and direct next/previous verse", "പഴയ നിയമം": "Old Testament", "പുതിയ നിയമം": "New Testament", "മത്തായി <span>28</span>": "Matthew <span>28</span>", "മർക്കൊസ് <span>16</span>": "Mark <span>16</span>", "ലൂക്കൊസ് <span>24</span>": "Luke <span>24</span>", "യോഹന്നാൻ <span>21</span>": "John <span>21</span>", "പ്രവൃത്തികൾ <span>28</span>": "Acts <span>28</span>", "റോമർ <span>16</span>": "Romans <span>16</span>", "1 കൊരിന്ത്യർ <span>16</span>": "1 Corinthians <span>16</span>", "2 കൊരിന്ത്യർ <span>13</span>": "2 Corinthians <span>13</span>", "ഗലാത്യർ <span>6</span>": "Galatians <span>6</span>", "എഫെസ്യർ <span>6</span>": "Ephesians <span>6</span>", "ഫിലിപ്പിയർ <span>4</span>": "Philippians <span>4</span>", "കൊലൊസ്സ്യർ <span>4</span>": "Colossians <span>4</span>", "1 തെസ്സലൊനീക്യർ <span>5</span>": "1 Thessalonians <span>5</span>", "2 തെസ്സലൊനീക്യർ <span>3</span>": "2 Thessalonians <span>3</span>", "1 തിമൊഥെയൊസ് <span>6</span>": "1 Timothy <span>6</span>", "തുടർന്നു വായിക്കുക: ഉല്പത്തി 1 · വാക്യം 3 · 62% (സ്വയം സൂക്ഷിച്ചത്)": "Continue reading: Genesis 1 · verse 3 · 62% (saved automatically)", "ഉല്പത്തി 1": "Genesis 1", "മൂലഭാഷ: എബ്രായ · ദൈവനാമങ്ങൾ അടയാളപ്പെടുത്തിയത് · ഓരോ വാക്യവും തുറക്കാം": "Original language: Hebrew · divine names marked · every verse opens", "ആദിയിൽ <span class=\"nm el\">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.": "In the beginning <span class=\"nm el\">[Elohim]</span> created the heavens and the earth.", "ഭൂമി പാഴായും ശൂന്യമായും ഇരുന്നു; ആഴത്തിന്മീതെ ഇരുൾ ഉണ്ടായിരുന്നു. <span class=\"nm el\">[എലോഹിം]</span>ന്റെ ആത്മാവു വെള്ളത്തിന്മീതെ പരിവർത്തിച്ചുകൊണ്ടിരുന്നു.": "The earth was formless and empty; darkness was over the face of the deep, and the Spirit of <span class=\"nm el\">[Elohim]</span> was hovering over the waters.", "വെളിച്ചം ഉണ്ടാകട്ടെ എന്നു <span class=\"nm el\">[എലോഹിം]</span> കല്പിച്ചു; വെളിച്ചം ഉണ്ടായി.": "And <span class=\"nm el\">[Elohim]</span> said, “Let there be light,” and there was light.", "വെളിച്ചം നല്ലതു എന്നു <span class=\"nm el\">[എലോഹിം]</span> കണ്ടു; <span class=\"nm el\">[എലോഹിം]</span> വെളിച്ചവും ഇരുളും തമ്മിൽ വേർപിരിച്ചു.": "<span class=\"nm el\">[Elohim]</span> saw that the light was good; and <span class=\"nm el\">[Elohim]</span> separated the light from the darkness.", "<span class=\"nm el\">[എലോഹിം]</span> വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു. സന്ധ്യയായി ഉഷസ്സുമായി, ഒന്നാം ദിവസം.": "<span class=\"nm el\">[Elohim]</span> called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.", "പേജ് 1 / 6 · ഉല്പത്തി 1:1–5": "Page 1 / 6 · Genesis 1:1–5", "ഉല്പത്തി 2": "Genesis 2", "സ്രോതസ്സ് നിറങ്ങൾ: ഓൺ · J / E / P / D": "Source colours: on · J / E / P / D", "സ്രോതസ്സ് നിറങ്ങൾ (Documentary Hypothesis) <span class=\"sw on\"></span>": "Source colours (Documentary Hypothesis) <span class=\"sw on\"></span>", "<i style=\"background:var(--J)\"></i>J യാഹ്‌വിസ്റ്റ്": "<i style=\"background:var(--J)\"></i>J Jahwist", "<i style=\"background:var(--E)\"></i>E എലോഹിസ്റ്റ്": "<i style=\"background:var(--E)\"></i>E Elohist", "<i style=\"background:var(--P)\"></i>P പുരോഹിത": "<i style=\"background:var(--P)\"></i>P Priestly", "<i style=\"background:var(--D)\"></i>D ഡ്യൂട്ടറോനോമിസ്റ്റ്": "<i style=\"background:var(--D)\"></i>D Deuteronomist", "<span class=\"nm el\">[എലോഹിം]</span> ഏഴാം ദിവസത്തെ അനുഗ്രഹിച്ചു ശുദ്ധീകരിച്ചു; താൻ സൃഷ്ടിച്ചുണ്ടാക്കിയ സകല പ്രവൃത്തിയിൽനിന്നും അന്നു നിവൃത്തനായി.": "<span class=\"nm el\">[Elohim]</span> blessed the seventh day and made it holy, because on it he rested from all the work of creating that he had done.", "ആകാശവും ഭൂമിയും സൃഷ്ടിച്ച ചരിത്രം ഇതാകുന്നു.": "This is the account of the heavens and the earth when they were created.", "<span class=\"nm yh\">[യഹ്‌വെ]</span> <span class=\"nm el\">[എലോഹിം]</span> ഭൂമിയും ആകാശവും ഉണ്ടാക്കിയ നാളിൽ —": "In the day that <span class=\"nm yh\">[YHWH]</span> <span class=\"nm el\">[Elohim]</span> made the earth and the heavens —", "<span class=\"nm yh\">[യഹ്‌വെ]</span> <span class=\"nm el\">[എലോഹിം]</span> നിലത്തെ പൊടികൊണ്ടു മനുഷ്യനെ നിർമ്മിച്ചു, അവന്റെ മൂക്കിൽ ജീവശ്വാസം ഊതി; മനുഷ്യൻ ജീവനുള്ള ദേഹിയായി തീർന്നു.": "<span class=\"nm yh\">[YHWH]</span> <span class=\"nm el\">[Elohim]</span> formed the man from the dust of the ground and breathed into his nostrils the breath of life; and the man became a living being.", "ഇവിടെ ശ്രദ്ധിക്കുക": "Notice here", "അതേ വാക്യഭാഗത്ത് ദൈവനാമം മാറുന്നു: P സ്രോതസ്സിൽ <b>എലോഹിം</b> മാത്രം; J സ്രോതസ്സ് തുടങ്ങുമ്പോൾ (2:4b) <b>യഹ്‌വെ എലോഹിം</b>. കാലം മാറുമ്പോൾ ഒരേ വാക്ക് എങ്ങനെ മാറുന്നു എന്നതിന്റെ ആദ്യ തെളിവ്.": "In the same passage the divine name changes: the P source uses only <b>Elohim</b>; when the J source begins (2:4b) it is <b>YHWH Elohim</b>. The first evidence of how the same word changes as time changes.", "എലോഹിം": "Elohim", "യഹ്‌വെ എലോഹിം": "YHWH Elohim", "കാലരേഖ →": "Timeline →", "താരതമ്യ പട്ടിക →": "Comparison table →", "സ്രോതസ്സുകളുടെ കാലരേഖ": "Timeline of the sources", "Documentary Hypothesis · ആദ്യകാല വാമൊഴി &amp; ലിഖിത സ്രോതസ്സുകളിൽ നിന്ന്": "Documentary Hypothesis · from early oral &amp; written sources", "രാജ്യം പിളർന്ന ശേഷം: J — യെഹൂദയിൽ (ദൈവം = യഹ്‌വെ); E — വടക്കൻ ഇസ്രായേലിൽ (ദൈവം = എലോഹിം, പുറപ്പാട് 3 വരെ)": "After the kingdom split: J — in Judah (God = YHWH); E — in northern Israel (God = Elohim, until Exodus 3)", "സമര്യയുടെ പതനത്തിനു ശേഷം J-യും E-യും ഒന്നിച്ചു ചേർത്തു": "After the fall of Samaria, J and E were combined", "യോശീയാവിന്റെ കാലം · ഹിൽക്കീയാവ് · യെരൂശലേം കേന്ദ്രീകൃതം": "Reign of Josiah · Hilkiah · centred on Jerusalem", "പ്രവാസകാലം/ശേഷം · പുരോഹിത പാരമ്പര്യം · വംശാവലികളും പട്ടികകളും": "Exile and after · priestly tradition · genealogies and lists", "അന്തിമ സംയോജനം — ഇന്നത്തെ തോറ (പഞ്ചഗ്രന്ഥം)": "Final combination — today's Torah (Pentateuch)", "അവലംബം:": "References:", "← വാക്യങ്ങൾ": "← Verses", "നാലു സ്രോതസ്സുകൾ — താരതമ്യം": "Four sources — comparison", "വലത്തോട്ട് സ്ക്രോൾ ചെയ്യുക →": "Scroll to the right →", "J യാഹ്‌വിസ്റ്റ്": "J Jahwist", "E എലോഹിസ്റ്റ്": "E Elohist", "P പുരോഹിത": "P Priestly", "D ഡ്യൂട്ടറോനോമിസ്റ്റ്": "D Deuteronomist", "എഴുതിയ കാലം": "Written", "പല ഘട്ടങ്ങളിൽ (യെഹെസ്കേൽ – എസ്രാ)": "In stages (Ezekiel – Ezra)", "621 BCE · യോശീയാവ്": "621 BCE · Josiah", "യഹ്‌വെ": "YHWH", "എലോഹിം (പുറ. 3 വരെ)": "Elohim (until Ex. 3)", "ഊന്നൽ": "Emphasis", "യെഹൂദ · നേതാക്കൾ": "Judah · leaders", "വടക്കൻ ഇസ്രായേൽ · പ്രവാചകർ": "Northern Israel · prophets", "യെഹൂദ · ആരാധനാക്രമം": "Judah · worship (cultic)", "കേന്ദ്ര ദേവാലയം · യെരൂശലേം": "Central shrine · Jerusalem", "ദൈവത്തെക്കുറിച്ചുള്ള ഭാഷ": "Speech about God", "മനുഷ്യരൂപം — നടക്കുന്നു, സംസാരിക്കുന്നു": "Human-like — walks, talks", "സ്വപ്നങ്ങളിലൂടെ": "Through dreams", "മഹത്വപൂർണ്ണം": "Majestic", "ദൈവത്തിന്റെ പ്രവൃത്തികളെ ഓർമ്മിപ്പിക്കുന്നു": "Recalls God's works", "പർവ്വതം": "Mountain", "സീനായ്": "Sinai", "ഹോരേബ്": "Horeb", "രീതി": "Style", "കഥ": "Narrative", "പ്രവചനം": "Prophetic", "വംശാവലികൾ, പട്ടികകൾ": "Genealogies, lists", "നീണ്ട പ്രസംഗങ്ങൾ": "Long sermons", "<b>അവലംബം:</b> Friedman (1987) · Baden, The Composition of the Pentateuch (2012). ദൈവശാസ്ത്ര നിലപാടില്ല — ചരിത്ര-പാഠ വിശകലനം മാത്രം.": "<b>References:</b> Friedman (1987) · Baden, The Composition of the Pentateuch (2012). No theological position — historical-textual analysis only.", "← കാലരേഖ": "← Timeline", "വാക്യങ്ങളിലേക്ക്": "To the verses", "ഉല്പത്തി 1 · കേൾക്കുന്നു": "Genesis 1 · Listening", "വായിക്കുന്ന വാക്യം തനിയെ അടയാളപ്പെടും": "The verse being read is highlighted automatically", "വെളിച്ചം ഉണ്ടാകട്ടെ എന്നു [എലോഹിം] കല്പിച്ചു; വെളിച്ചം ഉണ്ടായി.": "And [Elohim] said, “Let there be light,” and there was light.", "[എലോഹിം] വെളിച്ചത്തിന്നു പകൽ എന്നും ഇരുളിന്നു രാത്രി എന്നും പേരിട്ടു…": "[Elohim] called the light Day, and the darkness he called Night…", "വേഗം: 1.0×": "Speed: 1.0×", "ശബ്ദം: മലയാളം (സ്ത്രീ)": "Voice: English (female)", "ഉറക്കടൈമർ: ഓഫ്": "Sleep timer: off", "ഈ സെഷൻ": "This session", "കേൾവി സമയം: 03:12 · ഇന്നത്തെ പഠനസമയം: 41 മിനിറ്റ്": "Listening time: 03:12 · study time today: 41 min", "← വായന": "← Reading", "അക്ഷരവും കാഴ്ചയും": "Text & display", "മാറ്റങ്ങൾ തനിയെ സൂക്ഷിക്കും — അടുത്ത തവണയും ഇതേപോലെ": "Changes save automatically — same next time", "മുൻകാഴ്ച": "Preview", "ആദിയിൽ <span class=\"nm el\" style=\"font-size:19px\">[എലോഹിം]</span> ആകാശവും ഭൂമിയും സൃഷ്ടിച്ചു.": "In the beginning <span class=\"nm el\" style=\"font-size:19px\">[Elohim]</span> created the heavens and the earth.", "അക്ഷര വലുപ്പം": "Text size", "വലുത് (21px)": "Large (21px)", "കട്ടിയുള്ള അക്ഷരം <span class=\"sw\"></span>": "Bold text <span class=\"sw\"></span>", "ഉയർന്ന കോൺട്രാസ്റ്റ് <span class=\"sw\"></span>": "High contrast <span class=\"sw\"></span>", "വരികൾക്കിടയിൽ കൂടുതൽ ഇടം <span class=\"sw on\"></span>": "More space between lines <span class=\"sw on\"></span>", "ദൈവനാമങ്ങൾ നിറത്തിൽ കാണിക്കുക <span class=\"sw on\"></span>": "Show divine names in colour <span class=\"sw on\"></span>", "വാക്യം തൊട്ടാൽ ഉറക്കെ വായിക്കുക <span class=\"sw\"></span>": "Tap a verse to read aloud <span class=\"sw\"></span>", "ഭാഷ": "Language", "ആപ്പിന്റെ ഭാഷയും ബൈബിൾ പാഠത്തിന്റെ ഭാഷയും ഒന്നിച്ചു മാറും": "App language and Bible text language change together", "മലയാളം <span>✓</span>": "Malayalam <span>✓</span>", "മൂലഭാഷാ വരി ചേർത്തു കാണിക്കുക <span class=\"sw on\"></span>": "Show the original-language line <span class=\"sw on\"></span>", "ഉല്പത്തി 1:1 — മൂലഭാഷ + മലയാളം": "Genesis 1:1 — original + translation", "אֱלֹהִים = എലോഹിം · വാക്കിന്റെ പിന്നിലെ പേര് അതേപടി — “ദൈവം” എന്നു മാറ്റാതെ": "אֱלֹהִים = Elohim · the name behind the word kept as it is — not changed to “God”", "ഇംഗ്ലീഷ് പതിപ്പ് പകുതി സ്ക്രീനിൽ കാണിക്കുക <span class=\"sw\"></span>": "Show the English version in half screen <span class=\"sw\"></span>", "വാക്കിൽ തൊട്ടാൽ എബ്രായ/ഗ്രീക്ക് അർത്ഥം <span class=\"sw on\"></span>": "Tap a word for Hebrew/Greek meaning <span class=\"sw on\"></span>", "നിങ്ങളുടെ നില തിരഞ്ഞെടുക്കുക": "Choose your level", "ഉല്പത്തി 1:1 — 6 വായനാ പാതകൾ · ഇതേ നിലകൾ തന്നെ ക്രെഡിറ്റ് നിലകൾ": "Genesis 1:1 — 6 reading paths · the same levels are the credit levels", "ദ്രുത ഉത്തരം": "Quick Answer", "സൗജന്യം": "FREE", "ഈ വാക്യം ലളിതമായ ഭാഷയിൽ": "This verse in plain language", "⏱ 5 മിനിറ്റ്": "⏱ 5 min", "വിദ്യാർത്ഥി പണ്ഡിതൻ": "Student Scholar", "ട്രയൽ 5 മണിക്കൂർ": "TRIAL 5 h", "അക്കാദമിക സന്ദർഭം, അവലംബങ്ങളോടെ · നില 1": "Academic context with references · Level 1", "⏱ 15 മിനിറ്റ്": "⏱ 15 min", "ആഴപണ്ഡിതൻ": "Deep Scholar", "അംഗം": "MEMBER", "കൈയെഴുത്തുപ്രതി വ്യത്യാസങ്ങൾ, പാഠവിമർശനം · നില 2": "Manuscript variants, textual criticism · Level 2", "⏱ 30 മിനിറ്റ്": "⏱ 30 min", "മാസ്റ്റർ അനലിസ്റ്റ്": "Master Analyst", "പ്രീമിയം": "PREMIUM", "സ്രോതസ്സ് വിമർശനം · J/E/P/D വിശകലനം · നില 3": "Source criticism · J/E/P/D analysis · Level 3", "⏱ 45 മിനിറ്റ്": "⏱ 45 min", "പണ്ഡിത ശേഖരം": "Scholar's Archive", "🔒 പൂട്ടിയത്": "🔒 LOCKED", "പൂർണ്ണ അവലംബ ഡാറ്റാബേസ് · നില 4": "Complete reference database · Level 4", "മാസ്റ്റർ അനലിസ്റ്റ് പൂർത്തിയാക്കുക": "Complete Master Analyst first", "PhD ഗവേഷകൻ": "PhD Researcher", "രീതിശാസ്ത്രം · സ്ഥാപനങ്ങൾ വഴി മാത്രം": "Methodology · through institutions only", "സ്ഥാപന പ്രവേശനം": "Institutional access", "മുറികൾ കാണുക →": "See rooms →", "ഉല്പത്തി 1:1 — 8 മുറികൾ · ഓരോന്നും ഒരു വർഗ്ഗം ലിങ്കുകൾ": "Genesis 1:1 — 8 rooms · each a class of links", "📖 സന്ദർഭ പ്രവാഹം": "📖 Contextual Flow", "മുൻ-പിൻ വാക്യങ്ങൾ ഈ അർത്ഥം എങ്ങനെ ഒരുക്കുന്നു": "How the surrounding verses set up this meaning", "✨ ദൈവനാമ വിശകലനം": "✨ Divine Name Analysis", "ഇവിടെ എന്തുകൊണ്ട് [എലോഹിം], [യഹ്‌വെ] അല്ല — കാലക്രമത്തിൽ മാറ്റം": "Why [Elohim] here, not [YHWH] — change over time", "📜 സ്രോതസ്സ് നിർണ്ണയം": "📜 Source Attribution", "J / E / P / D — നിറങ്ങളിൽ": "J / E / P / D — in colours", "🔗 ബന്ധപ്പെട്ട വാക്യങ്ങൾ": "🔗 Connected Passages", "സമാന്തരം 5 · വിരുദ്ധം 2 · മറ്റേ നിയമത്തിൽ 3": "Parallel 5 · contradicting 2 · in the other Testament 3", "⚡ യുക്തി ശൃംഖല": "⚡ Logic Chain", "മുൻധാരണകൾ → നിഗമനം": "Premises → conclusion", "📅 ചരിത്ര സന്ദർഭം · കാലരേഖ": "📅 Historical Context · Timeline", "എപ്പോൾ, ആര് എഴുതി · കാലത്തിനനുസരിച്ച ചിത്രങ്ങൾ": "When and by whom it was written · images by period", "🔤 ഭാഷാ കുറിപ്പുകൾ": "🔤 Linguistic Notes", "എബ്രായ വ്യാകരണം, പദോൽപ്പത്തി": "Hebrew grammar, etymology", "🖼 ചിത്രങ്ങളും മാധ്യമങ്ങളും": "🖼 Images & Media", "വാക്യത്തോടു ചേർന്ന ചിത്രങ്ങൾ · വീഡിയോ": "Images tied to the verse · video", "നില പൂർത്തിയാക്കാൻ": "To complete this level", "✓ പൂർണ്ണ വിലയിരുത്തൽ — ഈ നിലയിലെ എല്ലാ മുറികളും കഴിഞ്ഞ ശേഷം": "✓ Full assessment — after all rooms of this level", "← നിലകൾ": "← Levels", "വായിക്കുക →": "Read →", "ദൈവശാസ്ത്ര പതിപ്പ്: ഓഫ്": "Theological version: OFF", "ദൈവനാമ വിശകലനം": "Divine Name Analysis", "ഉല്പത്തി 1:1 — വിദ്യാർത്ഥി പണ്ഡിതൻ": "Genesis 1:1 — Student Scholar", "✨ എന്തുകൊണ്ട് ഇവിടെ എലോഹിം?": "✨ Why Elohim here?", "ഉല്പത്തി 1:1–2:4a മുഴുവൻ ഒരേ നാമം — <b>എലോഹിം</b> (35 തവണ). സൃഷ്ടിയുടെ ദൈവം എല്ലാ ജനതകളുടെയും ദൈവം എന്ന നിലയിൽ; ഇസ്രായേലിന്റെ മാത്രം അല്ല. വ്യാകരണപരമായി ബഹുവചന രൂപം, ഏകവചന ക്രിയ (בָּרָא).": "All of Genesis 1:1–2:4a uses one name — <b>Elohim</b> (35 times). The God of creation as the God of all peoples, not of Israel only. Grammatically a plural form with a singular verb (בָּרָא).", "🕰 ഒരേ വാക്ക്, മാറുന്ന കാലം": "🕰 Same word, changing time", "<b>ഉല്പത്തി 1</b> (P): എലോഹിം → <b>ഉല്പത്തി 2:4b</b> (J): യഹ്‌വെ എലോഹിം → <b>പുറപ്പാട് 3:14</b>: “ഞാൻ ആകുന്നവൻ” → <b>പുറപ്പാട് 6:3</b>: “എൽ ഷദ്ദായ് എന്ന പേരിൽ ഞാൻ പ്രത്യക്ഷനായി; യഹ്‌വെ എന്ന പേരിൽ അവർ എന്നെ അറിഞ്ഞില്ല.” — നാമം കാലക്രമത്തിൽ വെളിപ്പെടുന്നു എന്ന് പാഠം തന്നെ പറയുന്നു.": "<b>Genesis 1</b> (P): Elohim → <b>Genesis 2:4b</b> (J): YHWH Elohim → <b>Exodus 3:14</b>: “I am who I am” → <b>Exodus 6:3</b>: “I appeared as El Shaddai; by my name YHWH I was not known to them.” — the text itself says the name is revealed over time.", "ഉല്പത്തി 2:4b": "Genesis 2:4b", "പുറപ്പാട് 3:14": "Exodus 3:14", "പുറപ്പാട് 6:3": "Exodus 6:3", "📚 എന്നാൽ “ദൈവം” എന്നു വിവർത്തനം ചെയ്താൽ?": "📚 But what if it is translated “God”?", "ഈ മാറ്റം അപ്രത്യക്ഷമാകും. അതുകൊണ്ടാണ് OriginalScript നാമങ്ങൾ അതേപടി സൂക്ഷിക്കുന്നത്.": "This change disappears. That is why OriginalScript keeps the names as they are.", "🖼 കമെന്ററി ചിത്രം · ലെനിൻഗ്രാഡ് കോഡെക്സ് fol. 1v (CDN)": "🖼 Commentary image · Leningrad Codex fol. 1v (CDN)", "❓ ഈ വാക്യത്തെക്കുറിച്ച് ചോദിക്കുക": "❓ Ask about this verse", "1:2 അതേ മുറി": "1:2 same room", "അതേ മുറി 2:4b": "same room 2:4b", "← മുറികൾ": "← Rooms", "അടുത്ത വാക്യം →": "Next verse →", "മിക്ക നിലകളും തുറന്നു. ഇത് തുറക്കാൻ മാസ്റ്റർ അനലിസ്റ്റ് നില ആദ്യം പൂർത്തിയാക്കുക.": "Most levels are open. To open this one, complete the Master Analyst level first.", "തുറക്കാനുള്ള നിബന്ധനകൾ": "Unlock requirements", "എല്ലാ സൗജന്യ നിലകളും (പൂർത്തിയായി)": "All free levels (completed)", "വിദ്യാർത്ഥി പണ്ഡിതൻ (പൂർത്തിയായി)": "Student Scholar (completed)", "ആഴപണ്ഡിതൻ (പൂർത്തിയായി)": "Deep Scholar (completed)", "മാസ്റ്റർ അനലിസ്റ്റ് — 75% · 11.5 മണിക്കൂർ ബാക്കി": "Master Analyst — 75% · 11.5 hours left", "1 · ഇപ്പോഴത്തെ നില തുടരുക <small>മാസ്റ്റർ അനലിസ്റ്റ് പൂർത്തിയാക്കിയാൽ തനിയെ തുറക്കും</small>": "1 · Continue the current level <small>Opens automatically when Master Analyst is complete</small>", "മാസ്റ്റർ അനലിസ്റ്റ് പൂർത്തിയാക്കിയാൽ തനിയെ തുറക്കും": "Opens automatically when Master Analyst is complete", "2 · സ്ഥാപന പ്രവേശനം <small>പങ്കാളി സ്ഥാപനത്തിൽ ചേർന്നാൽ ഉടൻ പ്രവേശനം</small>": "2 · Institutional access <small>Immediate access when you enrol at a partner institution</small>", "പങ്കാളി സ്ഥാപനത്തിൽ ചേർന്നാൽ ഉടൻ പ്രവേശനം": "Immediate access when you enrol at a partner institution", "3 · പ്രീമിയം അപ്ഗ്രേഡ് <small>പ്രതിമാസം · എപ്പോൾ വേണമെങ്കിലും നിർത്താം</small>": "3 · Premium upgrade <small>Monthly · cancel any time</small>", "പ്രതിമാസം · എപ്പോൾ വേണമെങ്കിലും നിർത്താം": "Monthly · cancel any time", "ഇത് തടസ്സമല്ല — സ്വന്തം വേഗത്തിൽ തുടരാം.": "This is not a barrier — continue at your own pace.", "തുടരുക": "Continue", "← കമെന്ററി": "← Commentary", "ഈ വാക്യത്തെക്കുറിച്ച് ചോദിക്കുക": "Ask about this verse", "ഉല്പത്തി 1:1 · ചോദ്യം ഈ വാക്യത്തോടു ചേർത്ത് ഗവേഷണത്തിനായി സൂക്ഷിക്കും": "Genesis 1:1 · the question is stored with this verse for research", "നിങ്ങളുടെ ചോദ്യം": "Your question", "എലോഹിം ബഹുവചനമാണെങ്കിൽ ക്രിയ എന്തുകൊണ്ട് ഏകവചനം?": "If Elohim is plural, why is the verb singular?", "ചോദ്യത്തിന്റെ തരം": "Type of question", "ഭാഷ / വ്യാകരണം ▾": "Language / grammar ▾", "പ്രായ വിഭാഗം (ഐച്ഛികം · ഗവേഷണത്തിന്)": "Age group (optional · for research)", "രാജ്യം (ഐച്ഛികം)": "Country (optional)", "ഇന്ത്യ ▾": "India ▾", "മുമ്പ് ഇതേ വാക്യത്തിൽ ചോദിച്ചവ": "Asked before on this verse", "“എന്തുകൊണ്ട് ‘ദൈവം’ എന്നല്ല ‘എലോഹിം’ എന്നെഴുതുന്നത്?” — 214 പേർ<br>“ആദിയിൽ എന്നതിന് കാലം ഏതാണ്?” — 96 പേർ": "“Why write ‘Elohim’ and not ‘God’?” — 214 people<br>“What period does ‘in the beginning’ refer to?” — 96 people", "മറുപടി ചോദ്യോത്തര വിഭാഗത്തിൽ വരും. പ്രവേശിച്ചാൽ വാട്സ്ആപ്പിലും അറിയിക്കും.": "The answer appears in the Q&A section. If signed in, you are also notified on WhatsApp.", "റദ്ദാക്കുക": "Cancel", "ചോദ്യം അയയ്ക്കുക": "Send question", "ഉല്പത്തി 1 · മലയാളം": "Genesis 1 · Malayalam", "മുകളിൽ മലയാളം · താഴെ ഇംഗ്ലീഷ് · ഒന്നിച്ചു സ്ക്രോൾ · അതിർത്തി മുകളിലേക്കോ താഴേക്കോ വലിക്കാം · ഫോൺ ചരിച്ചാൽ അടുത്തടുത്ത്": "Malayalam above · English below · scroll together · drag the divider up or down · side by side when the phone is turned", "വെളിചം|": "lite|", "ഇന്ന് 7 തിരച്ചിലുകൾ ബാക്കി": "7 searches left today", "⏳ കാലരേഖ · ബിഗ് ബാംഗ് മുതൽ ഇന്നു വരെ": "⏳ Timeline · Big Bang to today", "<b>സംഭവം</b> ≈1380 കോടി BC · D | <b>എഴുത്ത്</b> 560–450 BC (P) · C": "<b>Happened</b> ≈13.8 billion BC · D | <b>Written</b> 560–450 BC (P) · C", "ഉല്പത്തി 1:1 · കാലം": "Genesis 1:1 · Dates", "എപ്പോൾ സംഭവിച്ചു · എപ്പോൾ എഴുതി · തെളിവുകൾ · വർഷങ്ങൾ ക്രിസ്തുവിന്റെ ജനനം (5 BC) മുതൽ": "When it happened · when it was written · evidence · years from the birth of Christ (5 BC)", "സംഭവം · GN-1-0 · ആത്മവിശ്വാസം D": "Happened · GN-1-0 · confidence D", "<b>“ആദിയിൽ” — പ്രപഞ്ചത്തിന്റെ തുടക്കം</b><br>≈ 1,380 കോടി വർഷം മുമ്പ് · ശാസ്ത്രീയം": "<b>“In the beginning” — the beginning of the universe</b><br>≈ 13.8 billion years ago · Scientific", "<b>തെളിവ് 1 · ബൈബിൾ പാഠം:</b> ഉല്പ. 1:1–2<br><b>യുക്തി:</b> കാലവും സ്ഥലവും തുടങ്ങിയത് 1,380 കോടി വർഷം മുമ്പ് എന്ന് ശാസ്ത്രം<br><b>തെളിവ് 3 · ബൈബിളിനു പുറത്ത്:</b> എനൂമ എലിഷ് (c. 1100 BC); യൂബിലീസ് 2<br><b>തെളിവ് 4 · ശാസ്ത്രം:</b> പ്ലാങ്ക് ഉപഗ്രഹം 2018: 13.787 ± 0.02 ശതകോടി വർഷം": "<b>Evidence 1 · Bible text:</b> Gen 1:1–2<br><b>Logic:</b> science dates the beginning of time and space to 13.8 billion years ago<br><b>Evidence 3 · outside the Bible:</b> Enuma Elish (c. 1100 BC); Jubilees 2<br><b>Evidence 4 · science:</b> Planck satellite 2018: 13.787 ± 0.02 billion years", "വ്യത്യാസങ്ങൾ: ഉല്പത്തി 1 സൃഷ്ടിയുടെ ദൈവശാസ്ത്ര ക്രമമാണ്, ശാസ്ത്രീയ കാലക്രമമല്ല": "Discrepancies: Genesis 1 is a theological order of creation, not a scientific chronology", "എഴുത്ത് · C-P · ആത്മവിശ്വാസം C": "Written · C-P · confidence C", "<b>പുരോഹിത സ്രോതസ്സ് (P)</b><br>560–450 BC · മികച്ച കണക്ക് 520 BC · ക്രിസ്തുവിന് 515 വർഷം മുമ്പ്": "<b>Priestly source (P)</b><br>560–450 BC · best estimate 520 BC · 515 years before Christ", "<b>യുക്തി:</b> ഔപചാരിക പട്ടികകൾ, കൃത്യ തീയതികൾ, ശബ്ബത്ത് — ബാബിലോണിയൻ പ്രവാസകാലത്തോ ശേഷമോ പുരോഹിതർ എഴുതിയത്<br><b>തെളിവ് 4:</b> കെതെഫ് ഹിന്നോം താളിയോലകൾ (c. 600 BC) ഒരു P പാഠം ഉദ്ധരിക്കുന്നു (സംഖ്യ 6:24–26)": "<b>Logic:</b> formal lists, exact dates, Sabbath — written by priests during or after the Babylonian exile<br><b>Evidence 4:</b> Ketef Hinnom amulets (c. 600 BC) quote a P text (Num 6:24–26)", "ബദൽ: പാരമ്പര്യം — മോശ, c. 1446–1406 BC (എല്ലാം സൂക്ഷിച്ചിരിക്കുന്നു)": "Alternative: tradition — Moses, c. 1446–1406 BC (all alternatives kept)", "ഇടവേള": "Gap", "സംഭവത്തിനും എഴുത്തിനും ഇടയിൽ: ≈ 1,380 കോടി വർഷം · എഴുത്തിനും ഇന്നിനും ഇടയിൽ: ≈ 2,545 വർഷം": "Between the event and the writing: ≈ 13.8 billion years · between the writing and today: ≈ 2,545 years", "ഇതേ സംഭവം പറയുന്ന മറ്റു വാക്യങ്ങൾ": "Other verses describing the same event", "യോഹന്നാൻ 1:1–5 · എബ്രായർ 11:3 · സങ്കീ. 104 · സദൃശ. 8:22–31 · ഇയ്യോബ് 38": "John 1:1–5 · Hebrews 11:3 · Ps 104 · Prov 8:22–31 · Job 38", "ചരിത്ര കാലരേഖയിൽ കാണുക →": "See in the historical timeline →", "വാക്യ മുറികൾ": "Verse rooms", "അടിസ്ഥാന വർഷം: യേശുവിന്റെ ജനനം = 5 BC (4/6 BC ബദലുകൾ കുറിപ്പിൽ) · BC = നെഗറ്റീവ്, വർഷം 0 ഇല്ല": "Reference year: birth of Jesus = 5 BC (4/6 BC alternatives in the note) · BC = negative, no year 0", "ഫിൽട്ടർ": "Filter", "ചരിത്ര കാലരേഖ": "Historical timeline", "735 സംഭവങ്ങൾ · 9 പാതകൾ · പച്ച = ശാസ്ത്രീയം · മഞ്ഞ = ബൈബിൾ കണക്ക് · ഓറഞ്ച് = പാരമ്പര്യം": "735 events · 9 tracks · green = scientific · yellow = Bible-calculated · orange = tradition", "<i style=\"background:#6b7a8f\"></i>പ്രപഞ്ചം": "<i style=\"background:#6b7a8f\"></i>Cosmic", "<i style=\"background:#8a9a5b\"></i>ഭൂമി &amp; ജീവൻ": "<i style=\"background:#8a9a5b\"></i>Earth &amp; Life", "<i style=\"background:#b7791f\"></i>നാഗരികത": "<i style=\"background:#b7791f\"></i>Civilisation", "<i style=\"background:#2f7f6f\"></i>വിശ്വാസം &amp; പിളർപ്പുകൾ": "<i style=\"background:#2f7f6f\"></i>Faith &amp; Splits", "<i style=\"background:#5b5fa8\"></i>പാഠം &amp; ലിപി": "<i style=\"background:#5b5fa8\"></i>Text &amp; Script", "<i style=\"background:#a8455b\"></i>ബൈബിൾ ആഖ്യാനം": "<i style=\"background:#a8455b\"></i>Bible narrative", "<span class=\"lane\" style=\"background:#fff2cc\">നാഗരികത</span>റമെസ്സെസ് II പി-റമെസ്സെ പണിയുന്നു · A<br><small>തെളിവ്: ഖാന്തിർ ഉത്ഖനനം</small>": "<span class=\"lane\" style=\"background:#fff2cc\">Civilisation</span>Ramesses II builds Pi-Ramesse · A<br><small>Evidence: Qantir excavations</small>", "ബൈബിൾ ആഖ്യാനം": "Bible narrative", "സീനായിയിൽ ന്യായപ്രമാണം (പുറ. 20)": "The law given at Sinai (Exod 20)", "സംഭവിച്ചത്: 1446 / 1250 BC (രണ്ടു നിലപാടുകൾ) · എഴുതിയത്: 850–450 BC · <u>വാക്യങ്ങൾ →</u>": "Happened: 1446 / 1250 BC (two positions) · Written: 850–450 BC · <u>Verses →</u>", "<span class=\"lane\" style=\"background:#e2efda\">നാഗരികത</span>മെർനെപ്താ സ്റ്റെല — “ഇസ്രായേൽ” ആദ്യ പരാമർശം · A<br><small>തെളിവ്: കെയ്‌റോ മ്യൂസിയം JE 31408</small>": "<span class=\"lane\" style=\"background:#e2efda\">Civilisation</span>Merneptah Stele — first mention of “Israel” · A<br><small>Evidence: Cairo Museum JE 31408</small>", "≈ 200 വർഷം കടന്നുപോകുന്നു": "≈ 200 years pass", "<span class=\"lane\" style=\"background:#fff2cc\">ബൈബിൾ ആഖ്യാനം</span>ദാവീദ് യെരൂശലേം പിടിക്കുന്നു (2 ശമൂ. 5) · C<br><small>സ്ഥലം: യെബൂസ് → യെരൂശലേം · <u>സ്ഥല ചരിത്രം →</u></small>": "<span class=\"lane\" style=\"background:#fff2cc\">Bible narrative</span>David takes Jerusalem (2 Sam 5) · C<br><small>Place: Jebus → Jerusalem · <u>Place history →</u></small>", "<span class=\"lane\" style=\"background:#fff2cc\">ബൈബിൾ ആഖ്യാനം</span>ശലോമോന്റെ ദേവാലയം · C": "<span class=\"lane\" style=\"background:#fff2cc\">Bible narrative</span>Solomon's temple · C", "<span class=\"lane\" style=\"background:#e2efda\">പാഠം &amp; ലിപി</span>J സ്രോതസ്സ് എഴുതപ്പെടുന്നു · C": "<span class=\"lane\" style=\"background:#e2efda\">Text &amp; Script</span>J source written · C", "<span class=\"lane\" style=\"background:#e2efda\">നാഗരികത</span>സമര്യയുടെ പതനം (അസ്സീറിയ) · A<br><small>തെളിവ്: സർഗോൻ II വാർഷികങ്ങൾ</small>": "<span class=\"lane\" style=\"background:#e2efda\">Civilisation</span>Fall of Samaria (Assyria) · A<br><small>Evidence: annals of Sargon II</small>", "⏮ ബിഗ് ബാംഗ്": "⏮ Big Bang", "യേശു (5 BC)": "Jesus (5 BC)", "ഇന്ന് ⏭": "Today ⏭", "തെളിവില്ലാത്ത ഒരു തീയതിയും ഇല്ല · ഓരോ വരിയും: തെളിവ് · എവിടെ കാണാം · ലിങ്ക് · ബദലുകൾ": "No date without evidence · every row: evidence · where to see it · link · alternatives", "യെരൂശലേം · PL-JER": "Jerusalem · PL-JER", "ഒരേ സ്ഥലം, മാറുന്ന പേരുകൾ · 31.777 N, 35.235 E · സ്ഥാന ആത്മവിശ്വാസം A": "One place, changing names · 31.777 N, 35.235 E · location confidence A", "🗺 ഭൂപടം — ഇന്നത്തെ സ്ഥാനം · കാലം മാറ്റാൻ സ്ലൈഡർ": "🗺 Map — today's position · slider to change the period", "<b>ഉറുസലിം</b> · അക്കാദിയൻ (ക്യൂണിഫോം) · “ശാലേമിന്റെ അടിത്തറ”<br><small>തെളിവ്: അമർണ കത്തുകൾ EA 285–290 · A · ദൈവനാമം നഗരനാമത്തിനുള്ളിൽ</small>": "<b>Urusalim</b> · Akkadian (cuneiform) · “foundation of Shalem”<br><small>Evidence: Amarna letters EA 285–290 · A · a divine name inside the city name</small>", "<b>ശാലേം</b> · എബ്രായ · ചുരുക്കരൂപം<br><small>ഉല്പ. 14:18; സങ്കീ. 76:2 · ബൈബിൾ പാഠം മാത്രം</small>": "<b>Salem</b> · Hebrew · short form<br><small>Gen 14:18; Ps 76:2 · Bible text only</small>", "<b>യെബൂസ്</b> · എബ്രായ · യെബൂസ്യരിൽ നിന്ന് (ജനതയുടെ പേര്)<br><small>ന്യായാ. 19:10; 1 ദിന. 11:4 · ഒരു ലിഖിതവും ഈ പേര് ഉപയോഗിക്കുന്നില്ല</small>": "<b>Jebus</b> · Hebrew · from the Jebusites (a people's name)<br><small>Judg 19:10; 1 Chr 11:4 · no inscription uses this name</small>", "<b>യെരൂശലേം / ദാവീദിന്റെ നഗരം</b> · എബ്രായ<br><small>2 ശമൂ. 5:6–9</small>": "<b>Jerusalem / City of David</b> · Hebrew<br><small>2 Sam 5:6–9</small>", "<b>ഏലിയ കാപ്പിറ്റോലിന</b> · ലാറ്റിൻ · ഹാഡ്രിയൻ പുനർനാമകരണം<br><small>നാണയങ്ങൾ; കാസിയസ് ഡിയോ 69.12 · A</small>": "<b>Aelia Capitolina</b> · Latin · Hadrian's renaming<br><small>Coins; Cassius Dio 69.12 · A</small>", "<b>അൽ-ഖുദ്‌സ്</b> · അറബി · “വിശുദ്ധം” · ഇന്നും<br><small>പേരുകൾ ഭാഷയോടെ, മുൻഗണനയില്ലാതെ</small>": "<b>Al-Quds</b> · Arabic · “the holy” · still today<br><small>Names shown with their language, no preference</small>", "ഈ സ്ഥലത്തെ സംഭവങ്ങൾ": "Events at this place", "മെൽക്കീസേദെക്ക് (ഉല്പ. 14) · ദാവീദ് പിടിക്കുന്നു (1000 BC) · ദേവാലയം (960 BC) · നെബൂഖദ്‌നേസർ നശിപ്പിക്കുന്നു (586 BC) · റോമൻ നാശം (70 AD) — <u>കാലരേഖയിൽ →</u>": "Melchizedek (Gen 14) · David takes it (1000 BC) · the temple (960 BC) · Nebuchadnezzar destroys it (586 BC) · Roman destruction (70 AD) — <u>in the timeline →</u>", "യെരൂശലേം": "Jerusalem"};
+const phone=document.querySelector('.phone');const PHONE_ML=phone.innerHTML;const idx=document.getElementById('idx');
+let LANG='ml',screens=[],cur=0;
+function norm(s){return s.replace(/&nbsp;/g,' ').trim().replace(/\s+/g,' ').replace(/<br\s*\/?>/g,'<br>')}
+function tr(s){return LANG==='en'&&EN[norm(s)]||s}
+function walk(el){for(const c of [...el.children]){if(c.tagName==='SCRIPT')continue;const k=norm(c.innerHTML);if(EN[k]){c.innerHTML=EN[k];continue}walk(c)}}
+const H1=document.querySelector('.top h1');const H1_ML=H1.innerHTML;
+function render(){phone.innerHTML=PHONE_ML;H1.innerHTML=LANG==='en'?(EN[norm(H1_ML)]||H1_ML):H1_ML;if(LANG==='en')walk(phone);
+ phone.querySelectorAll('.sb').forEach(el=>{const q=tr(el.dataset.q||''),m=el.dataset.mode||'',left=tr(el.dataset.left||'');const L=LANG==='en'?{ph:'Search word · verse · contradicting verse',w:'word',v:'verse',c:'contradicting'}:{ph:'വാക്ക് · വാക്യം · വിരുദ്ധ വാക്യം തിരയുക',w:'വാക്ക്',v:'വാക്യം',c:'വിരുദ്ധം'};
+  el.innerHTML='<div class="box"><i>🔍</i><span>'+(q?'<span style="color:var(--ink)">'+q+'</span>':L.ph)+'</span><i>🎤</i></div><div class="modes">'+(m==='word'?'<b>'+L.w+'</b>':'<span>'+L.w+'</span>')+'<span>·</span><span>'+L.v+'</span><span>·</span><span>'+L.c+'</span>'+(left?'<em>'+left+'</em>':'')+'</div>';});
+ screens=[...phone.querySelectorAll('.screen')];idx.innerHTML='';screens.forEach((s,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.innerHTML='<span class="n">'+(i+1)+'</span>'+s.dataset.t;b.onclick=()=>go(i);li.appendChild(b);idx.appendChild(li);});
+ go(cur);}
+function go(i){cur=i;screens.forEach((s,k)=>s.classList.toggle('on',k===i));[...idx.querySelectorAll('button')].forEach((b,k)=>b.classList.toggle('on',k===i));
+ const n=NOTES[i];const T=IDS[i];document.getElementById('idtag').innerHTML='<b>'+T[0]+'</b><span>'+T[1]+'</span><code>'+T[2]+'</code>';document.getElementById('note').innerHTML='<h2>'+T[0]+' '+T[1]+' · '+screens[i].dataset.t+'</h2><p style="margin:0 0 6px"><span class="k" style="display:inline;margin:0 6px 0 0">Prototype</span>screen '+(i+1)+' · <span class="k" style="display:inline;margin:0 6px 0 0">Route</span><code>'+T[2]+'</code></p><div class="k">User action</div><p>'+n.u+'</p><div class="k">What must happen</div><ul>'+n.m.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="k">Requirement source</div><p>'+n.s+'</p><div class="k">Data the screen needs</div><p>'+n.d+'</p>'+(n.a?'<div class="ask"><b>Open note for Sebastian:</b> '+n.a+'</div>':'')+'<div class="nav2"><button onclick="go('+((i+screens.length-1)%screens.length)+')">‹ prev</button><button onclick="go('+((i+1)%screens.length)+')">next ›</button></div>';
+ try{localStorage.setItem(KEY,i)}catch(e){}}
+phone.addEventListener('click',e=>{const el=e.target.closest('[data-go]');if(el&&phone.contains(el)){e.stopPropagation();go(+el.dataset.go-1)}});
+function setLang(l){LANG=l;document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));try{localStorage.setItem('os-lang',l)}catch(e){}render()}
+document.querySelectorAll('.langsw button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+try{cur=+localStorage.getItem(KEY)||0}catch(e){}
+let l0='ml';try{l0=localStorage.getItem('os-lang')||'ml'}catch(e){}
+setLang(l0);
+
+/* phone-mode bar */
+(function(){const bar=document.createElement('div');bar.className='pbar';bar.innerHTML='<button id="pb-prev">◀</button><button id="pb-list">☰ screens</button><span class="cnt" id="pb-cnt"></span><button id="pb-note">i</button><button id="pb-next">▶</button>';document.body.appendChild(bar);
+const nav=document.querySelector('.index'),note=document.getElementById('note');
+function upd(){document.getElementById('pb-cnt').textContent=(cur+1)+' / '+screens.length}
+document.getElementById('pb-prev').onclick=()=>{go((cur-1+screens.length)%screens.length)};
+document.getElementById('pb-next').onclick=()=>{go((cur+1)%screens.length)};
+document.getElementById('pb-list').onclick=()=>{note.classList.remove('open');nav.classList.toggle('open')};
+document.getElementById('pb-note').onclick=()=>{nav.classList.remove('open');note.classList.toggle('open')};
+nav.addEventListener('click',e=>{if(e.target.closest('button'))nav.classList.remove('open')});
+const _go=go;go=function(i){_go(i);upd()};upd();})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OriginalScript Admin Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@500;700&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Serif+Hebrew&display=swap">
+<style>
+:root{
+  --bg:#f4f1ec; --panel:#ffffff; --ink:#1d1a17; --ink2:#5b544d; --ink3:#8c847b;
+  --line:#e6e0d8; --accent:#8b5a3c; --accent2:#6b4423; --accent-soft:#f6ede4;
+  --free:#e4f1e4; --free-ink:#2b5a2b; --trial:#fff5df; --trial-ink:#6b4a12;
+  --member:#f6ede4; --member-ink:#8b5a3c; --locked:#ede8f3; --locked-ink:#55466a;
+  --note:#fff6c7; --note-ink:#4d3f05; --note-line:#e8d27a;
+  --elohim:#fdf0d8; --yhwh:#e3f1e3;
+  --J:#b7791f; --E:#2f7f6f; --P:#5b5fa8; --D:#a8455b;
+  --phone:#ffffff; --status:#f9f7f4;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}}
+:root[data-theme="dark"]{
+  --bg:#1a1714; --panel:#241f1b; --ink:#f1ece6; --ink2:#c2b8ad; --ink3:#8f857a;
+  --line:#3a332d; --accent:#d29a6f; --accent2:#e6b48d; --accent-soft:#33281f;
+  --free:#213821; --free-ink:#a8dba8; --trial:#3a2f16; --trial-ink:#f2d58a;
+  --member:#33281f; --member-ink:#e6b48d; --locked:#2d2637; --locked-ink:#c9b8e6;
+  --note:#3a3414; --note-ink:#f1e3a1; --note-line:#6a5d1e;
+  --elohim:#3d3120; --yhwh:#213821; --phone:#1f1b18; --status:#171412;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Malayalam","Nirmala UI","Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 32px;padding-inline:16px}
+h1,h2,h3{font-family:"Noto Serif Malayalam",Georgia,"Nirmala UI",serif;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+.top{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;padding-block:18px 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.top h1{font-size:22px}
+.top .sub{color:var(--ink2);font-size:13px}
+.langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}.langsw button{background:var(--panel);border:none;padding:6px 14px;color:var(--ink2)}.langsw button.on{background:var(--accent);color:#fff}
+.top .tag{margin-left:0;margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) minmax(280px,360px);gap:20px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}.index{position:static}.index ol{display:flex;flex-wrap:wrap;gap:6px}.index li{flex:0 0 auto}}
+.index{position:sticky;top:12px}
+.index h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-family:inherit}
+.index ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.index button{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);display:flex;gap:8px;align-items:baseline}
+.index button .n{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:11px;min-width:18px}
+.index button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2)}
+.stage{display:flex;justify-content:center}.idtag{display:flex;gap:10px;align-items:baseline;justify-content:center;margin:0 0 8px;font-size:12px;color:var(--ink2)}.idtag b{font-variant-numeric:tabular-nums;color:var(--accent2);background:var(--accent-soft);padding:2px 8px;border-radius:6px;font-size:13px}.idtag code{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--ink3)}
+.phone{width:390px;max-width:100%;height:844px;background:var(--phone);border-radius:38px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line)}
+.notch{height:26px;background:#000;border-radius:0 0 18px 18px;margin:0 auto;width:180px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.status{height:32px;padding:6px 18px;background:var(--status);display:flex;justify-content:space-between;font-size:11px;color:var(--ink3)}
+.brand{padding:8px 16px 4px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink3)}
+.brand b{color:var(--accent);font-family:"Noto Serif Malayalam",Georgia,serif;font-size:14px}
+.brand .acts{display:flex;gap:6px}
+.brand .acts button{background:none;border:1px solid var(--line);border-radius:12px;padding:2px 9px;font-size:11px;color:var(--ink2)}
+.sb{padding:6px 16px 8px;display:grid;gap:5px;background:var(--phone)}
+.sb .box{display:flex;align-items:center;gap:8px;border:1.5px solid var(--accent);border-radius:10px;padding:7px 10px;background:var(--panel)}
+.sb .box span{color:var(--ink3);font-size:13px;flex:1}
+.sb .box i{font-style:normal}
+.sb .modes{display:flex;gap:6px;font-size:11px;align-items:center}
+.sb .modes b{font-weight:500;padding:2px 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent2)}
+.sb .modes em{font-style:normal;color:var(--ink3);margin-left:auto;font-variant-numeric:tabular-nums}
+.head{padding:10px 16px 8px;border-bottom:1px solid var(--line)}
+.head h2{font-size:22px;color:var(--ink)}
+.head p{margin:2px 0 0;font-size:12px;color:var(--ink3)}
+.body{flex:1;overflow-y:auto;padding:14px 16px;min-height:0}
+.foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--phone)}
+.btn{flex:1;padding:11px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:500}
+.btn.sec{background:transparent;color:var(--accent)}
+.hint{font-size:11px;color:var(--ink3);text-align:center;padding:6px 16px 0;background:var(--phone)}
+/* home */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.tile{border-radius:12px;padding:16px 10px;text-align:center;background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);font-family:"Noto Serif Malayalam",serif;font-weight:700;font-size:15px}
+.tile small{display:block;font-family:inherit;font-weight:400;font-size:11px;color:var(--ink3);margin-top:2px}
+.menu{display:grid;gap:7px}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--ink);font-size:13.5px}
+.menu button.degree{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2);font-weight:600}
+.menu button:after{content:"›";color:var(--ink3);font-size:18px}
+/* lists */
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 -16px 10px;padding:0 16px}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 10px;color:var(--ink3)}
+.tabs button.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.books{display:grid;gap:2px}
+.books button{display:flex;justify-content:space-between;width:100%;background:none;border:none;border-bottom:1px solid var(--line);padding:10px 4px;color:var(--ink);font-size:14px}
+.books button span{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:12px}
+/* reader */
+.verse{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;cursor:pointer}
+.verse .n{color:var(--ink3);font-variant-numeric:tabular-nums;font-size:11px;min-width:16px;padding-top:4px}
+.verse .t{font-size:16px;line-height:1.85;flex:1;font-family:"Noto Serif Malayalam",serif}
+.verse .c{color:var(--ink3);align-self:center}
+.nm{padding:1px 5px;border-radius:4px;font-weight:600;font-family:"Noto Sans Malayalam",sans-serif;font-size:14px}
+.nm.el{background:var(--elohim)}
+.nm.yh{background:var(--yhwh)}
+.hit{background:var(--trial);color:var(--trial-ink);border-radius:3px;padding:0 3px}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 0 0;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink3)}
+.pager b{background:var(--accent);color:#fff;border-radius:6px;padding:2px 8px;font-weight:500}
+.pager span{border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.audio{display:flex;justify-content:space-around;align-items:center;padding:8px 16px;border-top:1px solid var(--line);background:var(--status);font-size:20px;color:var(--accent)}
+.audio .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:18px}
+/* src colours */
+.src{border-left:5px solid;padding-left:8px}
+.src.J{border-color:var(--J)}.src.E{border-color:var(--E)}.src.P{border-color:var(--P)}.src.D{border-color:var(--D)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.toggle{position:relative;display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:10px;font-size:13px}
+.sw{width:40px;height:22px;border-radius:11px;background:var(--line);position:relative}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.sw.on{background:var(--accent)}.sw.on:after{left:20px}
+/* timeline */
+.tl{position:relative;padding-left:70px}
+.tl:before{content:"";position:absolute;left:52px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;margin-bottom:22px}
+.tl .ev b{position:absolute;left:-70px;width:50px;text-align:right;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink3);top:4px}
+.tl .ev:before{content:"";position:absolute;left:-23px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.chip{display:inline-block;padding:3px 10px;border-radius:6px;color:#fff;font-weight:600;font-size:13px;margin-right:4px}
+.chip.J{background:var(--J)}.chip.E{background:var(--E)}.chip.P{background:var(--P);color:#1d2a10}.chip.D{background:var(--D)}
+.tl .ev p{margin:4px 0 0;font-size:12px;color:var(--ink2)}
+.tbl{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table{border-collapse:collapse;font-size:12px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{color:#fff;font-weight:600}
+th.J{background:var(--J)}th.E{background:var(--E)}th.P{background:var(--P);color:#1d2a10}th.D{background:var(--D)}
+td:first-child{background:var(--status);font-weight:600;color:var(--ink2);white-space:nowrap}
+/* levels */
+.lvl{padding:11px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:9px;cursor:pointer}
+.lvl.feat{border:2px solid var(--accent)}
+.lvl .r{display:flex;justify-content:space-between;align-items:center}
+.lvl .r b{font-size:15px;font-weight:600}
+.bd{font-size:10.5px;padding:3px 9px;border-radius:5px;font-weight:600;letter-spacing:.02em}
+.bd.free{background:var(--free);color:var(--free-ink)}.bd.trial{background:var(--trial);color:var(--trial-ink)}.bd.member{background:var(--member);color:var(--member-ink)}.bd.locked{background:var(--locked);color:var(--locked-ink)}
+.lvl p{margin:3px 0 0;font-size:12px;color:var(--ink2)}
+.lvl small{color:var(--ink3);font-size:11px}
+.rooms{display:grid;gap:9px}
+.room{padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.room b{font-size:14px;display:block}
+.room span{font-size:12px;color:var(--ink2)}
+.cm{padding:10px 12px;background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px}
+.cm .lb{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.cm h3{font-size:13.5px;margin-bottom:5px;font-family:inherit}
+.cm p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+.cm .heb{font-family:"Noto Serif Hebrew","Times New Roman",serif;direction:rtl;font-size:18px;color:var(--ink);margin:4px 0}
+.img{height:90px;border:1px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink3);font-size:12px;background:var(--status);margin-top:8px}
+.refs{font-size:11px;color:var(--ink3);border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.refs b{color:var(--ink2)}
+.side{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;background:var(--accent);color:#fff;border-radius:10px 0 0 10px;padding:10px 0;display:grid;gap:8px;justify-items:center;font-size:13px;box-shadow:-2px 2px 8px rgba(0,0,0,.2)}
+.side span{writing-mode:vertical-rl;font-size:10px;letter-spacing:.05em}
+.rel{position:relative}
+.req{background:var(--panel);border-left:4px solid var(--accent);border-radius:6px;padding:12px;margin:14px 0}
+.req h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;font-family:inherit}
+.req div{display:flex;gap:8px;font-size:13px;color:var(--ink2);padding:4px 0}
+.req .ok{color:var(--free-ink)}
+.way{display:grid;gap:7px}
+.way button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:13px}
+.way button small{display:block;color:var(--ink3);font-size:11px}
+.field{display:grid;gap:5px;margin-bottom:12px;font-size:12px;color:var(--ink2)}
+.field textarea,.field select,.field .in{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--panel);color:var(--ink);font:inherit}
+.field textarea{min-height:90px;resize:vertical}
+.slider{display:flex;align-items:center;gap:10px;padding:6px 0}
+.slider .bar{flex:1;height:4px;background:var(--line);border-radius:2px;position:relative}
+.slider .bar:after{content:"";position:absolute;left:62%;top:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent)}
+.sugg{display:grid;gap:4px;margin-top:6px}
+.sugg button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px;display:flex;justify-content:space-between}
+.sugg button small{color:var(--ink3);font-size:11px}
+.keys{margin-top:auto;background:var(--status);border-top:1px solid var(--line);padding:8px;display:grid;gap:5px}
+.keys div{display:flex;gap:4px;justify-content:center}
+.keys span{flex:1;max-width:32px;height:34px;border-radius:5px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:13px}
+.res{padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.res .ref{font-size:11px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.res .t{font-size:14.5px;line-height:1.75;font-family:"Noto Serif Malayalam",serif}
+.res .why{font-size:11px;color:var(--ink3);margin-top:2px}
+.pair{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;font-size:13.5px}
+.pair.on{border-color:var(--accent);color:var(--accent2);font-weight:600}
+/* annotation panel */
+.note{background:var(--note);color:var(--note-ink);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px;font-size:13px;position:sticky;top:12px}
+.note h2{font-size:15px;margin-bottom:2px;font-family:inherit}
+.note .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin:10px 0 3px}
+.note p{margin:0 0 4px;line-height:1.5}
+.note ul{margin:0;padding-left:18px}
+.note li{margin:2px 0}
+.note .ask{margin-top:10px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.45);border-left:3px solid var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .note .ask{background:rgba(0,0,0,.25)}}
+:root[data-theme="dark"] .note .ask{background:rgba(0,0,0,.25)}
+.note .eng{font-family:"Segoe UI",system-ui,sans-serif}
+.nav2{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.nav2 button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.screen.on{animation:f .18s ease}@keyframes f{from{opacity:.4}to{opacity:1}}}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- phone mode: real handset (<=480px) shows the app full-screen ---- */
+@media (max-width:480px){
+  body{padding:0}
+  .top{padding:8px 12px;margin:0;border-bottom:1px solid var(--line);gap:6px;flex-wrap:nowrap;align-items:center}
+  .top h1{font-size:14px;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top .sub,.top .tag{display:none}
+  .langsw button{padding:4px 10px;font-size:12px}
+  .layout{display:block}
+  .index,#note{display:none}
+  .index.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px;z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .index.open ol{display:grid;gap:4px}
+  #note.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;z-index:30;border-radius:0;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+  .phone{width:100%;max-width:none;height:calc(100dvh - 42px - 52px);border-radius:0;box-shadow:none;border:none}
+  body .pbar{display:flex}
+}
+.pbar{display:none;position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--line);align-items:center;justify-content:space-between;padding:0 10px;z-index:40;gap:6px}
+.pbar button{background:var(--accent-soft);color:var(--accent2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.pbar .cnt{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>OriginalScript · Batch D — അഡ്മിൻ & ഉള്ളടക്കം</h1>
+  <span class="sub">7 screens · shown in the phone frame for consistency; on a desktop the same panels sit side by side · editor, review queue, settings, cohorts, research export, institution, data-sheet shop</span>
+  <span class="langsw"><button data-l="ml" class="on">മലയാളം</button><button data-l="en">English</button></span>
+  <span class="tag">Prototype · 13 Sep 2026</span>
+</div>
+
+<div class="layout">
+  <nav class="index"><h2>Screens</h2><ol id="idx"></ol></nav>
+
+  <div class="stage"><div><div class="idtag" id="idtag"></div><div class="phone"><div class="notch"></div>
+
+<!-- 1 COMMENTARY EDITOR -->
+<section class="screen" data-t="Commentary editor + images">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · പോൾ</span></div>
+  <div class="brand"><b>OriginalScript · എഡിറ്റർ</b><div class="acts"><button>ക്യൂ 37</button></div></div>
+  <div class="sb" data-q="ഉല്പത്തി 1:1" data-mode="verse"></div>
+  <div class="head"><h2>കമെന്ററി എഡിറ്റ്</h2><p>ഉല്പത്തി 1:1 · മുറി: ദൈവനാമ വിശകലനം · നില 2</p></div>
+  <div class="body">
+    <div class="field"><span>വാക്യം · മുറി · നില</span><div class="in">ഉല്പത്തി 1:1 ▾ &nbsp;|&nbsp; ദൈവനാമ വിശകലനം ▾ &nbsp;|&nbsp; നില 2 ▾</div></div>
+    <div class="field"><span>ഉള്ളടക്കം (മലയാളം) · <u>EN</u> · <u>HI</u> · <u>AF</u></span><textarea>ഉല്പത്തി 1:1–2:4a മുഴുവൻ ഒരേ നാമം — എലോഹിം (35 തവണ). വ്യാകരണപരമായി ബഹുവചന രൂപം, ഏകവചന ക്രിയ (בָּרָא)…</textarea></div>
+    <div class="field"><span>അവലംബങ്ങൾ — നിർബന്ധം (കുറഞ്ഞത് 1)</span><div class="in">Westminster Leningrad Codex, Gen 1:1<br>BDB Lexicon §430<br>Friedman 1987, pp. 50–61 <span style="color:var(--accent)">+ ചേർക്കുക</span></div></div>
+    <div class="field"><span>ചിത്രങ്ങൾ (S3/GCS → CDN)</span><div style="display:flex;gap:6px"><div class="img" style="flex:1;height:64px;margin:0">🖼 codex_1v.jpg</div><div class="img" style="flex:1;height:64px;margin:0">+ അപ്‌ലോഡ്</div></div></div>
+    <div class="toggle">is_theological — ദൈവശാസ്ത്ര ഉള്ളടക്കം <span class="sw"></span></div>
+    <div class="toggle">വേറെ ബൈബിൾ പതിപ്പിൽ നിന്നുള്ള ഉദ്ധരണി ഉണ്ട് <span class="sw"></span><span style="font-size:10px;color:var(--ink3);position:absolute;right:60px">ഓൺ ആയാൽ പ്രസിദ്ധീകരിക്കില്ല (നിയമം 4)</span></div>
+    <div class="cm" style="border-left-color:var(--trial-ink)"><div class="lb">നില</div><p><span class="bd trial">AI തയ്യാറാക്കിയത് · v1</span> → പരിശോധിച്ചാൽ <span class="bd free">✓ എഡിറ്റർ പരിശോധിച്ചത്</span> · പതിപ്പ് ചരിത്രം സൂക്ഷിക്കും</p></div>
+  </div>
+  <div class="foot"><button class="btn sec">കരട് സൂക്ഷിക്കുക</button><button class="btn">പരിശോധിച്ചു · പ്രസിദ്ധീകരിക്കുക ✓</button></div>
+</section>
+
+<!-- 2 REVIEW QUEUE -->
+<section class="screen" data-t="Review queue (AI drafts, flags)">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · പോൾ</span></div>
+  <div class="brand"><b>OriginalScript · എഡിറ്റർ</b><div class="acts"><button>ഫിൽട്ടർ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>പരിശോധനാ ക്യൂ</h2><p>37 കാത്തിരിക്കുന്നു · AI കരടുകൾ 22 · ചോദ്യോത്തരം 11 · ഫ്ലാഗ് 4</p></div>
+  <div class="body">
+    <div class="tabs"><button class="on">എല്ലാം</button><button>AI കരട്</button><button>ചോദ്യോത്തരം</button><button>ഫ്ലാഗ്</button></div>
+    <div class="res" data-go="1"><div class="ref">കമെന്ററി · ഉല്പത്തി 1:1 · ദൈവനാമ വിശകലനം · <span class="bd trial">AI കരട്</span></div><div class="t" style="font-size:13.5px">എലോഹിം — ബഹുവചന രൂപം, ഏകവചന ക്രിയ…</div><div class="why">അവലംബം 3 ✓ · ചിത്രം 1 · is_theological: ഇല്ല</div></div>
+    <div class="res"><div class="ref">ചോദ്യോത്തരം · പുറപ്പാട് 6:3 · <span class="bd trial">AI മറുപടി</span> · 214 പേർ ചോദിച്ചു</div><div class="t" style="font-size:13.5px">അബ്രാഹാം യഹ്‌വെ എന്ന പേര് അറിഞ്ഞിരുന്നില്ലേ?</div><div class="why">അവലംബം 1 ✓ · പരിശോധിച്ചാൽ ചോദിച്ച 214 പേർക്കും വാട്സ്ആപ്പ്</div></div>
+    <div class="res"><div class="ref">കമെന്ററി · യോഹന്നാൻ 1:1 · സന്ദർഭ പ്രവാഹം · <span class="bd locked">ഫ്ലാഗ്: ദൈവശാസ്ത്രം?</span></div><div class="t" style="font-size:13.5px">AI സൂചന: “…ഈ വാക്യം ത്രിത്വത്തെ…” — ദൈവശാസ്ത്ര വ്യാഖ്യാനം ആകാം</div><div class="why">തീരുമാനം: is_theological ഓൺ ചെയ്യുക / വാചകം മാറ്റുക</div></div>
+    <div class="res"><div class="ref">കമെന്ററി · സങ്കീർത്തനം 23:1 · <span class="bd locked">ഫ്ലാഗ്: മറ്റു പതിപ്പ്</span></div><div class="t" style="font-size:13.5px">AI സൂചന: ഉദ്ധരണി മറ്റൊരു ബൈബിൾ പതിപ്പിൽ നിന്നാകാം (നിയമം 4)</div><div class="why">പ്രസിദ്ധീകരണം തടഞ്ഞു</div></div>
+    <div class="res"><div class="ref">കമെന്ററി · ഉല്പത്തി 2:4 · സ്രോതസ്സ് നിർണ്ണയം · <span class="bd trial">AI കരട്</span></div><div class="t" style="font-size:13.5px">2:4a P / 2:4b J — ദൈവനാമം മാറുന്നു…</div><div class="why">അവലംബം 0 ✗ — പ്രസിദ്ധീകരിക്കാനാവില്ല</div></div>
+  </div>
+  <div class="hint">നിയമങ്ങൾ: അവലംബമില്ലാതെ പ്രസിദ്ധീകരിക്കില്ല · മറ്റു പതിപ്പ് ഉദ്ധരണി ഇല്ല · ദൈവശാസ്ത്രം = ഫ്ലാഗ് നിർബന്ധം</div>
+</section>
+
+<!-- 3 SETTINGS: PRICES & LEVELS -->
+<section class="screen" data-t="Settings: prices per country tier, levels">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · സെബാസ്റ്റ്യൻ</span></div>
+  <div class="brand"><b>OriginalScript · അഡ്മിൻ</b><div class="acts"><button>ചരിത്രം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ക്രമീകരണങ്ങൾ</h2><p>കോഡിൽ അല്ല — ഇവിടെ മാറ്റിയാൽ ഉടൻ പ്രാബല്യം</p></div>
+  <div class="body">
+    <h3 style="font-size:13px;margin-bottom:6px">വില · രാജ്യ ശ്രേണി</h3>
+    <div class="tbl"><table style="min-width:0;width:100%">
+      <tr><th style="background:var(--accent)">ശ്രേണി</th><th style="background:var(--accent)">ചേരൽ</th><th style="background:var(--accent)">സൗജന്യ മാസം</th><th style="background:var(--accent)">പ്രതിമാസം</th><th style="background:var(--accent)">വിലയിരുത്തൽ</th></tr>
+      <tr><td>1 · യു.എസ്., യൂറോപ്പ്…</td><td>$10</td><td>3</td><td>$4.99</td><td>$100</td></tr>
+      <tr><td>2 · ഇന്ത്യ, ബ്രസീൽ…</td><td>₹ 830</td><td>3</td><td>₹ 99</td><td>സ്കോളർഷിപ്പ്</td></tr>
+      <tr><td>3 · ആഫ്രിക്ക (ഭൂരിഭാഗം)…</td><td>0</td><td>∞</td><td>0</td><td>സ്കോളർഷിപ്പ്</td></tr>
+    </table></div>
+    <p style="font-size:11px;color:var(--ink3)">ഉദാഹരണ കണക്കുകൾ — തീരുമാനം തുറന്നിരിക്കുന്നു (13 സെപ്റ്റം.)</p>
+    <h3 style="font-size:13px;margin:12px 0 6px">നിലകൾ · മണിക്കൂർ · ക്രെഡിറ്റ്</h3>
+    <div class="tbl"><table style="min-width:0;width:100%">
+      <tr><th style="background:var(--accent)">നില</th><th style="background:var(--accent)">ക്ലാസ്</th><th style="background:var(--accent)">മറ്റു</th><th style="background:var(--accent)">ക്രെഡിറ്റ്</th><th style="background:var(--accent)">മുറികൾ</th></tr>
+      <tr><td>1 വിദ്യാർത്ഥി പണ്ഡിതൻ</td><td>15</td><td>30</td><td>1.00</td><td>8</td></tr>
+      <tr><td>2 ആഴപണ്ഡിതൻ</td><td>15</td><td>30</td><td>1.00</td><td>10</td></tr>
+      <tr><td>3 മാസ്റ്റർ അനലിസ്റ്റ്</td><td>20</td><td>40</td><td>1.33</td><td>12</td></tr>
+      <tr><td>4 പണ്ഡിത ശേഖരം</td><td>30</td><td>60</td><td>2.00</td><td>14</td></tr>
+    </table></div>
+    <div class="toggle" style="margin-top:12px">സന്ദർശക തിരച്ചിൽ പരിധി / ദിവസം <b>10</b> <span style="font-size:11px;color:var(--ink3)">ഉപകരണം അനുസരിച്ച്</span></div>
+    <div class="toggle">നിഷ്ക്രിയ നിർത്തൽ <b>5 മി</b> · ഹൃദയമിടിപ്പ് <b>30 സെ</b></div>
+    <div class="toggle">വാട്സ്ആപ്പ് സന്ദേശം ഓരോ <b>30 മി</b> · OTP: ചെലവു കുറഞ്ഞ ചാനൽ</div>
+  </div>
+  <div class="foot"><button class="btn" style="flex:1">സൂക്ഷിക്കുക (മാറ്റം രേഖപ്പെടും)</button></div>
+</section>
+
+<!-- 4 COHORT TRACKER -->
+<section class="screen" data-t="Cohort-of-20 tracker">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · സെബാസ്റ്റ്യൻ</span></div>
+  <div class="brand"><b>OriginalScript · അഡ്മിൻ</b><div class="acts"><button>⬇ CSV</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ബാച്ചുകൾ · 20 പേർ</h2><p>20 ആയാൽ യൂണിവേഴ്സിറ്റിയെ സമീപിക്കുക</p></div>
+  <div class="body">
+    <div class="lvl feat"><div class="r"><b>നില 1 · യൂണിവേഴ്സിറ്റി A (കേരളം)</b><span class="bd free">20 / 20 ✓</span></div><p>സമീപിച്ചു 9 സെപ്റ്റം. · മറുപടി കാത്തിരിക്കുന്നു · ട്രാൻസ്ക്രിപ്റ്റുകൾ അയച്ചു 20</p><div class="nav2" style="justify-content:flex-start"><button data-go="6">സ്ഥാപനം തുറക്കുക</button><button>ഇമെയിൽ ഡ്രാഫ്റ്റ്</button></div></div>
+    <div class="lvl"><div class="r"><b>നില 2 · യൂണിവേഴ്സിറ്റി A</b><span class="bd trial">14 / 20</span></div><p>6 ബാക്കി · ഈ ആഴ്ച +2 · ഈ വേഗത്തിൽ: 3 ആഴ്ച</p><div class="pager" style="justify-content:flex-start;padding-top:6px"><span style="border:none;padding:0;width:100%;height:6px;background:var(--line);border-radius:3px;display:block;position:relative"><i style="position:absolute;left:0;top:0;height:100%;width:70%;background:var(--accent);border-radius:3px"></i></span></div></div>
+    <div class="lvl"><div class="r"><b>നില 1 · കോളേജ് B (നൈറോബി)</b><span class="bd free">20 / 20 ✓</span></div><p>സമീപിച്ചു 2 സെപ്റ്റം. · മീറ്റിംഗ് 18 സെപ്റ്റം.</p></div>
+    <div class="lvl"><div class="r"><b>നില 3 · (യൂണിവേഴ്സിറ്റി ഇല്ല)</b><span class="bd locked">4 / 20</span></div><p>യൂണിവേഴ്സിറ്റി ചേർക്കുക</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">ബാച്ചിലെ ഒരാൾ (ഉദാഹരണം)</div><p>സാറ ജോൺ · OS‑2024‑08621 · നില 2 · 48.5 മ · ഇടക്കാല 4/4 · അന്തിമം: ബാക്കി · ട്രാൻസ്ക്രിപ്റ്റ് ✓</p></div>
+  </div>
+</section>
+
+<!-- 5 RESEARCH EXPORT -->
+<section class="screen" data-t="Research export (hours, questions)">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · ഗവേഷണം</span></div>
+  <div class="brand"><b>OriginalScript · അഡ്മിൻ</b><div class="acts"><button>ചരിത്രം</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>ഗവേഷണ ഡാറ്റ</h2><p>വായനക്കാരുടെ ഇടപെടലും ചോദ്യരീതികളും</p></div>
+  <div class="body">
+    <div class="field"><span>എന്ത്</span><div class="in">☑ പഠനസമയം (ദിവസം അനുസരിച്ച്) ☑ ചോദ്യങ്ങൾ (വാക്യം അനുസരിച്ച്) ☐ തിരച്ചിലുകൾ ☐ റാങ്കുകൾ</div></div>
+    <div class="field"><span>ആരുടെ</span><div class="in">ഒരാൾ: ലോഗിൻ ഇമെയിൽ / ഫോൺ ▾ &nbsp;|&nbsp; അല്ലെങ്കിൽ എല്ലാവരും (പേരില്ലാതെ)</div></div>
+    <div class="field"><span>കാലം</span><div class="in">1 ഓഗ. 2026 – 13 സെപ്റ്റം. 2026</div></div>
+    <div class="cm"><div class="lb">മുൻകാഴ്ച · sarah@… · ദിവസം അനുസരിച്ച്</div><div class="tbl"><table style="min-width:0;width:100%"><tr><th style="background:var(--accent)">തീയതി</th><th style="background:var(--accent)">വായന</th><th style="background:var(--accent)">കേൾവി</th><th style="background:var(--accent)">ചോദ്യം</th></tr><tr><td>13‑09</td><td>58</td><td>14</td><td>1</td></tr><tr><td>12‑09</td><td>48</td><td>0</td><td>0</td></tr><tr><td>11‑09</td><td>35</td><td>30</td><td>1</td></tr></table></div></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">ഏറ്റവും കൂടുതൽ ചോദിച്ച വാക്യങ്ങൾ (ഈ മാസം)</div><p>ഉല്പത്തി 1:1 — 214 · പുറപ്പാട് 6:3 — 96 · യോഹന്നാൻ 1:1 — 88 → പുതിയ മുറികൾക്കുള്ള സൂചന</p></div>
+    <p style="font-size:11px;color:var(--ink3)">എല്ലാവരുടെയും ഡാറ്റ പ്രായ വിഭാഗം/രാജ്യം മാത്രം — പേരില്ല, ഫോണില്ല.</p>
+  </div>
+  <div class="foot"><button class="btn sec">📧 ഇമെയിൽ</button><button class="btn">⬇ CSV / XLSX</button></div>
+</section>
+
+<!-- 6 PARTNER INSTITUTION (ADMIN) -->
+<section class="screen" data-t="Partner institution (admin view)">
+  <div class="status"><span>9:41</span><span>അഡ്മിൻ · സെബാസ്റ്റ്യൻ</span></div>
+  <div class="brand"><b>OriginalScript · അഡ്മിൻ</b><div class="acts"><button data-go="4">← ബാച്ചുകൾ</button></div></div>
+  <div class="sb"></div>
+  <div class="head"><h2>യൂണിവേഴ്സിറ്റി A · കേരളം</h2><p>പൊതു പേജ് + ആന്തരിക കുറിപ്പുകൾ</p></div>
+  <div class="body">
+    <div class="field"><span>നില (പൊതുവിൽ കാണിക്കും)</span><div class="in">ചർച്ചയിൽ ▾ &nbsp; <span style="color:var(--ink3)">(ലക്ഷ്യം / ചർച്ചയിൽ / അംഗീകരിച്ചു / നിരസിച്ചു)</span></div></div>
+    <div class="field"><span>പൊതു വിവരങ്ങൾ</span><div class="in">ബി.എ. തിയോളജി · ഫീസ് · പ്രവേശന നിബന്ധനകൾ · സമ്പർക്കം · നമ്മുടെ നിലയുമായുള്ള ബന്ധം: നില 1–2 → 1st year electives (നിർദ്ദേശം)</div></div>
+    <div class="field"><span>ആന്തരികം (പൊതുവിൽ ഇല്ല)</span><textarea>9 സെപ്റ്റം. — ഡീൻ: മണിക്കൂർ തുല്യത പരിഗണിക്കാം, അന്തിമ പരീക്ഷ അവരുടേത്. കമ്മീഷൻ: പ്രവേശനത്തിന് 15%. അടുത്ത മീറ്റിംഗ് 25 സെപ്റ്റം.</textarea></div>
+    <div class="cm"><div class="lb">ബാച്ചുകൾ</div><p>നില 1: 20/20 — ട്രാൻസ്ക്രിപ്റ്റുകൾ അയച്ചു · നില 2: 14/20</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">അവർ ചോദിച്ച രേഖകൾ</div><p>☑ പഠനഘടന (PDF) · ☑ പരീക്ഷാ മാതൃകകൾ · ☐ പ്രോക്ടറിംഗ് നയം · ☐ എഡിറ്റർ യോഗ്യതകൾ</p></div>
+  </div>
+  <div class="foot"><button class="btn sec">പൊതു പേജ് കാണുക</button><button class="btn">സൂക്ഷിക്കുക</button></div>
+</section>
+
+<!-- 7 DATA-SHEET LICENCE SHOP -->
+<section class="screen" data-t="Source data-sheet licence shop">
+  <div class="status"><span>9:41</span><span>4G ▮▮▮</span></div>
+  <div class="brand"><b>OriginalScript</b><div class="acts"><button>പ്രവേശിക്കുക</button></div></div>
+  <div class="sb" data-q="ഡാറ്റ" data-mode="word"></div>
+  <div class="head"><h2>സ്രോതസ്സ് ഡാറ്റാഷീറ്റുകൾ</h2><p>ഗവേഷകർക്കും ഡെവലപ്പർമാർക്കും · അവലംബത്തോടെ ഉപയോഗിക്കാം</p></div>
+  <div class="body">
+    <div class="lvl"><div class="r"><b>ഉല്പത്തി · ദൈവനാമങ്ങൾ (xlsx)</b><span class="bd member">$4</span></div><p>1,533 വാക്യങ്ങൾ · എബ്രായ · നാമം · സ്രോതസ്സ് J/E/P/D · വാക്യം അനുസരിച്ച്</p><small>© OriginalScript 2026 · ലൈസൻസ്: അവലംബത്തോടെ ഉപയോഗം · പുനർവിൽപ്പന ഇല്ല</small></div>
+    <div class="lvl"><div class="r"><b>പുതിയ നിയമം · ദൈവനാമങ്ങൾ (xlsx)</b><span class="bd member">$9</span></div><p>7,957 വാക്യങ്ങൾ · ഗ്രീക്ക് · θεός / κύριος സന്ദർഭം</p><small>© OriginalScript 2026</small></div>
+    <div class="lvl"><div class="r"><b>വിരുദ്ധ വാക്യ ജോഡികൾ (csv)</b><span class="bd free">സൗജന്യ മാതൃക</span></div><p>ആദ്യ 100 ജോഡികൾ · പൂർണ്ണം $6</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">അവലംബ വാചകം (ഓരോ ഷീറ്റിലും)</div><p>“OriginalScript.org, Genesis Divine Names dataset v1.0 (2026). Used under licence.”</p></div>
+    <div class="cm" style="border-left-color:var(--ink3)"><div class="lb">അഡ്മിൻ (ഈ പേജിന്റെ പിന്നിൽ)</div><p>ഷീറ്റ് അപ്‌ലോഡ് · പതിപ്പ് · വില · ലൈസൻസ് വാചകം · വിറ്റത്: 41 · വരുമാനം ഈ മാസം: $212</p></div>
+  </div>
+  <div class="foot"><button class="btn sec">മാതൃക ഡൗൺലോഡ്</button><button class="btn">വാങ്ങുക</button></div>
+</section>
+
+  </div></div></div>
+
+  <aside class="note eng" id="note"></aside>
+</div>
+
+<script>
+const NOTES = [
+ {u:"An editor (India team) writes or checks a commentary.",m:["One record = verse + room + level + language tabs (ML / EN / HI / AF).","References are mandatory: publish is blocked with fewer than one (rule 3).","Multi-image upload to S3/GCS, served by CDN.","is_theological flag — when ON the text is hidden from the academic version.","'Quote from another Bible version' flag — when ON, publish is blocked (rule 4).","Status chain: AI draft v1 → editor verified ✓; every version kept."],s:"Doc p.1 'Commentary Image Uploads', 'Strict Content Neutrality'; project rules 3 & 4; decision 13 Sep on AI-first + editor tick",d:"commentary (verse_id, room_id, level, lang, body, references[], images[], is_theological, status, version)",a:""},
+ {u:"Editor opens the daily queue.",m:["Everything waiting in one list: AI commentary drafts, AI answers to reader questions, AI flags (possible theology, possible other-version quote), items with zero references.","Verifying an AI answer sends it by WhatsApp to everyone who asked that question.","Hard rules in the footer line."],s:"Decision 13 Sep: AI answers first, editor verifies; rules 3 & 4",d:"review_queue view over commentary + answers",a:"Should a second editor be required for is_theological decisions (two-person rule)?"},
+ {u:"You (owner) change prices, hours or limits.",m:["Nothing here is hard-coded: prices per country tier (join, free months, monthly, evaluation), hours and credit per level, room count per level, visitor quota, idle stop, heartbeat, WhatsApp interval, OTP channel rule.","Every change is logged with who/when.","Figures shown are examples — decision left open on 13 Sep."],s:"Decisions 13 Sep: prices open; per-device quota; cheapest OTP channel; listening counts",d:"settings (key, value, country_tier, changed_by, changed_at)",a:"Which countries go in which tier? A default split by World Bank income group can be the starting point."},
+ {u:"You track how close each course is to a batch of 20.",m:["One card per course × target university with count, weekly growth and weeks-to-20.","At 20: status flips to 'approached', transcripts sent, next-step buttons.","Tap into any member's line to see hours / tests / transcript."],s:"Doc p.14 'Once a batch of 20 students joined to any course, we will approach the universities'",d:"cohorts (course_id, institution_id, members[], approached_at)",a:""},
+ {u:"Research team pulls reader data.",m:["By one login (email or phone) or for everyone anonymised (age band, country only).","Hours by date split reading / listening; questions by verse; most-asked verses feed new rooms.","CSV / XLSX / email."],s:"Doc p.1 'can pull the data datewise for that login email id'; 'reader demographic metadata for research'",d:"study_sessions, reader_questions (aggregations)",a:"Data-protection: exports of one named person should be logged and limited to named staff — agree?"},
+ {u:"You manage a partner institution.",m:["Public part (shown on the visitor page) and internal notes (never public).","Status drives the public badge: target / in discussion / accepted / declined.","Checklist of documents the university asked for."],s:"Chat 13 Sep: institutions browsable by anyone (public details); doc p.14 recruiter/commission model",d:"institutions (public fields, status) + institution_notes (private)",a:""},
+ {u:"A researcher or developer buys a source data-sheet.",m:["Each xlsx/csv sold under licence with copyright line and a required citation sentence; free sample rows.","Admin side: upload, version, price, licence text, sales.","Small fixed prices as in the doc."],s:"Doc p.14 'The source xlsx sheets will be uploaded with copyright and sold for small dollars to use by others with reference'",d:"datasets (file, version, price, licence_text, sales)",a:"Prices here are examples — set in the same settings screen."}
+];
+const IDS=[["5.1", "ADM-EDIT", "/admin/editor/{commentary_id}"], ["5.2", "ADM-QUEUE", "/admin/queue"], ["5.3", "ADM-SET", "/admin/settings"], ["5.4", "ADM-COHORT", "/admin/cohorts"], ["5.5", "ADM-RESEARCH", "/admin/research"], ["5.6", "ADM-INST", "/admin/institutions/{id}"], ["1.8", "DATA", "/data"]];
+const KEY='os-batch-d';
+const EN={"OriginalScript · Batch D — അഡ്മിൻ &amp; ഉള്ളടക്കം": "OriginalScript · Batch D — Admin &amp; Content", "അഡ്മിൻ · പോൾ": "Admin · Paul", "OriginalScript · എഡിറ്റർ": "OriginalScript · Editor", "ക്യൂ 37": "Queue 37", "കമെന്ററി എഡിറ്റ്": "Edit commentary", "ഉല്പത്തി 1:1 · മുറി: ദൈവനാമ വിശകലനം · നില 2": "Genesis 1:1 · room: Divine Name Analysis · Level 2", "വാക്യം · മുറി · നില": "Verse · room · level", "ഉല്പത്തി 1:1 ▾ | ദൈവനാമ വിശകലനം ▾ | നില 2 ▾": "Genesis 1:1 ▾  |  Divine Name Analysis ▾  |  Level 2 ▾", "ഉള്ളടക്കം (മലയാളം) · <u>EN</u> · <u>HI</u> · <u>AF</u>": "Content (English) · <u>ML</u> · <u>HI</u> · <u>AF</u>", "ഉല്പത്തി 1:1–2:4a മുഴുവൻ ഒരേ നാമം — എലോഹിം (35 തവണ). വ്യാകരണപരമായി ബഹുവചന രൂപം, ഏകവചന ക്രിയ (בָּרָא)…": "All of Genesis 1:1–2:4a uses one name — Elohim (35 times). Grammatically a plural form with a singular verb (בָּרָא)…", "അവലംബങ്ങൾ — നിർബന്ധം (കുറഞ്ഞത് 1)": "References — mandatory (at least 1)", "+ ചേർക്കുക": "+ Add", "ചിത്രങ്ങൾ (S3/GCS → CDN)": "Images (S3/GCS → CDN)", "+ അപ്‌ലോഡ്": "+ Upload", "is_theological — ദൈവശാസ്ത്ര ഉള്ളടക്കം <span class=\"sw\"></span>": "is_theological — theological content <span class=\"sw\"></span>", "വേറെ ബൈബിൾ പതിപ്പിൽ നിന്നുള്ള ഉദ്ധരണി ഉണ്ട് <span class=\"sw\"></span><span style=\"font-size:10px;color:var(--ink3);position:absolute;right:60px\">ഓൺ ആയാൽ പ്രസിദ്ധീകരിക്കില്ല (നിയമം 4)</span>": "Contains a quotation from another Bible version <span class=\"sw\"></span><span style=\"font-size:10px;color:var(--ink3);position:absolute;right:60px\">If on, cannot be published (rule 4)</span>", "ഓൺ ആയാൽ പ്രസിദ്ധീകരിക്കില്ല (നിയമം 4)": "If on, cannot be published (rule 4)", "നില": "Status", "<span class=\"bd trial\">AI തയ്യാറാക്കിയത് · v1</span> → പരിശോധിച്ചാൽ <span class=\"bd free\">✓ എഡിറ്റർ പരിശോധിച്ചത്</span> · പതിപ്പ് ചരിത്രം സൂക്ഷിക്കും": "<span class=\"bd trial\">AI generated · v1</span> → after checking <span class=\"bd free\">✓ Verified by editor</span> · version history kept", "AI തയ്യാറാക്കിയത് · v1": "AI generated · v1", "✓ എഡിറ്റർ പരിശോധിച്ചത്": "✓ Verified by editor", "കരട് സൂക്ഷിക്കുക": "Save draft", "പരിശോധിച്ചു · പ്രസിദ്ധീകരിക്കുക ✓": "Verified · publish ✓", "ഫിൽട്ടർ": "Filter", "പരിശോധനാ ക്യൂ": "Review queue", "37 കാത്തിരിക്കുന്നു · AI കരടുകൾ 22 · ചോദ്യോത്തരം 11 · ഫ്ലാഗ് 4": "37 waiting · AI drafts 22 · Q&A 11 · flags 4", "എല്ലാം": "All", "AI കരട്": "AI drafts", "ചോദ്യോത്തരം": "Q&A", "ഫ്ലാഗ്": "Flags", "കമെന്ററി · ഉല്പത്തി 1:1 · ദൈവനാമ വിശകലനം · <span class=\"bd trial\">AI കരട്</span>": "Commentary · Genesis 1:1 · Divine Name Analysis · <span class=\"bd trial\">AI draft</span>", "എലോഹിം — ബഹുവചന രൂപം, ഏകവചന ക്രിയ…": "Elohim — plural form, singular verb…", "അവലംബം 3 ✓ · ചിത്രം 1 · is_theological: ഇല്ല": "References 3 ✓ · images 1 · is_theological: no", "ചോദ്യോത്തരം · പുറപ്പാട് 6:3 · <span class=\"bd trial\">AI മറുപടി</span> · 214 പേർ ചോദിച്ചു": "Q&A · Exodus 6:3 · <span class=\"bd trial\">AI answer</span> · asked by 214 people", "AI മറുപടി": "AI answer", "അബ്രാഹാം യഹ്‌വെ എന്ന പേര് അറിഞ്ഞിരുന്നില്ലേ?": "Did Abraham not know the name YHWH?", "അവലംബം 1 ✓ · പരിശോധിച്ചാൽ ചോദിച്ച 214 പേർക്കും വാട്സ്ആപ്പ്": "References 1 ✓ · once verified, WhatsApp goes to all 214 who asked", "കമെന്ററി · യോഹന്നാൻ 1:1 · സന്ദർഭ പ്രവാഹം · <span class=\"bd locked\">ഫ്ലാഗ്: ദൈവശാസ്ത്രം?</span>": "Commentary · John 1:1 · Contextual Flow · <span class=\"bd locked\">Flag: theological?</span>", "ഫ്ലാഗ്: ദൈവശാസ്ത്രം?": "Flag: theological?", "AI സൂചന: “…ഈ വാക്യം ത്രിത്വത്തെ…” — ദൈവശാസ്ത്ര വ്യാഖ്യാനം ആകാം": "AI hint: “…this verse the Trinity…” — may be a theological interpretation", "തീരുമാനം: is_theological ഓൺ ചെയ്യുക / വാചകം മാറ്റുക": "Decision: switch on is_theological / change the wording", "കമെന്ററി · സങ്കീർത്തനം 23:1 · <span class=\"bd locked\">ഫ്ലാഗ്: മറ്റു പതിപ്പ്</span>": "Commentary · Psalm 23:1 · <span class=\"bd locked\">Flag: other version</span>", "ഫ്ലാഗ്: മറ്റു പതിപ്പ്": "Flag: other version", "AI സൂചന: ഉദ്ധരണി മറ്റൊരു ബൈബിൾ പതിപ്പിൽ നിന്നാകാം (നിയമം 4)": "AI hint: the quotation may come from another Bible version (rule 4)", "പ്രസിദ്ധീകരണം തടഞ്ഞു": "Publishing blocked", "കമെന്ററി · ഉല്പത്തി 2:4 · സ്രോതസ്സ് നിർണ്ണയം · <span class=\"bd trial\">AI കരട്</span>": "Commentary · Genesis 2:4 · Source Attribution · <span class=\"bd trial\">AI draft</span>", "2:4a P / 2:4b J — ദൈവനാമം മാറുന്നു…": "2:4a P / 2:4b J — the divine name changes…", "അവലംബം 0 ✗ — പ്രസിദ്ധീകരിക്കാനാവില്ല": "References 0 ✗ — cannot be published", "നിയമങ്ങൾ: അവലംബമില്ലാതെ പ്രസിദ്ധീകരിക്കില്ല · മറ്റു പതിപ്പ് ഉദ്ധരണി ഇല്ല · ദൈവശാസ്ത്രം = ഫ്ലാഗ് നിർബന്ധം": "Rules: no publishing without references · no quotations from other versions · theology = flag mandatory", "അഡ്മിൻ · സെബാസ്റ്റ്യൻ": "Admin · Sebastian", "OriginalScript · അഡ്മിൻ": "OriginalScript · Admin", "ചരിത്രം": "History", "ക്രമീകരണങ്ങൾ": "Settings", "കോഡിൽ അല്ല — ഇവിടെ മാറ്റിയാൽ ഉടൻ പ്രാബല്യം": "Not in code — changes here take effect at once", "വില · രാജ്യ ശ്രേണി": "Prices · country tier", "ശ്രേണി": "Tier", "ചേരൽ": "Join", "സൗജന്യ മാസം": "Free months", "പ്രതിമാസം": "Monthly", "വിലയിരുത്തൽ": "Evaluation", "1 · യു.എസ്., യൂറോപ്പ്…": "1 · US, Europe…", "2 · ഇന്ത്യ, ബ്രസീൽ…": "2 · India, Brazil…", "സ്കോളർഷിപ്പ്": "Scholarship", "3 · ആഫ്രിക്ക (ഭൂരിഭാഗം)…": "3 · Africa (most)…", "ഉദാഹരണ കണക്കുകൾ — തീരുമാനം തുറന്നിരിക്കുന്നു (13 സെപ്റ്റം.)": "Example figures — decision left open (13 Sep)", "നിലകൾ · മണിക്കൂർ · ക്രെഡിറ്റ്": "Levels · hours · credit", "ക്ലാസ്": "Class", "മറ്റു": "Other", "ക്രെഡിറ്റ്": "Credit", "മുറികൾ": "Rooms", "1 വിദ്യാർത്ഥി പണ്ഡിതൻ": "1 Student Scholar", "2 ആഴപണ്ഡിതൻ": "2 Deep Scholar", "3 മാസ്റ്റർ അനലിസ്റ്റ്": "3 Master Analyst", "4 പണ്ഡിത ശേഖരം": "4 Scholar's Archive", "സന്ദർശക തിരച്ചിൽ പരിധി / ദിവസം <b>10</b> <span style=\"font-size:11px;color:var(--ink3)\">ഉപകരണം അനുസരിച്ച്</span>": "Visitor search limit / day <b>10</b> <span style=\"font-size:11px;color:var(--ink3)\">per device</span>", "ഉപകരണം അനുസരിച്ച്": "per device", "നിഷ്ക്രിയ നിർത്തൽ <b>5 മി</b> · ഹൃദയമിടിപ്പ് <b>30 സെ</b>": "Idle stop <b>5 min</b> · heartbeat <b>30 s</b>", "5 മി": "5 min", "30 സെ": "30 s", "വാട്സ്ആപ്പ് സന്ദേശം ഓരോ <b>30 മി</b> · OTP: ചെലവു കുറഞ്ഞ ചാനൽ": "WhatsApp message every <b>30 min</b> · OTP: cheapest channel", "30 മി": "30 min", "സൂക്ഷിക്കുക (മാറ്റം രേഖപ്പെടും)": "Save (change is logged)", "ബാച്ചുകൾ · 20 പേർ": "Batches · 20 people", "20 ആയാൽ യൂണിവേഴ്സിറ്റിയെ സമീപിക്കുക": "At 20, approach the university", "നില 1 · യൂണിവേഴ്സിറ്റി A (കേരളം)": "Level 1 · University A (Kerala)", "സമീപിച്ചു 9 സെപ്റ്റം. · മറുപടി കാത്തിരിക്കുന്നു · ട്രാൻസ്ക്രിപ്റ്റുകൾ അയച്ചു 20": "Approached 9 Sep · awaiting reply · 20 transcripts sent", "സ്ഥാപനം തുറക്കുക": "Open institution", "ഇമെയിൽ ഡ്രാഫ്റ്റ്": "Email draft", "നില 2 · യൂണിവേഴ്സിറ്റി A": "Level 2 · University A", "6 ബാക്കി · ഈ ആഴ്ച +2 · ഈ വേഗത്തിൽ: 3 ആഴ്ച": "6 to go · +2 this week · at this pace: 3 weeks", "നില 1 · കോളേജ് B (നൈറോബി)": "Level 1 · College B (Nairobi)", "സമീപിച്ചു 2 സെപ്റ്റം. · മീറ്റിംഗ് 18 സെപ്റ്റം.": "Approached 2 Sep · meeting 18 Sep", "നില 3 · (യൂണിവേഴ്സിറ്റി ഇല്ല)": "Level 3 · (no university)", "യൂണിവേഴ്സിറ്റി ചേർക്കുക": "Add a university", "ബാച്ചിലെ ഒരാൾ (ഉദാഹരണം)": "One member of the batch (example)", "സാറ ജോൺ · OS‑2024‑08621 · നില 2 · 48.5 മ · ഇടക്കാല 4/4 · അന്തിമം: ബാക്കി · ട്രാൻസ്ക്രിപ്റ്റ് ✓": "Sarah John · OS‑2024‑08621 · Level 2 · 48.5 h · interim 4/4 · final: pending · transcript ✓", "അഡ്മിൻ · ഗവേഷണം": "Admin · Research", "ഗവേഷണ ഡാറ്റ": "Research data", "വായനക്കാരുടെ ഇടപെടലും ചോദ്യരീതികളും": "Reader engagement and question patterns", "എന്ത്": "What", "☑ പഠനസമയം (ദിവസം അനുസരിച്ച്) ☑ ചോദ്യങ്ങൾ (വാക്യം അനുസരിച്ച്) ☐ തിരച്ചിലുകൾ ☐ റാങ്കുകൾ": "☑ Study time (by day) ☑ Questions (by verse) ☐ Searches ☐ Ranks", "ആരുടെ": "Whose", "ഒരാൾ: ലോഗിൻ ഇമെയിൽ / ഫോൺ ▾ | അല്ലെങ്കിൽ എല്ലാവരും (പേരില്ലാതെ)": "One person: login email / phone ▾  |  or everyone (anonymised)", "കാലം": "Period", "1 ഓഗ. 2026 – 13 സെപ്റ്റം. 2026": "1 Aug 2026 – 13 Sep 2026", "മുൻകാഴ്ച · sarah@… · ദിവസം അനുസരിച്ച്": "Preview · sarah@… · by day", "തീയതി": "Date", "വായന": "Reading", "കേൾവി": "Listening", "ചോദ്യം": "Questions", "ഏറ്റവും കൂടുതൽ ചോദിച്ച വാക്യങ്ങൾ (ഈ മാസം)": "Most-asked verses (this month)", "ഉല്പത്തി 1:1 — 214 · പുറപ്പാട് 6:3 — 96 · യോഹന്നാൻ 1:1 — 88 → പുതിയ മുറികൾക്കുള്ള സൂചന": "Genesis 1:1 — 214 · Exodus 6:3 — 96 · John 1:1 — 88 → hints for new rooms", "എല്ലാവരുടെയും ഡാറ്റ പ്രായ വിഭാഗം/രാജ്യം മാത്രം — പേരില്ല, ഫോണില്ല.": "Everyone's data: age group / country only — no names, no phone numbers.", "📧 ഇമെയിൽ": "📧 Email", "← ബാച്ചുകൾ": "← Batches", "യൂണിവേഴ്സിറ്റി A · കേരളം": "University A · Kerala", "പൊതു പേജ് + ആന്തരിക കുറിപ്പുകൾ": "Public page + internal notes", "നില (പൊതുവിൽ കാണിക്കും)": "Status (shown publicly)", "ചർച്ചയിൽ ▾ <span style=\"color:var(--ink3)\">(ലക്ഷ്യം / ചർച്ചയിൽ / അംഗീകരിച്ചു / നിരസിച്ചു)</span>": "In discussion ▾   <span style=\"color:var(--ink3)\">(target / in discussion / accepted / declined)</span>", "(ലക്ഷ്യം / ചർച്ചയിൽ / അംഗീകരിച്ചു / നിരസിച്ചു)": "(target / in discussion / accepted / declined)", "പൊതു വിവരങ്ങൾ": "Public details", "ബി.എ. തിയോളജി · ഫീസ് · പ്രവേശന നിബന്ധനകൾ · സമ്പർക്കം · നമ്മുടെ നിലയുമായുള്ള ബന്ധം: നില 1–2 → 1st year electives (നിർദ്ദേശം)": "BA Theology · fees · admission conditions · contact · relation to our levels: Levels 1–2 → 1st-year electives (proposed)", "ആന്തരികം (പൊതുവിൽ ഇല്ല)": "Internal (not public)", "9 സെപ്റ്റം. — ഡീൻ: മണിക്കൂർ തുല്യത പരിഗണിക്കാം, അന്തിമ പരീക്ഷ അവരുടേത്. കമ്മീഷൻ: പ്രവേശനത്തിന് 15%. അടുത്ത മീറ്റിംഗ് 25 സെപ്റ്റം.": "9 Sep — Dean: hour equivalence can be considered, the final exam stays theirs. Commission: 15% on admissions. Next meeting 25 Sep.", "ബാച്ചുകൾ": "Batches", "നില 1: 20/20 — ട്രാൻസ്ക്രിപ്റ്റുകൾ അയച്ചു · നില 2: 14/20": "Level 1: 20/20 — transcripts sent · Level 2: 14/20", "അവർ ചോദിച്ച രേഖകൾ": "Documents they asked for", "☑ പഠനഘടന (PDF) · ☑ പരീക്ഷാ മാതൃകകൾ · ☐ പ്രോക്ടറിംഗ് നയം · ☐ എഡിറ്റർ യോഗ്യതകൾ": "☑ Study structure (PDF) · ☑ Sample tests · ☐ Proctoring policy · ☐ Editor qualifications", "പൊതു പേജ് കാണുക": "View public page", "സൂക്ഷിക്കുക": "Save", "പ്രവേശിക്കുക": "Sign in", "സ്രോതസ്സ് ഡാറ്റാഷീറ്റുകൾ": "Source data sheets", "ഗവേഷകർക്കും ഡെവലപ്പർമാർക്കും · അവലംബത്തോടെ ഉപയോഗിക്കാം": "For researchers and developers · use with citation", "ഉല്പത്തി · ദൈവനാമങ്ങൾ (xlsx)": "Genesis · Divine names (xlsx)", "1,533 വാക്യങ്ങൾ · എബ്രായ · നാമം · സ്രോതസ്സ് J/E/P/D · വാക്യം അനുസരിച്ച്": "1,533 verses · Hebrew · name · source J/E/P/D · by verse", "© OriginalScript 2026 · ലൈസൻസ്: അവലംബത്തോടെ ഉപയോഗം · പുനർവിൽപ്പന ഇല്ല": "© OriginalScript 2026 · licence: use with citation · no resale", "പുതിയ നിയമം · ദൈവനാമങ്ങൾ (xlsx)": "New Testament · Divine names (xlsx)", "7,957 വാക്യങ്ങൾ · ഗ്രീക്ക് · θεός / κύριος സന്ദർഭം": "7,957 verses · Greek · θεός / κύριος in context", "വിരുദ്ധ വാക്യ ജോഡികൾ (csv)": "Contradicting verse pairs (csv)", "സൗജന്യ മാതൃക": "Free sample", "ആദ്യ 100 ജോഡികൾ · പൂർണ്ണം $6": "First 100 pairs · full set $6", "അവലംബ വാചകം (ഓരോ ഷീറ്റിലും)": "Citation line (in every sheet)", "അഡ്മിൻ (ഈ പേജിന്റെ പിന്നിൽ)": "Admin (behind this page)", "ഷീറ്റ് അപ്‌ലോഡ് · പതിപ്പ് · വില · ലൈസൻസ് വാചകം · വിറ്റത്: 41 · വരുമാനം ഈ മാസം: $212": "Sheet upload · version · price · licence text · sold: 41 · revenue this month: $212", "മാതൃക ഡൗൺലോഡ്": "Download sample", "വാങ്ങുക": "Buy", "ഉല്പത്തി 1:1": "Genesis 1:1", "ഡാറ്റ": "data"};
+const phone=document.querySelector('.phone');const PHONE_ML=phone.innerHTML;const idx=document.getElementById('idx');
+let LANG='ml',screens=[],cur=0;
+function norm(s){return s.replace(/&nbsp;/g,' ').trim().replace(/\s+/g,' ').replace(/<br\s*\/?>/g,'<br>')}
+function tr(s){return LANG==='en'&&EN[norm(s)]||s}
+function walk(el){for(const c of [...el.children]){if(c.tagName==='SCRIPT')continue;const k=norm(c.innerHTML);if(EN[k]){c.innerHTML=EN[k];continue}walk(c)}}
+const H1=document.querySelector('.top h1');const H1_ML=H1.innerHTML;
+function render(){phone.innerHTML=PHONE_ML;H1.innerHTML=LANG==='en'?(EN[norm(H1_ML)]||H1_ML):H1_ML;if(LANG==='en')walk(phone);
+ phone.querySelectorAll('.sb').forEach(el=>{const q=tr(el.dataset.q||''),m=el.dataset.mode||'',left=tr(el.dataset.left||'');const L=LANG==='en'?{ph:'Search word · verse · contradicting verse',w:'word',v:'verse',c:'contradicting'}:{ph:'വാക്ക് · വാക്യം · വിരുദ്ധ വാക്യം തിരയുക',w:'വാക്ക്',v:'വാക്യം',c:'വിരുദ്ധം'};
+  el.innerHTML='<div class="box"><i>🔍</i><span>'+(q?'<span style="color:var(--ink)">'+q+'</span>':L.ph)+'</span><i>🎤</i></div><div class="modes">'+(m==='word'?'<b>'+L.w+'</b>':'<span>'+L.w+'</span>')+'<span>·</span><span>'+L.v+'</span><span>·</span><span>'+L.c+'</span>'+(left?'<em>'+left+'</em>':'')+'</div>';});
+ screens=[...phone.querySelectorAll('.screen')];idx.innerHTML='';screens.forEach((s,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.innerHTML='<span class="n">'+(i+1)+'</span>'+s.dataset.t;b.onclick=()=>go(i);li.appendChild(b);idx.appendChild(li);});
+ go(cur);}
+function go(i){cur=i;screens.forEach((s,k)=>s.classList.toggle('on',k===i));[...idx.querySelectorAll('button')].forEach((b,k)=>b.classList.toggle('on',k===i));
+ const n=NOTES[i];const T=IDS[i];document.getElementById('idtag').innerHTML='<b>'+T[0]+'</b><span>'+T[1]+'</span><code>'+T[2]+'</code>';document.getElementById('note').innerHTML='<h2>'+T[0]+' '+T[1]+' · '+screens[i].dataset.t+'</h2><p style="margin:0 0 6px"><span class="k" style="display:inline;margin:0 6px 0 0">Prototype</span>screen '+(i+1)+' · <span class="k" style="display:inline;margin:0 6px 0 0">Route</span><code>'+T[2]+'</code></p><div class="k">User action</div><p>'+n.u+'</p><div class="k">What must happen</div><ul>'+n.m.map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="k">Requirement source</div><p>'+n.s+'</p><div class="k">Data the screen needs</div><p>'+n.d+'</p>'+(n.a?'<div class="ask"><b>Open note for Sebastian:</b> '+n.a+'</div>':'')+'<div class="nav2"><button onclick="go('+((i+screens.length-1)%screens.length)+')">‹ prev</button><button onclick="go('+((i+1)%screens.length)+')">next ›</button></div>';
+ try{localStorage.setItem(KEY,i)}catch(e){}}
+phone.addEventListener('click',e=>{const el=e.target.closest('[data-go]');if(el&&phone.contains(el)){e.stopPropagation();go(+el.dataset.go-1)}});
+function setLang(l){LANG=l;document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));try{localStorage.setItem('os-lang',l)}catch(e){}render()}
+document.querySelectorAll('.langsw button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+try{cur=+localStorage.getItem(KEY)||0}catch(e){}
+let l0='ml';try{l0=localStorage.getItem('os-lang')||'ml'}catch(e){}
+setLang(l0);
+
+/* phone-mode bar */
+(function(){const bar=document.createElement('div');bar.className='pbar';bar.innerHTML='<button id="pb-prev">◀</button><button id="pb-list">☰ screens</button><span class="cnt" id="pb-cnt"></span><button id="pb-note">i</button><button id="pb-next">▶</button>';document.body.appendChild(bar);
+const nav=document.querySelector('.index'),note=document.getElementById('note');
+function upd(){document.getElementById('pb-cnt').textContent=(cur+1)+' / '+screens.length}
+document.getElementById('pb-prev').onclick=()=>{go((cur-1+screens.length)%screens.length)};
+document.getElementById('pb-next').onclick=()=>{go((cur+1)%screens.length)};
+document.getElementById('pb-list').onclick=()=>{note.classList.remove('open');nav.classList.toggle('open')};
+document.getElementById('pb-note').onclick=()=>{nav.classList.remove('open');note.classList.toggle('open')};
+nav.addEventListener('click',e=>{if(e.target.closest('button'))nav.classList.remove('open')});
+const _go=go;go=function(i){_go(i);upd()};upd();})();
+</script>
+
+</body>
+</html>
