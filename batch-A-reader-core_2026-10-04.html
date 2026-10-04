@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>OriginalScript Reader Core</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@500;700&family=Noto+Sans+Malayalam:wght@400;500;600&family=Noto+Serif+Hebrew&display=swap">
 <style>
@@ -206,7 +211,15 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .index.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 12px;z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
   .index.open ol{display:grid;gap:4px}
   #note.open{display:block;position:fixed;inset:auto 0 52px 0;max-height:60vh;overflow:auto;z-index:30;border-radius:0;box-shadow:0 -10px 30px rgba(0,0,0,.25)}
-  .phone{width:100%;max-width:none;height:calc(100dvh - 42px - 52px);border-radius:0;box-shadow:none;border:none}
+  html,body{height:100%;overflow:hidden}
+  body{display:flex;flex-direction:column;padding-bottom:52px}
+  .top{flex:0 0 auto}
+  .layout{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  .stage{flex:1 1 auto;min-height:0;display:flex}
+  .stage>div{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;width:100%}
+  .idtag{flex:0 0 auto;margin:2px 0;font-size:10px}
+  .phone{flex:1 1 auto;min-height:0;height:auto;width:100%;max-width:none;border-radius:0;box-shadow:none;border:none}
+  .notch{display:none}
   body .pbar{display:flex}
 }
 .pbar{display:none;position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--line);align-items:center;justify-content:space-between;padding:0 10px;z-index:40;gap:6px}
@@ -214,6 +227,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .pbar .cnt{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12px}
 </style>
 
+</head>
+<body>
 <div class="top">
   <h1>OriginalScript · Batch A — വായന കോർ</h1>
   <span class="sub">20 mobile screens · Malayalam UI · reader, search, colour layer, elevator lobby, rooms, commentary, verse dates, historical timeline, places</span>
@@ -773,3 +788,6 @@ document.getElementById('pb-note').onclick=()=>{nav.classList.remove('open');not
 nav.addEventListener('click',e=>{if(e.target.closest('button'))nav.classList.remove('open')});
 const _go=go;go=function(i){_go(i);upd()};upd();})();
 </script>
+
+</body>
+</html>
